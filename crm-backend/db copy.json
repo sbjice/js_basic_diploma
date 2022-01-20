@@ -1,0 +1,140 @@
+[{
+  "name": "Иванов",
+  "surname": "Александр",
+  "lastName": "Сергеевич",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79991234567"
+  }, {
+    "type": "VK",
+    "value": "vk.com/dummy_record"
+  }],
+  "id": "1642559801352",
+  "updatedAt": "2022-01-19T02:36:41.352Z",
+  "createdAt": "2022-01-19T02:36:41.352Z"
+}, {
+  "name": "Пуговкин",
+  "surname": "Владимир",
+  "lastName": "Дмитриевич",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }, {
+    "type": "VK",
+    "value": "vk.com/another_dummy_record"
+  }, {
+    "type": "FB",
+    "value": "fb.com/another_dummy_record"
+  }],
+  "id": "1642560021698",
+  "updatedAt": "2022-01-19T02:40:21.698Z",
+  "createdAt": "2022-01-19T02:40:21.698Z"
+}, {
+  "name": "Пуговкин",
+  "surname": "Владимир",
+  "lastName": "Дмитриевич",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }, {
+    "type": "VK",
+    "value": "vk.com/another_dummy_record"
+  }, {
+    "type": "FB",
+    "value": "fb.com/another_dummy_record"
+  }],
+  "id": "1642612680677",
+  "updatedAt": "2022-01-19T17:18:00.677Z",
+  "createdAt": "2022-01-19T17:18:00.677Z"
+}, {
+  "name": "Воробьев",
+  "surname": "Николай",
+  "lastName": "Петрович",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }, {
+    "type": "VK",
+    "value": "vk.com/another_dummy_record"
+  }, {
+    "type": "FB",
+    "value": "fb.com/another_dummy_record"
+  }],
+  "id": "1642613721018",
+  "updatedAt": "2022-01-19T17:35:21.018Z",
+  "createdAt": "2022-01-19T17:35:21.018Z"
+}, {
+  "name": "Смертин",
+  "surname": "Дмитрий",
+  "lastName": "Витальевич",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }],
+  "id": "1642614295980",
+  "updatedAt": "2022-01-19T17:44:55.980Z",
+  "createdAt": "2022-01-19T17:44:55.980Z"
+}, {
+  "name": "Васильев",
+  "surname": "Игорь",
+  "lastName": "",
+  "contacts": [],
+  "id": "1642614612251",
+  "updatedAt": "2022-01-19T17:50:12.251Z",
+  "createdAt": "2022-01-19T17:50:12.251Z"
+}, {
+  "name": "Смертин",
+  "surname": "Дмитрий",
+  "lastName": "Витальевич",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }],
+  "id": "1642694687387",
+  "updatedAt": "2022-01-20T16:04:47.387Z",
+  "createdAt": "2022-01-20T16:04:47.387Z"
+}, {
+  "name": "Смертин",
+  "surname": "Дмитрий",
+  "lastName": "Витальевич",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }],
+  "id": "1642694692192",
+  "updatedAt": "2022-01-20T16:04:52.192Z",
+  "createdAt": "2022-01-20T16:04:52.192Z"
+}, {
+  "name": "Владимир",
+  "surname": "Монастырук",
+  "lastName": "Константинович",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }],
+  "id": "1642694692915",
+  "updatedAt": "2022-01-20T17:41:49.255Z",
+  "createdAt": "2022-01-20T16:04:52.915Z"
+}, {
+  "name": "Смертин",
+  "surname": "Дмитрий",
+  "lastName": "Витальевич",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }],
+  "id": "1642700509276",
+  "updatedAt": "2022-01-20T17:41:49.276Z",
+  "createdAt": "2022-01-20T17:41:49.276Z"
+}, {
+  "name": "Владимир",
+  "surname": "Монастырук",
+  "lastName": "Константинович",
+  "contacts": [{
+    "type": "phone",
+    "value": "+79997654321"
+  }],
+  "id": "1642700509282",
+  "updatedAt": "2022-01-20T17:41:49.293Z",
+  "createdAt": "2022-01-20T17:41:49.282Z"
+}]

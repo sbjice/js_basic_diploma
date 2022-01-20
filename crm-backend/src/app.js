@@ -25,6 +25,26 @@
     return data;
   }
 
+  async function deleteClientByID(id){
+    const response = await fetch(API + '/' + id, {
+      method: 'DELETE'
+    });
+    const data = await response.json();
+    return data;
+  }
+
+  async function changeClientByID(id, clientData) {
+    const response = await fetch(API + '/' + id, {
+      method: 'PATCH',
+      body: JSON.stringify(clientData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await response.json();
+    return data;
+  }
+
   const clientObj = {
     name: 'Смертин',
     surname: 'Дмитрий',
@@ -35,10 +55,37 @@
       }],
   };
 
-  // const client =  await createNewClient(clientObj);
-  // console.log(client);
 
-  // console.log('request sent');
+
+  // API Usage
+  // let clients = await getClients();
+  // console.log(clients);
+  // clients[clients.length-1].surname = 'Монастырук'
+  // clients[clients.length-1].name = 'Владимир'
+  // clients[clients.length-1].lastName = 'Константинович'
+  // console.log(clients[clients.length-1]);
+  // let clientLast = await changeClientByID(clients[clients.length-1].id, clients[clients.length-1]);
+  // console.log(clientLast);
+  // let newClient = await createNewClient(clientObj);
+
+
+  // let idToDelete = newClient.id;
+
+  // newClient = await createNewClient(clientObj);
+  // newClient = await createNewClient(clientObj);
+
+  // clients = await getClients();
+  // clients[clients.length-1].surname = 'Монастырук'
+  // clients[clients.length-1].name = 'Владимир'
+  // clients[clients.length-1].lastName = 'Константинович'
+  // console.log(clients[clients.length-1]);
+  // clientLast = await changeClientByID(clients[clients.length-1].id, clients[clients.length-1]);
+  // console.log(clientLast);
+
+  // await deleteClientByID(idToDelete);
+  // clients = await getClients();
+  // console.log(clients);
+  // console.log(await getClientByID(clients[0].id));
 
 
 
