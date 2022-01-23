@@ -19,6 +19,65 @@
   font-style: normal;
 }
 
-* {
+html {
   font-family: 'Open-Sans', sans-serif;
+  font-size: 20px;
+}
+
+body {
+  background-color: #E5E5E5;
+}
+
+li {
+  font-size: 0.7rem;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+/* .container {
+  background-color: #E5E5E5;
+} */
+
+.clients__list {
+  background-color: #FFFFFF;
+}
+
+.clients__list-item {
+  min-height: 60px;
+  /* outline: 1px solid red; */
+  border-bottom: 1px solid #C8C5D1;
+}
+
+.clients__list-id {
+  width: 110px;
+  margin-right: 40px;
+}
+
+.clients__list-name {
+  margin-right: 40px;
+  width: 250px;
+}
+
+.clients__list-create-datetime, .clients__list-update-datetime {
+  margin-right: 40px;
+}
+
+.clients__list-id, .clients__list-create-time, .clients__list-update-time {
+  color: #B0B0B0;
+}
+
+.clients__list-contacts-list {
+  margin-right: 40px;
+  min-width: 108px;
+}
+
+.clients__list-change-button {
+  margin-right: 30px;
+}
+
+.contact-hidden {
+  display: none;
 }
