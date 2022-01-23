@@ -71,7 +71,7 @@ a {
 
 .clients__list-contacts-list {
   margin-right: 40px;
-  min-width: 108px;
+  width: 108px;
 }
 
 .clients__list-change-button {

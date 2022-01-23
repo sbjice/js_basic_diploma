@@ -117,7 +117,7 @@
       const link = document.createElement('a');
       link.classList.add(element.type, 'display-inline-flex', 'text-primary');
       (index % 5 !== 4 && index !== array.length - 1) ? link.classList.add('mr-1') : null;
-      (index % 5 >= 0 && array.length > 5 && index !== array.length - 1) ? link.classList.add('mb-1') : null;
+      (index % 5 >= 0 && array.length > 5 && index !== array.length - 1 && array.length%5 + index <= array.length - 1) ? link.classList.add('mb-1') : null;
       link.href = element.type === 'phone' ? 'tel:' + element.value : element.value;
       link.target = '_blank';
       link.style.width = '16px';
@@ -147,7 +147,7 @@
       showContactButton.addEventListener('click', e => {
         e.preventDefault();
         for (let i = 0; i < client.contacts.length; i++) {
-          (i % 5 >= 0 && client.contacts.length > 5 && i !== client.contacts.length - 1) ? contactsDiv.children[i].classList.add('mb-1') : null;
+          (i % 5 >= 0 && client.contacts.length > 5 && i !== client.contacts.length - 1 && client.contacts.length % 5 + i <= client.contacts.length - 1) ? contactsDiv.children[i].classList.add('mb-1') : null;
           if (i>3) {
             contactsDiv.children[i].classList.toggle('contact-hidden', false);
           }
