@@ -19,8 +19,12 @@
   font-style: normal;
 }
 
-html {
+* {
+  box-sizing: border-box;
   font-family: 'Open-Sans', sans-serif;
+}
+
+html {
   font-size: 20px;
 }
 
@@ -35,6 +39,11 @@ li {
 a {
   text-decoration: none;
   color: black;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #9873FF;
 }
 
 /* .container {
@@ -80,4 +89,60 @@ a {
 
 .contact-hidden {
   display: none;
+}
+
+.VK {
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/vk.svg');
+}
+
+.FB {
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/fb.svg');
+}
+
+.mail {
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/mail.svg');
+}
+
+.phone {
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/phone.svg');
+}
+
+.other {
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/other.svg');
+}
+
+.show-contact-button {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #9873FF;
+  font-size: 8px;
+  text-decoration: none;
+  color: black;
+}
+
+.show-contact-button:hover {
+  color: #9873FF;
+}
+
+.change-element-icon {
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/change.svg');
+}
+
+.delete-element-icon {
+  width: 16px;
+  height: 16px;
+  background-image: url('../img/delete.svg');
 }

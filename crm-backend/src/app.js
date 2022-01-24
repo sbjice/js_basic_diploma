@@ -93,10 +93,10 @@
     const creationDateTimeDiv = document.createElement('div');
     creationDateTimeDiv.classList.add('d-flex', 'justify-content-between', 'clients__list-create-datetime');
     const creationDateSpan = document.createElement('span');
-    creationDateSpan.classList.add('d-inline-flex', 'mr-1','clients__list-create-date');
+    creationDateSpan.classList.add('d-inline-flex', 'mr-1', 'clients__list-create-date');
     creationDateSpan.textContent = [creationDateTime.getDate(), creationMonth, creationDateTime.getFullYear()].join('.');
     const creationTimeSpan = document.createElement('span');
-    creationTimeSpan.classList.add('d-inline-flex','clients__list-create-time');
+    creationTimeSpan.classList.add('d-inline-flex', 'clients__list-create-time');
     creationTimeSpan.textContent = [padNumberByZero(creationDateTime.getHours()), padNumberByZero(creationDateTime.getMinutes())].join(':');
     creationDateTimeDiv.append(creationDateSpan, creationTimeSpan);
 
@@ -104,25 +104,31 @@
     const updateDateTimeDiv = document.createElement('div');
     updateDateTimeDiv.classList.add('d-flex', 'justify-content-between', 'clients__list-update-datetime');
     const updateDateSpan = document.createElement('span');
-    updateDateSpan.classList.add('d-inline-flex', 'mr-1','clients__list-update-date');
+    updateDateSpan.classList.add('d-inline-flex', 'mr-1', 'clients__list-update-date');
     updateDateSpan.textContent = [updateDateTime.getDate(), updateMonth, updateDateTime.getFullYear()].join('.');
     const updateTimeSpan = document.createElement('span');
-    updateTimeSpan.classList.add('d-inline-flex','clients__list-update-time');
+    updateTimeSpan.classList.add('d-inline-flex', 'clients__list-update-time');
     updateTimeSpan.textContent = [padNumberByZero(updateDateTime.getHours()), padNumberByZero(updateDateTime.getMinutes())].join(':');
     updateDateTimeDiv.append(updateDateSpan, updateTimeSpan);
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'clients__list-contacts-list');
+
+    const fullRows = Math.floor(client.contacts.length / 5);
+    const elementsInLastRow = client.contacts.length - fullRows * 5;
+    const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? 5 : elementsInLastRow);
     client.contacts.forEach((element, index, array) => {
       const link = document.createElement('a');
-      link.classList.add(element.type, 'display-inline-flex', 'text-primary');
-      (index % 5 !== 4 && index !== array.length - 1) ? link.classList.add('mr-1') : null;
-      (index % 5 >= 0 && array.length > 5 && index !== array.length - 1 && array.length%5 + index <= array.length - 1) ? link.classList.add('mb-1') : null;
+      const linkClass = element.type === 'phone' ||
+                         element.type === 'VK' ||
+                         element.type === 'mail' ||
+                         element.type === 'FB' ? element.type : 'other'
+      link.classList.add(linkClass, 'display-inline-flex', 'text-primary');
+      (index % 5 !== 4 && index !== array.length - 1) ? link.classList.add('mr-1'): null;
+      (index % 5 >= 0 && array.length > 5 && index < acceptableItems) ? link.classList.add('mb-1'): null;
       link.href = element.type === 'phone' ? 'tel:' + element.value : element.value;
+      link.href = element.type === 'mail' ? 'mailto:' + element.value : element.value;
       link.target = '_blank';
-      link.style.width = '16px';
-      link.style.height = '16px';
-      link.style.backgroundColor = 'blue';
       contactsDiv.append(link);
     });
 
@@ -130,25 +136,32 @@
     Показ скрытых ссылок по нажатию на 5 ссылку в ряду
     */
 
-    if (client.contacts.length>5) {
+    if (client.contacts.length > 5) {
       for (let i = 0; i < client.contacts.length; i++) {
         contactsDiv.children[i].classList.toggle('mb-1', false);
-        if (i>3) {
+        if (i > 3) {
           contactsDiv.children[i].classList.toggle('contact-hidden', true);
         }
       }
       const showContactButton = document.createElement('a');
-      showContactButton.classList.add('display-inline-flex', 'text-primary');
+      showContactButton.classList.add('display-inline-flex', 'show-contact-button', 'd-flex', 'align-items-center', 'justify-content-center');
       showContactButton.target = '_blank';
-      showContactButton.style.width = '16px';
-      showContactButton.style.height = '16px';
-      showContactButton.style.backgroundColor = 'cyan';
+      showContactButton.textContent = '+' + (client.contacts.length - 4);
+      const showContactButtonText = document.createElement('span');
+      showContactButtonText.classList.add('display-inline-flex');
+
+
+
       contactsDiv.append(showContactButton);
       showContactButton.addEventListener('click', e => {
         e.preventDefault();
+        const fullRows = Math.floor(client.contacts.length / 5);
+        const elementsInLastRow = client.contacts.length - fullRows * 5;
+        const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? 5 : elementsInLastRow);
+        console.log('acceptableItems:', acceptableItems);
         for (let i = 0; i < client.contacts.length; i++) {
-          (i % 5 >= 0 && client.contacts.length > 5 && i !== client.contacts.length - 1 && client.contacts.length % 5 + i <= client.contacts.length - 1) ? contactsDiv.children[i].classList.add('mb-1') : null;
-          if (i>3) {
+          (i % 5 >= 0 && client.contacts.length > 5 && i < acceptableItems) ? contactsDiv.children[i].classList.add('mb-1'): null;
+          if (i > 3) {
             contactsDiv.children[i].classList.toggle('contact-hidden', false);
           }
         }
@@ -159,10 +172,10 @@
     const changeClientButton = document.createElement('a');
     changeClientButton.classList.add('d-inline-flex', 'd-flex', 'align-items-center', 'clients__list-change-button');
     const changeClientIcon = document.createElement('span');
-    changeClientIcon.classList.add('d-inline-flex');
-    changeClientIcon.style.width = '16px';
-    changeClientIcon.style.height = '16px';
-    changeClientIcon.style.backgroundColor = 'purple';
+    changeClientIcon.classList.add('d-inline-flex', 'change-element-icon');
+    // changeClientIcon.style.width = '16px';
+    // changeClientIcon.style.height = '16px';
+    // changeClientIcon.style.backgroundColor = 'purple';
     const changeClientText = document.createElement('span');
     changeClientText.classList.add('d-inline-flex');
     changeClientText.textContent = 'Изменить';
@@ -175,10 +188,10 @@
     const deleteClientButton = document.createElement('a');
     deleteClientButton.classList.add('d-inline-flex', 'd-flex', 'align-items-center', 'clients__list-delete-button');
     const deleteClientIcon = document.createElement('span');
-    deleteClientIcon.classList.add('d-inline-flex');
-    deleteClientIcon.style.width = '16px';
-    deleteClientIcon.style.height = '16px';
-    deleteClientIcon.style.backgroundColor = 'purple';
+    deleteClientIcon.classList.add('d-inline-flex', 'delete-element-icon');
+    // deleteClientIcon.style.width = '16px';
+    // deleteClientIcon.style.height = '16px';
+    // deleteClientIcon.style.backgroundColor = 'purple';
     const deleteClientText = document.createElement('span');
     deleteClientText.classList.add('d-inline-flex');
     deleteClientText.textContent = 'Удалить';
