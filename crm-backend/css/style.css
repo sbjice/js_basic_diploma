@@ -39,6 +39,7 @@ li {
 a {
   text-decoration: none;
   color: black;
+  cursor: pointer;
 }
 
 a:hover {
@@ -46,9 +47,16 @@ a:hover {
   color: #9873FF;
 }
 
-/* .container {
-  background-color: #E5E5E5;
-} */
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  top: -100%;
+  background-color: rgba(0,0,0,0.5);
+  position: absolute;
+  transition: top .3s ease-in-out;
+}
+
 
 .clients__list {
   background-color: #FFFFFF;
@@ -56,7 +64,6 @@ a:hover {
 
 .clients__list-item {
   min-height: 60px;
-  /* outline: 1px solid red; */
   border-bottom: 1px solid #C8C5D1;
 }
 
@@ -83,13 +90,12 @@ a:hover {
   width: 108px;
 }
 
-.clients__list-change-button {
-  margin-right: 30px;
-}
+
 
 .contact-hidden {
   display: none;
 }
+
 
 .VK {
   width: 16px;
@@ -97,10 +103,19 @@ a:hover {
   background-image: url('../img/vk.svg');
 }
 
+.VK:hover {
+  mask-image: url('../img/vk.svg');
+}
+
+
 .FB {
   width: 16px;
   height: 16px;
   background-image: url('../img/fb.svg');
+}
+
+.FB:hover  {
+  mask-image: url('../img/fb.svg');
 }
 
 .mail {
@@ -109,16 +124,28 @@ a:hover {
   background-image: url('../img/mail.svg');
 }
 
+.mail:hover {
+  mask-image: url('../img/mail.svg');
+}
+
 .phone {
   width: 16px;
   height: 16px;
   background-image: url('../img/phone.svg');
 }
 
+.phone:hover {
+  mask-image: url('../img/phone.svg');
+}
+
 .other {
   width: 16px;
   height: 16px;
   background-image: url('../img/other.svg');
+}
+
+.other:hover {
+  mask-image: url('../img/other.svg');
 }
 
 .show-contact-button {
@@ -133,6 +160,12 @@ a:hover {
 
 .show-contact-button:hover {
   color: #9873FF;
+  border-color: #9873FF;
+}
+
+
+.clients__list-change-button {
+  margin-right: 30px;
 }
 
 .change-element-icon {
@@ -141,8 +174,27 @@ a:hover {
   background-image: url('../img/change.svg');
 }
 
+
+.clients__list-change-button:hover {
+  text-decoration: none;
+  color: #9873FF;
+}
+
+.clients__list-change-button:hover .change-element-icon {
+  mask-image: url('../img/change.svg');
+}
+
 .delete-element-icon {
   width: 16px;
   height: 16px;
   background-image: url('../img/delete.svg');
+}
+
+.clients__list-delete-button:hover {
+  text-decoration: none;
+  color: #F06A4D;
+}
+
+.clients__list-delete-button:hover .delete-element-icon{
+  mask-image: url('../img/delete.svg');
 }

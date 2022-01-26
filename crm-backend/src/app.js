@@ -60,13 +60,66 @@
     return container;
   }
 
-  const container = getContainer();
-  let clients = await getClients();
 
-
+  /*
+  Дополнение строки с цифрой до 2 символов с помощью 0
+  */
   function padNumberByZero(number) {
     return number.toString().length === 1 ? '0' + number.toString() : number.toString();
   }
+
+  const container = getContainer();
+  let clients = await getClients();
+
+  function createModal() {
+    const body = document.body;
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center');
+    const modal = document.createElement('div');
+    modal.classList.add('h-75', 'w-50', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
+
+    // const textEl = createTextElement('Hey, how are you?');
+    // modal.append(textEl);
+
+    overlay.append(modal);
+    body.append(overlay);
+
+    modal.addEventListener('click', e => {
+      e.stopPropagation();
+    });
+
+    overlay.addEventListener('click', e => {
+      overlay.style.top = '-100%';
+    });
+
+    return {
+      overlay,
+      modal,
+      showModal() {
+        this.overlay.style.top = '0';
+        return this;
+      },
+      hideModal() {
+        this.overlay.style.top = '-100%';
+        return this;
+      },
+      insertFormIntoModal(form) {
+        this.modal.innerHTML = '';
+        const textEl = document.createElement('p');
+        textEl.classList.add('d-inline-flex', 'w-100');
+        textEl.textContent = JSON.stringify(form);
+        this.modal.append(textEl);
+        // this.modal.append(form);
+        return this;
+      }
+    }
+  }
+
+  const modal = createModal();
+
+
+
 
   /*
     Создание элемента для отображения данных о клиенте
@@ -120,15 +173,17 @@
     client.contacts.forEach((element, index, array) => {
       const link = document.createElement('a');
       const linkClass = element.type === 'phone' ||
-                         element.type === 'VK' ||
-                         element.type === 'mail' ||
-                         element.type === 'FB' ? element.type : 'other'
+        element.type === 'VK' ||
+        element.type === 'mail' ||
+        element.type === 'FB' ? element.type : 'other';
       link.classList.add(linkClass, 'display-inline-flex', 'text-primary');
-      (index % 5 !== 4 && index !== array.length - 1) ? link.classList.add('mr-1'): null;
-      (index % 5 >= 0 && array.length > 5 && index < acceptableItems) ? link.classList.add('mb-1'): null;
-      link.href = element.type === 'phone' ? 'tel:' + element.value : element.value;
-      link.href = element.type === 'mail' ? 'mailto:' + element.value : element.value;
+      (index % 5 !== 4 && index !== array.length - 1) ? link.classList.toggle('mr-1', true): null;
+      (index % 5 >= 0 && array.length > 5 && index < acceptableItems) ? link.classList.toggle('mb-1', true): null;
+      link.href = element.type === 'phone' ? ('tel:' + element.value) : (element.type === 'mail' ? ('mailto:' + element.value) : element.value);
       link.target = '_blank';
+      // const embed = document.createElement('embed');
+      // embed.classList.add(linkClass, 'd-flex');
+      // link.append(embed);
       contactsDiv.append(link);
     });
 
@@ -160,7 +215,7 @@
         const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? 5 : elementsInLastRow);
         console.log('acceptableItems:', acceptableItems);
         for (let i = 0; i < client.contacts.length; i++) {
-          (i % 5 >= 0 && client.contacts.length > 5 && i < acceptableItems) ? contactsDiv.children[i].classList.add('mb-1'): null;
+          (i % 5 >= 0 && client.contacts.length > 5 && i < acceptableItems) ? contactsDiv.children[i].classList.toggle('mb-1', true): null;
           if (i > 3) {
             contactsDiv.children[i].classList.toggle('contact-hidden', false);
           }
@@ -171,33 +226,39 @@
 
     const changeClientButton = document.createElement('a');
     changeClientButton.classList.add('d-inline-flex', 'd-flex', 'align-items-center', 'clients__list-change-button');
-    const changeClientIcon = document.createElement('span');
+    const changeClientIcon = document.createElement('a');
     changeClientIcon.classList.add('d-inline-flex', 'change-element-icon');
-    // changeClientIcon.style.width = '16px';
-    // changeClientIcon.style.height = '16px';
-    // changeClientIcon.style.backgroundColor = 'purple';
     const changeClientText = document.createElement('span');
     changeClientText.classList.add('d-inline-flex');
     changeClientText.textContent = 'Изменить';
     changeClientButton.append(changeClientIcon, changeClientText);
-    // changeClientButton.addEventListener('click', e => {
-    //   e.preventDefault();
-    //   console.log
-    // })
 
     const deleteClientButton = document.createElement('a');
     deleteClientButton.classList.add('d-inline-flex', 'd-flex', 'align-items-center', 'clients__list-delete-button');
     const deleteClientIcon = document.createElement('span');
     deleteClientIcon.classList.add('d-inline-flex', 'delete-element-icon');
-    // deleteClientIcon.style.width = '16px';
-    // deleteClientIcon.style.height = '16px';
-    // deleteClientIcon.style.backgroundColor = 'purple';
     const deleteClientText = document.createElement('span');
     deleteClientText.classList.add('d-inline-flex');
     deleteClientText.textContent = 'Удалить';
     deleteClientButton.append(deleteClientIcon, deleteClientText);
 
+    changeClientButton.addEventListener('click', async e => {
+      e.preventDefault();
+      const clientData = await getClientByID(client.id);
+      console.log('CHANGE');
+      console.log(clientData);
+      modal.insertFormIntoModal(clientData).showModal();
+    });
+
+    deleteClientButton.addEventListener('click', async e => {
+      e.preventDefault();
+      const clientData = await getClientByID(client.id);
+      console.log('DELETE');
+      console.log(clientData);
+    });
+
     clientLi.append(idSpan, nameSpan, creationDateTimeDiv, updateDateTimeDiv, contactsDiv, changeClientButton, deleteClientButton);
+    /*
     const clientObj = {
       client,
       changeClientButton,
@@ -222,15 +283,16 @@
     }
     clientObj.bindUpdateClientData();
     clientObj.bindDeleteClientData();
-    return clientObj;
+    */
+    return clientLi;
   }
 
   async function createClientsListView(clients) {
     const clienstListView = document.createElement('ul');
     clienstListView.classList.add('d-flex', 'flex-column', 'm-0', 'p-0', 'clients__list', 'my-3');
     clients.forEach(async item => {
-      const clientObj = await createClientView(item);
-      clienstListView.append(clientObj.clientLi);
+      const clientLi = await createClientView(item);
+      clienstListView.append(clientLi);
     });
     return clienstListView;
   }
@@ -242,6 +304,39 @@
   const clienstListView = await createClientsListView(clients);
 
   container.append(clienstListView);
+  // console.log(JSON.stringify(clients[0]));
+
+  container.insertAdjacentHTML("afterend",
+    `<div class="elements__select">
+  <select name="select" id="customSelect" class="elements__custom-select">
+    <option value="VK">VK</option>
+    <option value="FB">FB</option>
+    <option value="Phone">Phone</option>
+    <option value="Email">Email</option>
+    <option value="Other">Other</option>
+    <option value="Select Option:" selected>Select Option:</option>
+  </select>
+</div>`);
+  const element = document.querySelector('.elements__custom-select');
+
+
+  const choices = new Choices(element, {
+    placeholder: true,
+    placeholderValue: "Select Option:",
+    searchEnabled: false,
+    itemSelectText: '',
+    shouldSort: false,
+  });
+
+  choices.passedElement.element.addEventListener(
+    'choice',
+    function(event) {
+      // do something creative here...
+      console.log(event.detail.choice.value);
+    },
+    false,
+  );
+
 
 
 
