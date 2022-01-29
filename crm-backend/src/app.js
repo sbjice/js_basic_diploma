@@ -68,57 +68,6 @@
     return number.toString().length === 1 ? '0' + number.toString() : number.toString();
   }
 
-  const container = getContainer();
-  let clients = await getClients();
-
-  function createModal() {
-    const body = document.body;
-
-    const overlay = document.createElement('div');
-    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center');
-    const modal = document.createElement('div');
-    modal.classList.add('h-75', 'w-50', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
-
-    // const textEl = createTextElement('Hey, how are you?');
-    // modal.append(textEl);
-
-    overlay.append(modal);
-    body.append(overlay);
-
-    modal.addEventListener('click', e => {
-      e.stopPropagation();
-    });
-
-    overlay.addEventListener('click', e => {
-      overlay.style.top = '-100%';
-    });
-
-    return {
-      overlay,
-      modal,
-      showModal() {
-        this.overlay.style.top = '0';
-        return this;
-      },
-      hideModal() {
-        this.overlay.style.top = '-100%';
-        return this;
-      },
-      insertFormIntoModal(form) {
-        this.modal.innerHTML = '';
-        const textEl = document.createElement('p');
-        textEl.classList.add('d-inline-flex', 'w-100');
-        textEl.textContent = JSON.stringify(form);
-        this.modal.append(textEl);
-        // this.modal.append(form);
-        return this;
-      }
-    }
-  }
-
-  const modal = createModal();
-
-
 
 
   /*
@@ -258,32 +207,6 @@
     });
 
     clientLi.append(idSpan, nameSpan, creationDateTimeDiv, updateDateTimeDiv, contactsDiv, changeClientButton, deleteClientButton);
-    /*
-    const clientObj = {
-      client,
-      changeClientButton,
-      deleteClientButton,
-      clientLi,
-      bindUpdateClientData() {
-        this.changeClientButton.addEventListener('click', async e => {
-          e.preventDefault();
-          const clientData = await getClientByID(this.client.id);
-          console.log('CHANGE');
-          console.log(clientData);
-        });
-      },
-      bindDeleteClientData() {
-        this.deleteClientButton.addEventListener('click', async e => {
-          e.preventDefault();
-          const clientData = await getClientByID(this.client.id);
-          console.log('DELETE');
-          console.log(clientData);
-        });
-      }
-    }
-    clientObj.bindUpdateClientData();
-    clientObj.bindDeleteClientData();
-    */
     return clientLi;
   }
 
@@ -298,14 +221,64 @@
   }
 
 
+  const container = getContainer();
+  let clients = await getClients();
 
-  // const clientDiv = createClientView(clients[0]);
-  // container.append(clientDiv);
+  function createModal() {
+    const body = document.body;
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center');
+    const modal = document.createElement('div');
+    modal.classList.add('h-75', 'w-50', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
+
+    // const textEl = createTextElement('Hey, how are you?');
+    // modal.append(textEl);
+
+    overlay.append(modal);
+    body.append(overlay);
+
+    modal.addEventListener('click', e => {
+      e.stopPropagation();
+    });
+
+    overlay.addEventListener('click', e => {
+      overlay.style.top = '-100%';
+    });
+
+    return {
+      overlay,
+      modal,
+      showModal() {
+        this.overlay.style.top = '0';
+        return this;
+      },
+      hideModal() {
+        this.overlay.style.top = '-100%';
+        return this;
+      },
+      insertFormIntoModal(form) {
+        this.modal.innerHTML = '';
+        const textEl = document.createElement('p');
+        textEl.classList.add('d-inline-flex', 'w-100');
+        textEl.textContent = JSON.stringify(form);
+        this.modal.append(textEl);
+        // this.modal.append(form);
+        return this;
+      }
+    }
+  }
+
+  const modal = createModal();
   const clienstListView = await createClientsListView(clients);
 
   container.append(clienstListView);
   // console.log(JSON.stringify(clients[0]));
 
+
+  // Добавление селекта на страницу
+
+  /*
   container.insertAdjacentHTML("afterend",
     `<div class="elements__select">
   <select name="select" id="customSelect" class="elements__custom-select">
@@ -337,9 +310,7 @@
     false,
   );
 
-
-
-
+  */
 
 
   // API Usage
@@ -370,5 +341,19 @@
   console.log(clients);
   console.log(await getClientByID(clients[0].id));
   */
+
+
+  // TODO:
+  // 1) Вставлять svg с помощью куска кода через adjacentHTML,
+  // так появится возможность безболезненно менять цвет
+  // 2) Сделать добавление формы в модальное окно
+  // 3) Сделать обработку событий удаления, изменения данных в бд
+  // 4) Расставить обработку статусов http-запросов
+  // 5) Добавление тултипов
+  // 6) Поиск по данным
+  // 7) Менять svg для кнопок изменения и удаления при нажатиях на них
+  // 7*) Добавить анимацию вращения
+  // 8) Валидация формы добавления / изменения данных
+
 
 })();
