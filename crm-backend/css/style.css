@@ -67,6 +67,7 @@ a:hover {
   border-bottom: 1px solid #C8C5D1;
 }
 
+
 .clients__list-id {
   width: 110px;
   margin-right: 40px;
@@ -89,8 +90,6 @@ a:hover {
   margin-right: 40px;
   width: 108px;
 }
-
-
 
 .contact-hidden {
   display: none;
@@ -149,31 +148,35 @@ a:hover {
   border-color: #9873FF;
 }
 
-
 .clients__list-change-button {
   margin-right: 30px;
+}
+
+.clients__list-change-button, .clients__list-delete-button {
+  transition: color .3s ease-in-out;
+}
+
+.clients__list-change-button:hover .svg-icon g{
+  opacity: 1;
+}
+
+.clients__list-delete-button:hover .svg-icon g{
+  opacity: 1;
 }
 
 .change-element-icon {
   width: 16px;
   height: 16px;
-  background-image: url('../img/change.svg');
 }
-
 
 .clients__list-change-button:hover {
   text-decoration: none;
   color: #9873FF;
 }
 
-.clients__list-change-button:hover .change-element-icon {
-  mask-image: url('../img/change.svg');
-}
-
 .delete-element-icon {
   width: 16px;
   height: 16px;
-  background-image: url('../img/delete.svg');
 }
 
 .clients__list-delete-button:hover {
@@ -181,6 +184,3 @@ a:hover {
   color: #F06A4D;
 }
 
-.clients__list-delete-button:hover .delete-element-icon{
-  mask-image: url('../img/delete.svg');
-}
