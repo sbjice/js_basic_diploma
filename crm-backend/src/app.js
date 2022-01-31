@@ -83,6 +83,52 @@
     return container;
   }
 
+  function createModal() {
+    const body = document.body;
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center');
+    const modal = document.createElement('div');
+    modal.classList.add('h-75', 'w-50', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
+
+    overlay.append(modal);
+    body.append(overlay);
+
+    modal.addEventListener('click', e => {
+      e.stopPropagation();
+    });
+
+    overlay.addEventListener('click', e => {
+      overlay.style.top = '-100%';
+    });
+
+    return {
+      overlay,
+      modal,
+      showModal() {
+        this.overlay.style.top = '0';
+        return this;
+      },
+      hideModal() {
+        this.overlay.style.top = '-100%';
+        return this;
+      },
+      insertFormIntoModal(form) {
+        this.modal.innerHTML = '';
+        const textEl = document.createElement('p');
+        textEl.classList.add('d-inline-flex', 'w-100');
+        textEl.textContent = JSON.stringify(form);
+        this.modal.append(textEl);
+        // this.modal.append(form);
+        return this;
+      }
+    }
+  }
+
+  /*
+  Создание элемента svg с содержимым в виде переданной иконки
+  */
+
   function createIcon(elementType, linkClass) {
     const type = ICON_STRINGS[elementType] === undefined ? 'other' : elementType;
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -97,18 +143,28 @@
     return svg;
   }
 
-
   /*
-  Дополнение строки с цифрой до 2 символов с помощью 0
+    Дополнение строки с цифрой до 2 символов с помощью 0
   */
   function padNumberByZero(number) {
-    return number.toString().length === 1 ? '0' + number.toString() : number.toString();
+    return number.toString().padStart(2, "0");
   }
 
-
+  function createDateTimeDiv(dateTimeObj, dateTimeClassToAdd, dateClassToAdd, timeClassToAdd) {
+    const dateTimeDiv = document.createElement('div');
+    dateTimeDiv.classList.add('d-flex', 'justify-content-between', dateTimeClassToAdd);
+    const dateSpan = document.createElement('span');
+    dateSpan.classList.add('d-inline-flex', 'mr-1', dateClassToAdd);
+    dateSpan.textContent = [dateTimeObj.dateTime.getDate(), dateTimeObj.month, dateTimeObj.dateTime.getFullYear()].join('.');
+    const timeSpan = document.createElement('span');
+    timeSpan.classList.add('d-inline-flex', timeClassToAdd);
+    timeSpan.textContent = [padNumberByZero(dateTimeObj.dateTime.getHours()), padNumberByZero(dateTimeObj.dateTime.getMinutes())].join(':');
+    dateTimeDiv.append(dateSpan, timeSpan);
+    return dateTimeDiv;
+  }
 
   /*
-    Создание элемента для отображения данных о клиенте
+    Создание элемента (li) для отображения данных о клиенте
   */
 
   async function createClientView(client) {
@@ -123,32 +179,25 @@
     nameSpan.classList.add('d-inline-flex', 'clients__list-name');
     nameSpan.textContent = [client.surname, client.name, client.lastName].join(' ');
 
+
     const creationDateTime = new Date(client.createdAt);
+    const creationMonth = padNumberByZero(creationDateTime.getMonth() + 1);
+    const createDTObj = {
+      'dateTime': creationDateTime,
+      'month': creationMonth
+    }
+    const creationDateTimeDiv = createDateTimeDiv(createDTObj,'clients__list-create-datetime','clients__list-create-date','clients__list-create-time');
+
+
     const updateDateTime = new Date(client.updatedAt);
-    const creationMonth = (creationDateTime.getMonth() + 1).toString().length === 1 ? '0' + (creationDateTime.getMonth() + 1).toString() : (creationDateTime.getMonth() + 1).toString();
-    const updateMonth = (updateDateTime.getMonth() + 1).toString().length === 1 ? '0' + (updateDateTime.getMonth() + 1).toString() : (updateDateTime.getMonth() + 1).toString();
+    const updateMonth = padNumberByZero(updateDateTime.getMonth() + 1);
+    const updateDTObj = {
+      'dateTime': updateDateTime,
+      'month': updateMonth
+    }
+    const updateDateTimeDiv = createDateTimeDiv(updateDTObj,'clients__list-create-datetime','clients__list-create-date','clients__list-create-time');
 
 
-    const creationDateTimeDiv = document.createElement('div');
-    creationDateTimeDiv.classList.add('d-flex', 'justify-content-between', 'clients__list-create-datetime');
-    const creationDateSpan = document.createElement('span');
-    creationDateSpan.classList.add('d-inline-flex', 'mr-1', 'clients__list-create-date');
-    creationDateSpan.textContent = [creationDateTime.getDate(), creationMonth, creationDateTime.getFullYear()].join('.');
-    const creationTimeSpan = document.createElement('span');
-    creationTimeSpan.classList.add('d-inline-flex', 'clients__list-create-time');
-    creationTimeSpan.textContent = [padNumberByZero(creationDateTime.getHours()), padNumberByZero(creationDateTime.getMinutes())].join(':');
-    creationDateTimeDiv.append(creationDateSpan, creationTimeSpan);
-
-
-    const updateDateTimeDiv = document.createElement('div');
-    updateDateTimeDiv.classList.add('d-flex', 'justify-content-between', 'clients__list-update-datetime');
-    const updateDateSpan = document.createElement('span');
-    updateDateSpan.classList.add('d-inline-flex', 'mr-1', 'clients__list-update-date');
-    updateDateSpan.textContent = [updateDateTime.getDate(), updateMonth, updateDateTime.getFullYear()].join('.');
-    const updateTimeSpan = document.createElement('span');
-    updateTimeSpan.classList.add('d-inline-flex', 'clients__list-update-time');
-    updateTimeSpan.textContent = [padNumberByZero(updateDateTime.getHours()), padNumberByZero(updateDateTime.getMinutes())].join(':');
-    updateDateTimeDiv.append(updateDateSpan, updateTimeSpan);
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'clients__list-contacts-list');
@@ -162,7 +211,6 @@
         element.type === 'VK' ||
         element.type === 'mail' ||
         element.type === 'FB' ? element.type : 'other';
-      // link.classList.add(linkClass, 'display-inline-flex', 'text-primary');
       link.classList.add('display-inline-flex', 'text-primary', 'contact-item');
 
       (index % 5 !== 4 && index !== array.length - 1) ? link.classList.toggle('mr-1', true): null;
@@ -265,50 +313,6 @@
   const container = getContainer();
   let clients = await getClients();
 
-  function createModal() {
-    const body = document.body;
-
-    const overlay = document.createElement('div');
-    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center');
-    const modal = document.createElement('div');
-    modal.classList.add('h-75', 'w-50', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
-
-    // const textEl = createTextElement('Hey, how are you?');
-    // modal.append(textEl);
-
-    overlay.append(modal);
-    body.append(overlay);
-
-    modal.addEventListener('click', e => {
-      e.stopPropagation();
-    });
-
-    overlay.addEventListener('click', e => {
-      overlay.style.top = '-100%';
-    });
-
-    return {
-      overlay,
-      modal,
-      showModal() {
-        this.overlay.style.top = '0';
-        return this;
-      },
-      hideModal() {
-        this.overlay.style.top = '-100%';
-        return this;
-      },
-      insertFormIntoModal(form) {
-        this.modal.innerHTML = '';
-        const textEl = document.createElement('p');
-        textEl.classList.add('d-inline-flex', 'w-100');
-        textEl.textContent = JSON.stringify(form);
-        this.modal.append(textEl);
-        // this.modal.append(form);
-        return this;
-      }
-    }
-  }
 
   const modal = createModal();
   const clienstListView = await createClientsListView(clients);
@@ -385,8 +389,6 @@
 
 
   // TODO:
-  // 1) Вставлять svg с помощью куска кода через adjacentHTML,
-  // так появится возможность безболезненно менять цвет
   // 2) Сделать добавление формы в модальное окно
   // 3) Сделать обработку событий удаления, изменения данных в бд
   // 4) Расставить обработку статусов http-запросов
@@ -395,6 +397,5 @@
   // 7) Менять svg для кнопок изменения и удаления при нажатиях на них
   // 7*) Добавить анимацию вращения
   // 8) Валидация формы добавления / изменения данных
-
 
 })();
