@@ -57,6 +57,14 @@ a:hover {
   transition: top .3s ease-in-out;
 }
 
+.content {
+  overflow-y: auto;
+}
+
+.choices {
+  margin-bottom: 0;
+  width: 25%;
+}
 
 .clients__list {
   background-color: #FFFFFF;

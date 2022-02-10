@@ -70,16 +70,6 @@
     return data;
   }
 
-  const clientObj = {
-    name: 'Дмитрий',
-    surname: 'Смертин',
-    lastName: 'Витальевич',
-    contacts: [{
-      type: 'phone',
-      value: '+79997654321'
-    }],
-  };
-
   function getContainer(selector = document.getElementById('app')) {
     const container = selector;
     return container;
@@ -89,9 +79,9 @@
     const body = document.body;
 
     const overlay = document.createElement('div');
-    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center');
+    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center', 'p-3');
     const modal = document.createElement('div');
-    modal.classList.add('h-auto', 'w-50', 'p-3', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
+    modal.classList.add('h-75', 'w-50', 'p-3', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
 
     overlay.append(modal);
     body.append(overlay);
@@ -102,6 +92,7 @@
 
     overlay.addEventListener('click', e => {
       overlay.style.top = '-100%';
+      modal.innerHTML = '';
     });
 
     return {
@@ -117,11 +108,11 @@
       },
       insertFormIntoModal(form) {
         this.modal.innerHTML = '';
-        const textEl = document.createElement('p');
-        textEl.classList.add('d-inline-flex', 'w-100');
-        textEl.textContent = JSON.stringify(form);
-        this.modal.append(textEl);
-        // this.modal.append(form);
+        // const textEl = document.createElement('p');
+        // textEl.classList.add('d-inline-flex', 'w-100');
+        // textEl.textContent = JSON.stringify(form);
+        // this.modal.append(textEl);
+        this.modal.append(form);
         return this;
       }
     }
@@ -148,6 +139,7 @@
   /*
     Дополнение строки с цифрой до 2 символов с помощью 0
   */
+
   function padNumberByZero(number) {
     return number.toString().padStart(2, "0");
   }
@@ -269,7 +261,11 @@
       const clientData = await getClientByID(client.id);
       console.log('CHANGE');
       console.log(clientData);
-      modal.insertFormIntoModal(clientData).showModal();
+      // modal.insertFormIntoModal(clientData).showModal();
+
+      const modalContent = createModalContent(clientData);
+      // console.log(modalContent);
+      modal.insertFormIntoModal(modalContent).showModal();
     });
 
     deleteClientButton.addEventListener('click', async e => {
@@ -302,7 +298,141 @@
   const clienstListView = await createClientsListView(clients);
 
   container.append(clienstListView);
-  // console.log(JSON.stringify(clients[0]));
+
+
+  let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
+
+
+  // const box = document.querySelector('.box');
+  // const testDiv = document.createElement('div');
+
+  function createSelect(valuesArr, selectClass, selectName='') {
+    const select = document.createElement('select');
+    select.classList.add(selectClass);
+    select.name = selectName;
+    select.type = 'select-one';
+    valuesArr.forEach((item, index, arr) => {
+      const option = document.createElement('option');
+      option.value = item;
+      option.textContent = item;
+      if (index === arr.length-1) option.selected = true;
+      select.append(option);
+    });
+    return select;
+  }
+
+  function configureSelect(select, value) {
+    const choicesElement = new Choices(select, {
+      searchEnabled: false,
+      itemSelectText: '',
+      shouldSort: false,
+    });
+    choicesElement.passedElement.element.addEventListener(
+      'choice',
+      function(event) {
+        // do something creative here...
+        console.log(event.detail.choice.value);
+      },
+      false,
+    );
+    choicesElement.setChoiceByValue(value);
+    // return choicesElement;
+  }
+
+
+
+  function createInputObj(inputName, labelText, placeholderValue='', required = false){
+    const input = document.createElement('input');
+    input.name = inputName;
+    input.placeholder = placeholderValue;
+    input.classList.add('input', 'p-1', 'border-top-0', 'border-right-0', 'border-left-0', 'w-100');
+    const label = document.createElement('label');
+    label.for = input.name;
+    label.textContent = labelText;
+    label.classList.add('text-muted', 'm-0','d-flex');
+    if (required) {
+      const span = document.createElement('span');
+      span.classList.add('d-inline-flex', 'asterisk');
+      span.textContent = '*';
+      label.append(span);
+    }
+    const inputDiv = document.createElement('div');
+    inputDiv.classList.add('d-flex', 'flex-column', 'w-100');
+    inputDiv.append(label, input);
+    return {
+      inputDiv,
+      input, label
+    };
+  }
+  const inputObj1 = createInputObj('name', 'Имя','', true);
+  const inputObj2 = createInputObj('surname', 'Фамилия','', true);
+  // inputs.append(inputObj1.inputDiv, inputObj2.inputDiv);
+
+
+  function createModalContent(obj) {
+    // console.log(obj);
+    const container = document.createElement('div');
+    container.classList.add('d-flex', 'flex-column', 'mw-25', 'content', 'h-100');
+
+    const modalHeaderDiv = document.createElement('div');
+    modalHeaderDiv.classList.add('d-flex', 'align-items-end');
+    const modalHeaderTitle = document.createElement('h3');
+    modalHeaderTitle.classList.add('d-inline-flex', 'm-0');
+    modalHeaderTitle.textContent = 'Изменить данные';
+    const modalHeaderText = document.createElement('p');
+    modalHeaderText.classList.add('d-inline-flex', 'text-muted', 'm-0');
+    modalHeaderText.textContent = 'ID:'+obj.id;
+    modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
+
+
+    const nameDiv = document.createElement('div');
+    nameDiv.classList.add('d-flex', 'flex-column');
+    const nameInput = createInputObj('name', 'Имя','', true);
+    const surnameInput = createInputObj('surname', 'Фамилия','', true);
+    const lastNameInput = createInputObj('lastName', 'Отчество');
+    nameInput.input.value = obj.name;
+    surnameInput.input.value = obj.surname;
+    lastNameInput.input.value = obj.lastName;
+    nameDiv.append(nameInput.inputDiv,surnameInput.inputDiv,lastNameInput.inputDiv);
+
+
+    const contactsDiv = document.createElement('div');
+    contactsDiv.classList.add('d-flex','flex-column','bg-light','p-3');
+
+    obj.contacts.forEach(item => {
+      const contactItemDiv = document.createElement('div');
+      contactItemDiv.classList.add('d-flex');
+      // create type select
+      const contactTypeSelect = createSelect(values, 'sel1');
+      contactItemDiv.append(contactTypeSelect);
+      // contactTypeSelect.value = item.type;
+      configureSelect(contactTypeSelect, item.type);
+      // contactItemSelect.containerOuter.classNames.containerOuter += ' m-0 mw-25';
+      // contactItemSelect.setChoiceByValue(item.type);
+      // create value input
+      const contactValueInput = document.createElement('input');
+      contactValueInput.classList.add('p-1','mw-75');
+      contactValueInput.value = item.value;
+      contactItemDiv.append(contactValueInput);
+      contactsDiv.append(contactItemDiv);
+    });
+
+    document.querySelectorAll('.choices').forEach(item => {
+      item.classList.add('m-0', 'mw-25');
+    });
+
+
+    container.append(modalHeaderDiv, nameDiv, contactsDiv);
+    return container;
+  }
+
+  // const modalContent = createModalContent(obj);
+  // document.body.append(modalContent);
+
+
+
+
+
 
 
   // Добавление селекта на страницу
