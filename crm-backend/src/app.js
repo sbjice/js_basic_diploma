@@ -87,12 +87,14 @@
     body.append(overlay);
 
     modal.addEventListener('click', e => {
-      e.stopPropagation();
+      if (e.target===modal) e.stopPropagation();
     });
 
     overlay.addEventListener('click', e => {
-      overlay.style.top = '-100%';
-      modal.innerHTML = '';
+      if (e.target===overlay){
+        overlay.style.top = '-100%';
+        modal.innerHTML = '';
+      }
     });
 
     return {
@@ -169,7 +171,7 @@
     dataEditText.classList.add('d-inline-flex');
     dataEditText.textContent = buttonText;
     dataEditButton.append(dataEditIcon, dataEditText);
-    return dataEditButton
+    return dataEditButton;
   }
 
   /*
@@ -265,7 +267,12 @@
 
       const modalContent = createModalContent(clientData);
       // console.log(modalContent);
-      modal.insertFormIntoModal(modalContent).showModal();
+      modal.insertFormIntoModal(modalContent.container);
+      document.querySelectorAll('.sel1').forEach((item,index,array) => {
+        // item.classList.add('m-0', 'mw-25');
+        configureSelect(item, clientData.contacts[index].type);
+      });
+      modal.showModal();
     });
 
     deleteClientButton.addEventListener('click', async e => {
@@ -336,7 +343,7 @@
       false,
     );
     choicesElement.setChoiceByValue(value);
-    // return choicesElement;
+    return choicesElement;
   }
 
 
@@ -364,13 +371,12 @@
       input, label
     };
   }
-  const inputObj1 = createInputObj('name', 'Имя','', true);
-  const inputObj2 = createInputObj('surname', 'Фамилия','', true);
-  // inputs.append(inputObj1.inputDiv, inputObj2.inputDiv);
+  // const inputObj1 = createInputObj('name', 'Имя','', true);
+  // const inputObj2 = createInputObj('surname', 'Фамилия','', true);
+  // // inputs.append(inputObj1.inputDiv, inputObj2.inputDiv);
 
 
   function createModalContent(obj) {
-    // console.log(obj);
     const container = document.createElement('div');
     container.classList.add('d-flex', 'flex-column', 'mw-25', 'content', 'h-100');
 
@@ -398,17 +404,20 @@
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex','flex-column','bg-light','p-3');
+    const choices = [];
 
+    // мб не объект не сохраняется в замыкании
     obj.contacts.forEach(item => {
       const contactItemDiv = document.createElement('div');
-      contactItemDiv.classList.add('d-flex');
+      contactItemDiv.classList.add('d-flex', 'contact__item-div', 'mb-2');
       // create type select
       const contactTypeSelect = createSelect(values, 'sel1');
       contactItemDiv.append(contactTypeSelect);
       // contactTypeSelect.value = item.type;
-      configureSelect(contactTypeSelect, item.type);
+      const contactItemSelect = configureSelect(contactTypeSelect);
+      choices.push(contactItemSelect);
       // contactItemSelect.containerOuter.classNames.containerOuter += ' m-0 mw-25';
-      // contactItemSelect.setChoiceByValue(item.type);
+      contactItemSelect.setChoiceByValue(item.type);
       // create value input
       const contactValueInput = document.createElement('input');
       contactValueInput.classList.add('p-1','mw-75');
@@ -418,12 +427,15 @@
     });
 
     document.querySelectorAll('.choices').forEach(item => {
-      item.classList.add('m-0', 'mw-25');
+      // item.classList.add('m-0', 'mw-25');
     });
 
 
     container.append(modalHeaderDiv, nameDiv, contactsDiv);
-    return container;
+    return {
+      container,
+      choices
+    };
   }
 
   // const modalContent = createModalContent(obj);
