@@ -36,6 +36,7 @@ li {
   font-size: 0.7rem;
 }
 
+
 a {
   text-decoration: none;
   color: black;
@@ -45,6 +46,10 @@ a {
 a:hover {
   text-decoration: none;
   color: #9873FF;
+}
+
+input:focus{
+  outline: none;
 }
 
 
@@ -58,6 +63,7 @@ a:hover {
 }
 
 .content {
+  /* font-size: 12px; */
   overflow-y: auto;
 }
 

@@ -174,6 +174,146 @@
     return dataEditButton;
   }
 
+  let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
+
+
+  function createSelect(valuesArr, selectClass, selectName='') {
+    const select = document.createElement('select');
+    select.classList.add(selectClass);
+    select.name = selectName;
+    select.type = 'select-one';
+    valuesArr.forEach((item, index, arr) => {
+      const option = document.createElement('option');
+      option.value = item;
+      option.textContent = item;
+      if (index === arr.length-1) option.selected = true;
+      select.append(option);
+    });
+    return select;
+  }
+
+  function configureSelect(select, value) {
+    const choicesElement = new Choices(select, {
+      searchEnabled: false,
+      itemSelectText: '',
+      shouldSort: false,
+    });
+    // choicesElement.passedElement.element.addEventListener(
+    //   'choice',
+    //   function(event) {
+    //     // do something creative here...
+    //     console.log(event.detail.choice.value);
+    //   },
+    //   false,
+    // );
+    return choicesElement;
+  }
+
+  function createInputObj(inputName, labelText, placeholderValue='', required = false){
+    const input = document.createElement('input');
+    input.name = inputName;
+    input.placeholder = placeholderValue;
+    input.classList.add('input', 'p-1', 'border-top-0', 'border-right-0', 'border-left-0', 'w-100');
+    const label = document.createElement('label');
+    label.for = input.name;
+    label.textContent = labelText;
+    label.classList.add('text-muted', 'm-0','d-flex');
+    if (required) {
+      const span = document.createElement('span');
+      span.classList.add('d-inline-flex', 'asterisk');
+      span.textContent = '*';
+      label.append(span);
+    }
+    const inputDiv = document.createElement('div');
+    inputDiv.classList.add('d-flex', 'flex-column', 'w-100');
+    inputDiv.append(label, input);
+    return {
+      inputDiv,
+      input, label
+    };
+  }
+
+  function createModalContent(obj) {
+    const container = document.createElement('div');
+    container.classList.add('d-flex', 'flex-column', 'mw-25', 'content', 'h-100');
+
+    const modalHeaderDiv = document.createElement('div');
+    modalHeaderDiv.classList.add('d-flex', 'align-items-end');
+    const modalHeaderTitle = document.createElement('h3');
+    modalHeaderTitle.classList.add('d-inline-flex', 'm-0');
+    modalHeaderTitle.textContent = 'Изменить данные';
+    const modalHeaderText = document.createElement('p');
+    modalHeaderText.classList.add('d-inline-flex', 'text-muted', 'm-0');
+    modalHeaderText.textContent = 'ID:'+obj.id;
+    modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
+
+
+    const nameDiv = document.createElement('div');
+    nameDiv.classList.add('d-flex', 'flex-column');
+    const nameInput = createInputObj('name', 'Имя','', true);
+    const surnameInput = createInputObj('surname', 'Фамилия','', true);
+    const lastNameInput = createInputObj('lastName', 'Отчество');
+    nameInput.input.value = obj.name;
+    surnameInput.input.value = obj.surname;
+    lastNameInput.input.value = obj.lastName;
+    nameDiv.append(nameInput.inputDiv,surnameInput.inputDiv,lastNameInput.inputDiv);
+
+
+    const contactsDiv = document.createElement('div');
+    contactsDiv.classList.add('d-flex','flex-column','bg-light','p-3');
+    const contactTypeChoices = [];
+    const contactValueInputs = [];
+
+    obj.contacts.forEach(item => {
+      const contactItemDiv = document.createElement('div');
+      contactItemDiv.classList.add('d-flex', 'contact__item-div', 'mb-2');
+
+      const contactTypeSelect = createSelect(values, 'sel1');
+      contactItemDiv.append(contactTypeSelect);
+      const contactItemSelect = configureSelect(contactTypeSelect);
+
+      contactTypeChoices.push(contactItemSelect);
+      contactItemSelect.setChoiceByValue(item.type);
+      contactItemSelect.passedElement.element.addEventListener(
+        'choice',
+        function(event) {
+          obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = event.detail.choice.value;
+          // console.log(obj);
+        },
+        false,
+      );
+
+      const contactValueInput = document.createElement('input');
+      contactValueInput.classList.add('p-1','mw-75');
+      contactValueInput.value = item.value;
+      contactValueInputs.push(contactValueInput);
+      contactValueInput.addEventListener(
+        'input',
+        function(event) {
+          obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = event.target.value;
+          console.log(obj);
+        },
+        false,
+      );
+      contactItemDiv.append(contactValueInput);
+      contactsDiv.append(contactItemDiv);
+    });
+
+    // TODO:
+    // добавлять селекты и инпуты в соответствуующие массивы
+    // чтобы можно было по изменению этого конкретного элемента найти его индекс
+    // и по индексу изменить нужный контакт
+
+
+
+    container.append(modalHeaderDiv, nameDiv, contactsDiv);
+    return {
+      container,
+      contactTypeChoices,
+      contactValueInputs
+    };
+  }
+
   /*
     Создание элемента (li) для отображения данных о клиенте
   */
@@ -261,28 +401,30 @@
     changeClientButton.addEventListener('click', async e => {
       e.preventDefault();
       const clientData = await getClientByID(client.id);
-      console.log('CHANGE');
-      console.log(clientData);
+      // console.log('CHANGE');
+      // console.log(clientData);
       // modal.insertFormIntoModal(clientData).showModal();
 
       const modalContent = createModalContent(clientData);
       // console.log(modalContent);
       modal.insertFormIntoModal(modalContent.container);
-      document.querySelectorAll('.sel1').forEach((item,index,array) => {
-        // item.classList.add('m-0', 'mw-25');
-        configureSelect(item, clientData.contacts[index].type);
-      });
+
       modal.showModal();
     });
 
     deleteClientButton.addEventListener('click', async e => {
       e.preventDefault();
       const clientData = await getClientByID(client.id);
-      console.log('DELETE');
-      console.log(clientData);
+      // console.log('DELETE');
+      // console.log(clientData);
     });
 
-    clientLi.append(idSpan, nameSpan, creationDateTimeDiv, updateDateTimeDiv, contactsDiv, changeClientButton, deleteClientButton);
+    clientLi.append(
+      idSpan, nameSpan,
+      creationDateTimeDiv, updateDateTimeDiv,
+      contactsDiv,
+      changeClientButton, deleteClientButton
+      );
     return clientLi;
   }
 
@@ -305,147 +447,6 @@
   const clienstListView = await createClientsListView(clients);
 
   container.append(clienstListView);
-
-
-  let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
-
-
-  // const box = document.querySelector('.box');
-  // const testDiv = document.createElement('div');
-
-  function createSelect(valuesArr, selectClass, selectName='') {
-    const select = document.createElement('select');
-    select.classList.add(selectClass);
-    select.name = selectName;
-    select.type = 'select-one';
-    valuesArr.forEach((item, index, arr) => {
-      const option = document.createElement('option');
-      option.value = item;
-      option.textContent = item;
-      if (index === arr.length-1) option.selected = true;
-      select.append(option);
-    });
-    return select;
-  }
-
-  function configureSelect(select, value) {
-    const choicesElement = new Choices(select, {
-      searchEnabled: false,
-      itemSelectText: '',
-      shouldSort: false,
-    });
-    choicesElement.passedElement.element.addEventListener(
-      'choice',
-      function(event) {
-        // do something creative here...
-        console.log(event.detail.choice.value);
-      },
-      false,
-    );
-    choicesElement.setChoiceByValue(value);
-    return choicesElement;
-  }
-
-
-
-  function createInputObj(inputName, labelText, placeholderValue='', required = false){
-    const input = document.createElement('input');
-    input.name = inputName;
-    input.placeholder = placeholderValue;
-    input.classList.add('input', 'p-1', 'border-top-0', 'border-right-0', 'border-left-0', 'w-100');
-    const label = document.createElement('label');
-    label.for = input.name;
-    label.textContent = labelText;
-    label.classList.add('text-muted', 'm-0','d-flex');
-    if (required) {
-      const span = document.createElement('span');
-      span.classList.add('d-inline-flex', 'asterisk');
-      span.textContent = '*';
-      label.append(span);
-    }
-    const inputDiv = document.createElement('div');
-    inputDiv.classList.add('d-flex', 'flex-column', 'w-100');
-    inputDiv.append(label, input);
-    return {
-      inputDiv,
-      input, label
-    };
-  }
-  // const inputObj1 = createInputObj('name', 'Имя','', true);
-  // const inputObj2 = createInputObj('surname', 'Фамилия','', true);
-  // // inputs.append(inputObj1.inputDiv, inputObj2.inputDiv);
-
-
-  function createModalContent(obj) {
-    const container = document.createElement('div');
-    container.classList.add('d-flex', 'flex-column', 'mw-25', 'content', 'h-100');
-
-    const modalHeaderDiv = document.createElement('div');
-    modalHeaderDiv.classList.add('d-flex', 'align-items-end');
-    const modalHeaderTitle = document.createElement('h3');
-    modalHeaderTitle.classList.add('d-inline-flex', 'm-0');
-    modalHeaderTitle.textContent = 'Изменить данные';
-    const modalHeaderText = document.createElement('p');
-    modalHeaderText.classList.add('d-inline-flex', 'text-muted', 'm-0');
-    modalHeaderText.textContent = 'ID:'+obj.id;
-    modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
-
-
-    const nameDiv = document.createElement('div');
-    nameDiv.classList.add('d-flex', 'flex-column');
-    const nameInput = createInputObj('name', 'Имя','', true);
-    const surnameInput = createInputObj('surname', 'Фамилия','', true);
-    const lastNameInput = createInputObj('lastName', 'Отчество');
-    nameInput.input.value = obj.name;
-    surnameInput.input.value = obj.surname;
-    lastNameInput.input.value = obj.lastName;
-    nameDiv.append(nameInput.inputDiv,surnameInput.inputDiv,lastNameInput.inputDiv);
-
-
-    const contactsDiv = document.createElement('div');
-    contactsDiv.classList.add('d-flex','flex-column','bg-light','p-3');
-    const choices = [];
-
-    // мб не объект не сохраняется в замыкании
-    obj.contacts.forEach(item => {
-      const contactItemDiv = document.createElement('div');
-      contactItemDiv.classList.add('d-flex', 'contact__item-div', 'mb-2');
-      // create type select
-      const contactTypeSelect = createSelect(values, 'sel1');
-      contactItemDiv.append(contactTypeSelect);
-      // contactTypeSelect.value = item.type;
-      const contactItemSelect = configureSelect(contactTypeSelect);
-      choices.push(contactItemSelect);
-      // contactItemSelect.containerOuter.classNames.containerOuter += ' m-0 mw-25';
-      contactItemSelect.setChoiceByValue(item.type);
-      // create value input
-      const contactValueInput = document.createElement('input');
-      contactValueInput.classList.add('p-1','mw-75');
-      contactValueInput.value = item.value;
-      contactItemDiv.append(contactValueInput);
-      contactsDiv.append(contactItemDiv);
-    });
-
-    document.querySelectorAll('.choices').forEach(item => {
-      // item.classList.add('m-0', 'mw-25');
-    });
-
-
-    container.append(modalHeaderDiv, nameDiv, contactsDiv);
-    return {
-      container,
-      choices
-    };
-  }
-
-  // const modalContent = createModalContent(obj);
-  // document.body.append(modalContent);
-
-
-
-
-
-
 
   // Добавление селекта на страницу
 
