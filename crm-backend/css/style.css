@@ -69,7 +69,7 @@ input:focus{
 
 .choices {
   margin-bottom: 0;
-  width: 35%;
+  width: 40%;
 }
 
 .clients__list {
@@ -112,6 +112,24 @@ input:focus{
 .contact-item {
   width: 16px;
   height: 16px;
+}
+
+.contact-delete-button {
+  width: 10%;
+  border: 1px solid #C8C5D1;
+  transition: border-color ease-in-out .3s;
+}
+
+.contact-delete-button:hover {
+  border-color: #F06A4D;
+}
+
+.contact-delete-button .contact-delete-icon g path{
+  transition: fill ease-in-out .3s;
+}
+
+.contact-delete-button:hover .contact-delete-icon g path{
+  fill: #F06A4D;
 }
 
 .svg-icon g {

@@ -24,6 +24,9 @@
     'change': `<g opacity="0.7">
       <path d="M2 11.5V14H4.5L11.8733 6.62662L9.37333 4.12662L2 11.5ZM13.8067 4.69329C14.0667 4.43329 14.0667 4.01329 13.8067 3.75329L12.2467 2.19329C11.9867 1.93329 11.5667 1.93329 11.3067 2.19329L10.0867 3.41329L12.5867 5.91329L13.8067 4.69329Z" fill="#9873FF"/>
       </g>`,
+    'contact-delete':`<g opacity="0.7">
+      <path d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z" fill="#B0B0B0"/>
+      </g>`,
   }
 
   async function getClients() {
@@ -86,12 +89,12 @@
     overlay.append(modal);
     body.append(overlay);
 
-    modal.addEventListener('click', e => {
-      if (e.target===modal) e.stopPropagation();
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) e.stopPropagation();
     });
 
-    overlay.addEventListener('click', e => {
-      if (e.target===overlay){
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) {
         overlay.style.top = '-100%';
         modal.innerHTML = '';
       }
@@ -110,10 +113,6 @@
       },
       insertFormIntoModal(form) {
         this.modal.innerHTML = '';
-        // const textEl = document.createElement('p');
-        // textEl.classList.add('d-inline-flex', 'w-100');
-        // textEl.textContent = JSON.stringify(form);
-        // this.modal.append(textEl);
         this.modal.append(form);
         return this;
       }
@@ -177,7 +176,7 @@
   let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
 
 
-  function createSelect(valuesArr, selectClass, selectName='') {
+  function createSelect(valuesArr, selectClass, selectName = '') {
     const select = document.createElement('select');
     select.classList.add(selectClass);
     select.name = selectName;
@@ -186,7 +185,7 @@
       const option = document.createElement('option');
       option.value = item;
       option.textContent = item;
-      if (index === arr.length-1) option.selected = true;
+      if (index === arr.length - 1) option.selected = true;
       select.append(option);
     });
     return select;
@@ -198,18 +197,10 @@
       itemSelectText: '',
       shouldSort: false,
     });
-    // choicesElement.passedElement.element.addEventListener(
-    //   'choice',
-    //   function(event) {
-    //     // do something creative here...
-    //     console.log(event.detail.choice.value);
-    //   },
-    //   false,
-    // );
     return choicesElement;
   }
 
-  function createInputObj(inputName, labelText, placeholderValue='', required = false){
+  function createInputObj(inputName, labelText, placeholderValue = '', required = false) {
     const input = document.createElement('input');
     input.name = inputName;
     input.placeholder = placeholderValue;
@@ -217,7 +208,7 @@
     const label = document.createElement('label');
     label.for = input.name;
     label.textContent = labelText;
-    label.classList.add('text-muted', 'm-0','d-flex');
+    label.classList.add('text-muted', 'm-0', 'd-flex');
     if (required) {
       const span = document.createElement('span');
       span.classList.add('d-inline-flex', 'asterisk');
@@ -229,13 +220,14 @@
     inputDiv.append(label, input);
     return {
       inputDiv,
-      input, label
+      input,
+      label
     };
   }
 
   function createModalContent(obj) {
     const container = document.createElement('div');
-    container.classList.add('d-flex', 'flex-column', 'mw-25', 'content', 'h-100');
+    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100');
 
     const modalHeaderDiv = document.createElement('div');
     modalHeaderDiv.classList.add('d-flex', 'align-items-end');
@@ -244,29 +236,31 @@
     modalHeaderTitle.textContent = 'Изменить данные';
     const modalHeaderText = document.createElement('p');
     modalHeaderText.classList.add('d-inline-flex', 'text-muted', 'm-0');
-    modalHeaderText.textContent = 'ID:'+obj.id;
+    modalHeaderText.textContent = 'ID:' + obj.id;
     modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
 
 
     const nameDiv = document.createElement('div');
     nameDiv.classList.add('d-flex', 'flex-column');
-    const nameInput = createInputObj('name', 'Имя','', true);
-    const surnameInput = createInputObj('surname', 'Фамилия','', true);
+    const nameInput = createInputObj('name', 'Имя', '', true);
+    const surnameInput = createInputObj('surname', 'Фамилия', '', true);
     const lastNameInput = createInputObj('lastName', 'Отчество');
     nameInput.input.value = obj.name;
     surnameInput.input.value = obj.surname;
     lastNameInput.input.value = obj.lastName;
-    nameDiv.append(nameInput.inputDiv,surnameInput.inputDiv,lastNameInput.inputDiv);
+    nameDiv.append(nameInput.inputDiv, surnameInput.inputDiv, lastNameInput.inputDiv);
 
 
     const contactsDiv = document.createElement('div');
-    contactsDiv.classList.add('d-flex','flex-column','bg-light','p-3');
+    contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
     const contactTypeChoices = [];
     const contactValueInputs = [];
+    const contactDeleteButtons = [];
 
-    obj.contacts.forEach(item => {
+    obj.contacts.forEach((item, index, array) => {
       const contactItemDiv = document.createElement('div');
-      contactItemDiv.classList.add('d-flex', 'contact__item-div', 'mb-2');
+      contactItemDiv.classList.add('d-flex', 'contact__item-div');
+      if (index!==array.length-1) contactItemDiv.classList.add('mb-2');
 
       const contactTypeSelect = createSelect(values, 'sel1');
       contactItemDiv.append(contactTypeSelect);
@@ -276,41 +270,67 @@
       contactItemSelect.setChoiceByValue(item.type);
       contactItemSelect.passedElement.element.addEventListener(
         'choice',
-        function(event) {
-          obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = event.detail.choice.value;
+        function(e) {
+          obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
+          console.log(e.detail.choice.value);
           // console.log(obj);
         },
         false,
       );
 
       const contactValueInput = document.createElement('input');
-      contactValueInput.classList.add('p-1','mw-75');
+      contactValueInput.classList.add('p-1', 'mw-75');
       contactValueInput.value = item.value;
       contactValueInputs.push(contactValueInput);
       contactValueInput.addEventListener(
         'input',
-        function(event) {
-          obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = event.target.value;
-          console.log(obj);
+        function(e) {
+          obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
+          // console.log(obj);
         },
         false,
       );
-      contactItemDiv.append(contactValueInput);
+
+      const contactDeleteButton = document.createElement('a');
+      contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button','align-items-center', 'justify-content-center');
+      const contactDeleteIcon = createIcon('contact-delete','contact-delete-icon');
+      contactDeleteButton.append(contactDeleteIcon);
+      contactDeleteButtons.push(contactDeleteButton);
+      contactDeleteButton.addEventListener(
+        'click',
+        function(e) {
+          e.preventDefault();
+          let elementToWorkWith = null;
+          // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
+          // тк присутствует следующая вложенность объектов снизу вверх:
+          // path -> g -> svg -> a
+          if (e.target.tagName==='path'){
+            elementToWorkWith = e.target.parentElement.parentElement.parentElement;
+          } else if (e.target.tagName==='g'){
+            elementToWorkWith = e.target.parentElement.parentElement;
+          } else if (e.target.tagName==='svg'){
+            elementToWorkWith = e.target.parentElement;
+          } else {
+            elementToWorkWith = e.target;
+          }
+          console.log(contactDeleteButtons.indexOf(elementToWorkWith));
+          const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
+          elementToWorkWith.parentElement.remove();
+          contactDeleteButtons.splice(elementNumber,1);
+          obj.contacts.splice(elementNumber,1);
+          console.log(obj);
+        });
+
+      contactItemDiv.append(contactValueInput, contactDeleteButton);
       contactsDiv.append(contactItemDiv);
     });
-
-    // TODO:
-    // добавлять селекты и инпуты в соответствуующие массивы
-    // чтобы можно было по изменению этого конкретного элемента найти его индекс
-    // и по индексу изменить нужный контакт
-
-
 
     container.append(modalHeaderDiv, nameDiv, contactsDiv);
     return {
       container,
       contactTypeChoices,
-      contactValueInputs
+      contactValueInputs,
+      contactDeleteButtons,
     };
   }
 
@@ -330,8 +350,8 @@
     nameSpan.classList.add('d-inline-flex', 'clients__list-name');
     nameSpan.textContent = [client.surname, client.name, client.lastName].join(' ');
 
-    const creationDateTimeDiv = createDateTimeDiv(client.createdAt,'clients__list-create-datetime','clients__list-create-date','clients__list-create-time');
-    const updateDateTimeDiv = createDateTimeDiv(client.updatedAt,'clients__list-create-datetime','clients__list-create-date','clients__list-create-time');
+    const creationDateTimeDiv = createDateTimeDiv(client.createdAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
+    const updateDateTimeDiv = createDateTimeDiv(client.updatedAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'clients__list-contacts-list');
@@ -402,21 +422,15 @@
       e.preventDefault();
       const clientData = await getClientByID(client.id);
       // console.log('CHANGE');
-      // console.log(clientData);
-      // modal.insertFormIntoModal(clientData).showModal();
-
+      console.log(clientData);
       const modalContent = createModalContent(clientData);
-      // console.log(modalContent);
-      modal.insertFormIntoModal(modalContent.container);
-
-      modal.showModal();
+      modal.insertFormIntoModal(modalContent.container).showModal();
     });
 
     deleteClientButton.addEventListener('click', async e => {
       e.preventDefault();
       const clientData = await getClientByID(client.id);
       // console.log('DELETE');
-      // console.log(clientData);
     });
 
     clientLi.append(
@@ -424,9 +438,13 @@
       creationDateTimeDiv, updateDateTimeDiv,
       contactsDiv,
       changeClientButton, deleteClientButton
-      );
+    );
     return clientLi;
   }
+
+  /*
+    Создание элемента (ul) для отображения данных о всех клиентах
+  */
 
   async function createClientsListView(clients) {
     const clienstListView = document.createElement('ul');
