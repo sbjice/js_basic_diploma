@@ -246,10 +246,32 @@
     nameDiv.classList.add('d-flex', 'flex-column');
     const nameInput = createInputObj('name', 'Имя', '', true);
     const surnameInput = createInputObj('surname', 'Фамилия', '', true);
+
     const lastNameInput = createInputObj('lastName', 'Отчество');
     nameInput.input.value = obj.name;
     surnameInput.input.value = obj.surname;
     lastNameInput.input.value = obj.lastName;
+    nameInput.input.addEventListener(
+      'input',
+      function(e) {
+        obj.name = e.target.value;
+        console.log(obj);
+      }
+    );
+    surnameInput.input.addEventListener(
+      'input',
+      function(e) {
+        obj.surname = e.target.value;
+        console.log(obj);
+      }
+    );
+    lastNameInput.input.addEventListener(
+      'input',
+      function(e) {
+        obj.lastName = e.target.value;
+        console.log(obj);
+      }
+    );
     nameDiv.append(nameInput.inputDiv, surnameInput.inputDiv, lastNameInput.inputDiv);
 
     const contactsDiv = document.createElement('div');
