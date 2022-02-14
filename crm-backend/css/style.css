@@ -132,6 +132,10 @@ input:focus{
   fill: #F06A4D;
 }
 
+.add-contact-button {
+  transition: color ease-in-out .3s;
+}
+
 .svg-icon g {
   transition: opacity .3s ease-in-out;
 }

@@ -320,6 +320,8 @@
           const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
           elementToWorkWith.parentElement.remove();
           contactDeleteButtons.splice(elementNumber,1);
+          contactValueInputs.splice(elementNumber,1);
+          contactTypeChoices.splice(elementNumber,1);
           obj.contacts.splice(elementNumber,1);
           console.log(obj);
       });
@@ -330,11 +332,10 @@
     contactsDiv.append(contactsList);
 
     const addContactButton = document.createElement('a');
-    addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center');
+    addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'add-contact-button');
     const addContactSpan = document.createElement('span');
     addContactSpan.classList.add('d-inline-flex');
     addContactSpan.textContent = 'Добавить контакт';
-
     const addContactIcon = createIcon('contact-add', 'contact-add-icon');
     addContactButton.append(addContactIcon, addContactSpan);
 
@@ -350,7 +351,9 @@
         obj.contacts.push(newContact);
 
         const contactItemDivs = document.querySelectorAll('.contact__item-div');
-        contactItemDivs[contactItemDivs.length-1].classList.add('mb-2');
+        if (contactItemDivs[contactItemDivs.length-1]!==undefined) {
+          contactItemDivs[contactItemDivs.length-1].classList.add('mb-2');
+        }
 
         const contactItemDiv = document.createElement('div');
         contactItemDiv.classList.add('d-flex', 'contact__item-div');
@@ -364,6 +367,7 @@
         contactItemSelect.passedElement.element.addEventListener(
           'choice',
           function(e) {
+            console.log(contactTypeChoices.indexOf(contactItemSelect));
             obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
             console.log(obj);
           },
