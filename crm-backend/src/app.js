@@ -35,6 +35,7 @@
   async function getClients() {
     const response = await fetch(API);
     const data = await response.json();
+    // console.log(response);
     return data;
   }
 
@@ -163,7 +164,6 @@
     return dateTimeDiv;
   }
 
-
   function createDataEditButton(buttonClassToAdd, iconTypeToCreate, iconClassToAdd, buttonText) {
     const dataEditButton = document.createElement('a');
     dataEditButton.classList.add('d-inline-flex', 'd-flex', 'align-items-center', buttonClassToAdd);
@@ -177,7 +177,6 @@
   }
 
   let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
-
 
   function createSelect(valuesArr, selectClass, selectName = '') {
     const select = document.createElement('select');
@@ -228,7 +227,7 @@
     };
   }
 
-  function createModalContent(obj) {
+  function createModalContent(obj, modal) {
     const container = document.createElement('div');
     container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100');
 
@@ -442,14 +441,30 @@
         contactsList.append(contactItemDiv);
     });
 
+    const saveButton = document.createElement('a');
+    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'p-1', 'mb-1', 'm-25', 'contact-save-button');
+    saveButton.textContent = 'Сохранить';
+    saveButton.addEventListener(
+      'click',
+      async function(e) {
+        const dat = await changeClientByID(obj.id, obj);
+        // console.log(dat);
+        if (dat) {
+          modal.hideModal();
+          await updateClientsListView(app);
+        }
+      }
+    );
+
     contactsDiv.append(addContactButton);
 
-    container.append(modalHeaderDiv, nameDiv, contactsDiv);
+    container.append(modalHeaderDiv, nameDiv, contactsDiv, saveButton);
     return {
       container,
       contactTypeChoices,
       contactValueInputs,
       contactDeleteButtons,
+      saveButton,
     };
   }
 
@@ -541,8 +556,8 @@
       e.preventDefault();
       const clientData = await getClientByID(client.id);
       // console.log('CHANGE');
-      console.log(clientData);
-      const modalContent = createModalContent(clientData);
+      // console.log(clientData);
+      const modalContent = createModalContent(clientData, modal);
       modal.insertFormIntoModal(modalContent.container).showModal();
     });
 
@@ -575,53 +590,21 @@
     return clienstListView;
   }
 
-
-  const container = getContainer();
-  let clients = await getClients();
-
-
+  const app = getContainer();
   const modal = createModal();
-  const clienstListView = await createClientsListView(clients);
 
-  container.append(clienstListView);
-
-  // Добавление селекта на страницу
-
-  /*
-  container.insertAdjacentHTML("afterend",
-    `<div class="elements__select">
-  <select name="select" id="customSelect" class="elements__custom-select">
-    <option value="VK">VK</option>
-    <option value="FB">FB</option>
-    <option value="Phone">Phone</option>
-    <option value="Email">Email</option>
-    <option value="Other">Other</option>
-    <option value="Select Option:" selected>Select Option:</option>
-  </select>
-</div>`);
-  const element = document.querySelector('.elements__custom-select');
+  async function updateClientsListView(app) {
+    let clients = await getClients();
+    const clienstListView = await createClientsListView(clients);
+    app.innerHTML = '';
+    app.append(clienstListView);
+  };
 
 
-  const choices = new Choices(element, {
-    placeholder: true,
-    placeholderValue: "Select Option:",
-    searchEnabled: false,
-    itemSelectText: '',
-    shouldSort: false,
-  });
+  await updateClientsListView(app);
 
-  choices.passedElement.element.addEventListener(
-    'choice',
-    function(event) {
-      // do something creative here...
-      console.log(event.detail.choice.value);
-    },
-    false,
-  );
-
-  */
-
-
+  // let clients = await getClients();
+  // console.log(clients);
   // API Usage
   /*
   let clients = await getClients();

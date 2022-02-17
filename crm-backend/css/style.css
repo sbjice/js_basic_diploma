@@ -124,6 +124,17 @@ input:focus{
   border-color: #F06A4D;
 }
 
+.contact-save-button {
+  background-color: #9873FF;
+  color: #fff;
+  transition: background-color .3s ease-in-out;
+}
+
+.contact-save-button:hover {
+  background-color: #B89EFF;
+  color: #fff;
+}
+
 .contact-delete-button .contact-delete-icon g path{
   transition: fill ease-in-out .3s;
 }
