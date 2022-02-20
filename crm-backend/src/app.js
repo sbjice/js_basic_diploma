@@ -1,6 +1,8 @@
 (async () => {
   const API = 'http://localhost:3000/api/clients';
 
+  let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
+
   const ICON_STRINGS = {
     'VK': `<g opacity="0.7">
       <path d="M8 0C3.58187 0 0 3.58171 0 8C0 12.4183 3.58187 16 8 16C12.4181 16 16 12.4183 16 8C16 3.58171 12.4181 0 8 0ZM12.058 8.86523C12.4309 9.22942 12.8254 9.57217 13.1601 9.97402C13.3084 10.1518 13.4482 10.3356 13.5546 10.5423C13.7065 10.8371 13.5693 11.1604 13.3055 11.1779L11.6665 11.1776C11.2432 11.2126 10.9064 11.0419 10.6224 10.7525C10.3957 10.5219 10.1853 10.2755 9.96698 10.037C9.87777 9.93915 9.78382 9.847 9.67186 9.77449C9.44843 9.62914 9.2543 9.67366 9.1263 9.90707C8.99585 10.1446 8.96606 10.4078 8.95362 10.6721C8.93577 11.0586 8.81923 11.1596 8.43147 11.1777C7.60291 11.2165 6.81674 11.0908 6.08606 10.6731C5.44147 10.3047 4.94257 9.78463 4.50783 9.19587C3.66126 8.04812 3.01291 6.78842 2.43036 5.49254C2.29925 5.2007 2.39517 5.04454 2.71714 5.03849C3.25205 5.02817 3.78697 5.02948 4.32188 5.03799C4.53958 5.04143 4.68362 5.166 4.76726 5.37142C5.05633 6.08262 5.4107 6.75928 5.85477 7.38684C5.97311 7.55396 6.09391 7.72059 6.26594 7.83861C6.45582 7.9689 6.60051 7.92585 6.69005 7.71388C6.74734 7.57917 6.77205 7.43513 6.78449 7.29076C6.82705 6.79628 6.83212 6.30195 6.75847 5.80943C6.71263 5.50122 6.53929 5.30218 6.23206 5.24391C6.07558 5.21428 6.0985 5.15634 6.17461 5.06697C6.3067 4.91245 6.43045 4.81686 6.67777 4.81686L8.52951 4.81653C8.82136 4.87382 8.88683 5.00477 8.92645 5.29874L8.92808 7.35656C8.92464 7.47032 8.98521 7.80751 9.18948 7.88198C9.35317 7.936 9.4612 7.80473 9.55908 7.70112C10.0032 7.22987 10.3195 6.67368 10.6029 6.09801C10.7279 5.84413 10.8358 5.58142 10.9406 5.31822C11.0185 5.1236 11.1396 5.02785 11.3593 5.03112L13.1424 5.03325C13.195 5.03325 13.2483 5.03374 13.3004 5.04274C13.6009 5.09414 13.6832 5.22345 13.5903 5.5166C13.4439 5.97721 13.1596 6.36088 12.8817 6.74553C12.5838 7.15736 12.2661 7.55478 11.9711 7.96841C11.7001 8.34652 11.7215 8.53688 12.058 8.86523Z" fill="#9873FF"/>
@@ -30,6 +32,9 @@
     'contact-add': `<g opacity="0.7">
       <path d="M8.00001 4.66667C7.63334 4.66667 7.33334 4.96667 7.33334 5.33333V7.33333H5.33334C4.96668 7.33333 4.66668 7.63333 4.66668 8C4.66668 8.36667 4.96668 8.66667 5.33334 8.66667H7.33334V10.6667C7.33334 11.0333 7.63334 11.3333 8.00001 11.3333C8.36668 11.3333 8.66668 11.0333 8.66668 10.6667V8.66667H10.6667C11.0333 8.66667 11.3333 8.36667 11.3333 8C11.3333 7.63333 11.0333 7.33333 10.6667 7.33333H8.66668V5.33333C8.66668 4.96667 8.36668 4.66667 8.00001 4.66667ZM8.00001 1.33333C4.32001 1.33333 1.33334 4.32 1.33334 8C1.33334 11.68 4.32001 14.6667 8.00001 14.6667C11.68 14.6667 14.6667 11.68 14.6667 8C14.6667 4.32 11.68 1.33333 8.00001 1.33333ZM8.00001 13.3333C5.06001 13.3333 2.66668 10.94 2.66668 8C2.66668 5.06 5.06001 2.66667 8.00001 2.66667C10.94 2.66667 13.3333 5.06 13.3333 8C13.3333 10.94 10.94 13.3333 8.00001 13.3333Z" fill="#9873FF"/>
       </g>`,
+    'new-client': `<g opacity="0.7">
+      <path d="M14.5 8C16.71 8 18.5 6.21 18.5 4C18.5 1.79 16.71 0 14.5 0C12.29 0 10.5 1.79 10.5 4C10.5 6.21 12.29 8 14.5 8ZM5.5 6V3H3.5V6H0.5V8H3.5V11H5.5V8H8.5V6H5.5ZM14.5 10C11.83 10 6.5 11.34 6.5 14V16H22.5V14C22.5 11.34 17.17 10 14.5 10Z" fill="#9873FF"/>
+      </g>`
   }
 
   async function getClients() {
@@ -127,15 +132,15 @@
   Создание элемента svg с содержимым в виде переданной иконки
   */
 
-  function createIcon(elementType, linkClass) {
+  function createIcon(elementType, linkClass, width, height, viewBox) {
     const type = ICON_STRINGS[elementType] === undefined ? 'other' : elementType;
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.classList.add('d-flex', 'svg-icon');
     if (linkClass !== undefined) svg.classList.add(linkClass);
-    svg.setAttribute('width', '16');
-    svg.setAttribute('height', '16');
+    svg.setAttribute('width', width === undefined ? '16' : width);
+    svg.setAttribute('height', height === undefined ?  '16' : height);
     svg.setAttribute('fill', 'none');
-    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('viewBox', viewBox === undefined ? '0 0 16 16' : viewBox);
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
     svg.innerHTML = ICON_STRINGS[type];
     return svg;
@@ -175,8 +180,6 @@
     dataEditButton.append(dataEditIcon, dataEditText);
     return dataEditButton;
   }
-
-  let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
 
   function createSelect(valuesArr, selectClass, selectName = '') {
     const select = document.createElement('select');
@@ -337,14 +340,14 @@
           } else {
             elementToWorkWith = e.target;
           }
-          console.log(contactDeleteButtons.indexOf(elementToWorkWith));
+          // console.log(contactDeleteButtons.indexOf(elementToWorkWith));
           const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
           elementToWorkWith.parentElement.remove();
           contactDeleteButtons.splice(elementNumber,1);
           contactValueInputs.splice(elementNumber,1);
           contactTypeChoices.splice(elementNumber,1);
           obj.contacts.splice(elementNumber,1);
-          console.log(obj);
+          // console.log(obj);
       });
 
       contactItemDiv.append(contactValueInput, contactDeleteButton);
@@ -388,9 +391,9 @@
         contactItemSelect.passedElement.element.addEventListener(
           'choice',
           function(e) {
-            console.log(contactTypeChoices.indexOf(contactItemSelect));
+            // console.log(contactTypeChoices.indexOf(contactItemSelect));
             obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
-            console.log(obj);
+            // console.log(obj);
           },
           false,
         );
@@ -402,7 +405,7 @@
           'input',
           function(e) {
             obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
-            console.log(obj);
+            // console.log(obj);
           },
           false,
         );
@@ -433,16 +436,16 @@
             elementToWorkWith.parentElement.remove();
             contactDeleteButtons.splice(elementNumber,1);
             obj.contacts.splice(elementNumber,1);
-            console.log(obj);
+            // console.log(obj);
         });
 
-        console.log(obj)
+        // console.log(obj)
         contactItemDiv.append(contactValueInput, contactDeleteButton);
         contactsList.append(contactItemDiv);
     });
 
     const saveButton = document.createElement('a');
-    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'p-1', 'mb-1', 'm-25', 'contact-save-button');
+    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
     saveButton.textContent = 'Сохранить';
     saveButton.addEventListener(
       'click',
@@ -590,18 +593,58 @@
     return clienstListView;
   }
 
+  function createNewClientButton() {
+    const newClientButton = document.createElement('a');
+    newClientButton.classList.add('d-flex', 'd-inline-flex','align-self-center', 'align-items-center', 'justify-content-center', 'p-1', 'mb-1', 'w-25', 'new-client-button');
+    const newClientIcon = createIcon('new-client', 'new-client-icon', width='23', height='16', viewBox='0 0 23 16');
+    newClientIcon.classList.add('d-inline-flex');
+    const newClientText = document.createElement('p');
+    newClientText.classList.add('d-inline-flex', 'm-0');
+    newClientText.textContent = 'Добавить контакт';
+    newClientButton.append(newClientIcon, newClientText);
+    newClientButton.addEventListener(
+      'click',
+      async function(e) {
+        console.log('new client button pressed');
+        // const dat = await changeClientByID(obj.id, obj);
+        // // console.log(dat);
+        // if (dat) {
+        //   modal.hideModal();
+        //   await updateClientsListView(app);
+        // }
+        modal.showModal();
+      }
+    );
+    return newClientButton;
+  }
+
   const app = getContainer();
+  app.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
   const modal = createModal();
 
-  async function updateClientsListView(app) {
+  const clientsListDiv = document.createElement('div');
+  clientsListDiv.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+  const appPageBottom = document.createElement('div');
+  appPageBottom.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100');
+
+  const newClientButton = createNewClientButton();
+  appPageBottom.append(newClientButton);
+
+  app.append(clientsListDiv,appPageBottom);
+
+
+
+  async function updateClientsListView(block) {
     let clients = await getClients();
     const clienstListView = await createClientsListView(clients);
-    app.innerHTML = '';
-    app.append(clienstListView);
+    block.innerHTML = '';
+    block.append(clienstListView);
   };
 
 
-  await updateClientsListView(app);
+  await updateClientsListView(clientsListDiv);
+
+
 
   // let clients = await getClients();
   // console.log(clients);

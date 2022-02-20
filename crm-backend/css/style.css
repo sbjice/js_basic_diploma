@@ -135,6 +135,25 @@ input:focus{
   color: #fff;
 }
 
+.new-client-button {
+  border: 1px solid #9873FF;
+  color: #9873FF;
+  transition: border-color .3s ease-in-out, color .3s ease-in-out;
+}
+
+.new-client-button:hover {
+  border-color: #B89EFF;
+  color: #B89EFF;
+}
+
+.new-client-button .new-client-icon g path {
+  transition: fill .3s ease-in-out;
+}
+
+.new-client-button:hover .new-client-icon g path {
+  fill: #B89EFF;
+}
+
 .contact-delete-button .contact-delete-icon g path{
   transition: fill ease-in-out .3s;
 }
