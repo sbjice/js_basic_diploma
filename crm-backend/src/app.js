@@ -84,6 +84,7 @@
 
   function getContainer(selector = document.getElementById('app')) {
     const container = selector;
+    container.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
     return container;
   }
 
@@ -105,6 +106,7 @@
     overlay.addEventListener('click', function(e) {
       if (e.target === overlay) {
         overlay.style.top = '-100%';
+        body.classList.toggle('scroll-disable', false);
         modal.innerHTML = '';
       }
     });
@@ -113,11 +115,13 @@
       overlay,
       modal,
       showModal() {
+        body.classList.toggle('scroll-disable', true);
         this.overlay.style.top = '0';
         return this;
       },
       hideModal() {
         this.overlay.style.top = '-100%';
+        body.classList.toggle('scroll-disable', false);
         return this;
       },
       insertFormIntoModal(form) {
@@ -230,7 +234,7 @@
     };
   }
 
-  function createModalContent(obj, modal) {
+  function createChangeClientModalContent(obj, modal) {
     const container = document.createElement('div');
     container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100');
 
@@ -454,14 +458,193 @@
         // console.log(dat);
         if (dat) {
           modal.hideModal();
-          await updateClientsListView(app);
+          await updateClientsListView(clientsListDiv);
         }
       }
     );
 
+
     contactsDiv.append(addContactButton);
 
     container.append(modalHeaderDiv, nameDiv, contactsDiv, saveButton);
+    return {
+      container,
+      contactTypeChoices,
+      contactValueInputs,
+      contactDeleteButtons,
+      saveButton,
+    };
+  }
+
+  function createNewClientModalContent(modal) {
+    const obj = {};
+    obj.contacts = [];
+    const container = document.createElement('div');
+    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100');
+
+    const modalHeaderDiv = document.createElement('div');
+    modalHeaderDiv.classList.add('d-flex', 'align-items-end');
+    const modalHeaderTitle = document.createElement('h3');
+    modalHeaderTitle.classList.add('d-inline-flex', 'm-0');
+    modalHeaderTitle.textContent = 'Новый клиент';
+    modalHeaderDiv.append(modalHeaderTitle);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.classList.add('d-flex', 'flex-column');
+    const nameInput = createInputObj('name', 'Имя', '', true);
+    const surnameInput = createInputObj('surname', 'Фамилия', '', true);
+    const lastNameInput = createInputObj('lastName', 'Отчество');
+    nameInput.input.addEventListener(
+      'input',
+      function(e) {
+        obj.name = e.target.value;
+        console.log(obj);
+      }
+    );
+    surnameInput.input.addEventListener(
+      'input',
+      function(e) {
+        obj.surname = e.target.value;
+        console.log(obj);
+      }
+    );
+    lastNameInput.input.addEventListener(
+      'input',
+      function(e) {
+        obj.lastName = e.target.value;
+        console.log(obj);
+      }
+    );
+    nameDiv.append(nameInput.inputDiv, surnameInput.inputDiv, lastNameInput.inputDiv);
+
+    const contactsDiv = document.createElement('div');
+    contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
+    const contactsList = document.createElement('ul');
+    contactsList.classList.add('d-flex', 'flex-column','mx-0', 'mb-2', 'p-0');
+    const contactTypeChoices = [];
+    const contactValueInputs = [];
+    const contactDeleteButtons = [];
+
+    contactsDiv.append(contactsList);
+
+    const addContactButton = document.createElement('a');
+    addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'add-contact-button');
+    const addContactSpan = document.createElement('span');
+    addContactSpan.classList.add('d-inline-flex');
+    addContactSpan.textContent = 'Добавить контакт';
+    const addContactIcon = createIcon('contact-add', 'contact-add-icon');
+    addContactButton.append(addContactIcon, addContactSpan);
+
+    addContactButton.addEventListener(
+      'click',
+      function(e) {
+        e.preventDefault();
+
+        const newContact = {
+          'type': 'other',
+          'value': ''
+        }
+        obj.contacts.push(newContact);
+
+        const contactItemDivs = document.querySelectorAll('.contact__item-div');
+        if (contactItemDivs[contactItemDivs.length-1]!==undefined) {
+          contactItemDivs[contactItemDivs.length-1].classList.add('mb-2');
+        }
+
+        const contactItemDiv = document.createElement('div');
+        contactItemDiv.classList.add('d-flex', 'contact__item-div');
+
+        const contactTypeSelect = createSelect(values, 'sel1');
+        contactItemDiv.append(contactTypeSelect);
+        const contactItemSelect = configureSelect(contactTypeSelect);
+
+        contactTypeChoices.push(contactItemSelect);
+        contactItemSelect.setChoiceByValue('other');
+        contactItemSelect.passedElement.element.addEventListener(
+          'choice',
+          function(e) {
+            // console.log(contactTypeChoices.indexOf(contactItemSelect));
+            obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
+            console.log(obj);
+          },
+          false,
+        );
+
+        const contactValueInput = document.createElement('input');
+        contactValueInput.classList.add('p-1', 'mw-75');
+        contactValueInputs.push(contactValueInput);
+        contactValueInput.addEventListener(
+          'input',
+          function(e) {
+            obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
+            console.log(obj);
+          },
+          false,
+        );
+
+        const contactDeleteButton = document.createElement('a');
+        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button','align-items-center', 'justify-content-center');
+        const contactDeleteIcon = createIcon('contact-delete','contact-delete-icon');
+        contactDeleteButton.append(contactDeleteIcon);
+        contactDeleteButtons.push(contactDeleteButton);
+        contactDeleteButton.addEventListener(
+          'click',
+          function(e) {
+            e.preventDefault();
+            let elementToWorkWith = null;
+            // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
+            // тк присутствует следующая вложенность объектов снизу вверх:
+            // path -> g -> svg -> a
+            if (e.target.tagName==='path'){
+              elementToWorkWith = e.target.parentElement.parentElement.parentElement;
+            } else if (e.target.tagName==='g'){
+              elementToWorkWith = e.target.parentElement.parentElement;
+            } else if (e.target.tagName==='svg'){
+              elementToWorkWith = e.target.parentElement;
+            } else {
+              elementToWorkWith = e.target;
+            }
+            const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
+            elementToWorkWith.parentElement.remove();
+            contactDeleteButtons.splice(elementNumber,1);
+            obj.contacts.splice(elementNumber,1);
+            console.log(obj);
+        });
+
+        console.log(obj)
+        contactItemDiv.append(contactValueInput, contactDeleteButton);
+        contactsList.append(contactItemDiv);
+    });
+
+    contactsDiv.append(addContactButton);
+
+    const saveButton = document.createElement('a');
+    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
+    saveButton.textContent = 'Сохранить';
+    saveButton.addEventListener(
+      'click',
+      async function(e) {
+        const dat = await createNewClient(obj);
+        console.log(dat);
+        if (dat) {
+          modal.hideModal();
+          await updateClientsListView(clientsListDiv);
+        }
+      }
+    );
+
+    const cancelButton = document.createElement('a');
+    cancelButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'new-client-cancel-button');
+    cancelButton.textContent = 'Отмена';
+    cancelButton.addEventListener(
+      'click',
+      function(e) {
+        modal.hideModal();
+      }
+    );
+
+    container.append(modalHeaderDiv, nameDiv, contactsDiv, saveButton, cancelButton);
+
     return {
       container,
       contactTypeChoices,
@@ -560,7 +743,7 @@
       const clientData = await getClientByID(client.id);
       // console.log('CHANGE');
       // console.log(clientData);
-      const modalContent = createModalContent(clientData, modal);
+      const modalContent = createChangeClientModalContent(clientData, modal);
       modal.insertFormIntoModal(modalContent.container).showModal();
     });
 
@@ -579,9 +762,16 @@
     return clientLi;
   }
 
+  function createClientsListDiv() {
+    const clientsListDiv = document.createElement('div');
+    clientsListDiv.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+    return clientsListDiv;
+  }
+
   /*
     Создание элемента (ul) для отображения данных о всех клиентах
   */
+
 
   async function createClientsListView(clients) {
     const clienstListView = document.createElement('ul');
@@ -591,6 +781,12 @@
       clienstListView.append(clientLi);
     });
     return clienstListView;
+  }
+
+  function createAppPageBottom() {
+    const appPageBottom = document.createElement('div');
+    appPageBottom.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100','mb-3');
+    return appPageBottom;
   }
 
   function createNewClientButton() {
@@ -612,27 +808,12 @@
         //   modal.hideModal();
         //   await updateClientsListView(app);
         // }
-        modal.showModal();
+        const newClientContent = createNewClientModalContent(modal);
+        modal.insertFormIntoModal(newClientContent.container).showModal();
       }
     );
     return newClientButton;
   }
-
-  const app = getContainer();
-  app.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
-  const modal = createModal();
-
-  const clientsListDiv = document.createElement('div');
-  clientsListDiv.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
-  const appPageBottom = document.createElement('div');
-  appPageBottom.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100');
-
-  const newClientButton = createNewClientButton();
-  appPageBottom.append(newClientButton);
-
-  app.append(clientsListDiv,appPageBottom);
-
-
 
   async function updateClientsListView(block) {
     let clients = await getClients();
@@ -641,6 +822,16 @@
     block.append(clienstListView);
   };
 
+
+
+  const app = getContainer();
+  const modal = createModal();
+  const clientsListDiv = createClientsListDiv();
+  const appPageBottom = createAppPageBottom();
+  const newClientButton = createNewClientButton();
+
+  appPageBottom.append(newClientButton);
+  app.append(clientsListDiv, appPageBottom);
 
   await updateClientsListView(clientsListDiv);
 
