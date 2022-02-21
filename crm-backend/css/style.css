@@ -76,6 +76,23 @@ input:focus{
   width: 40%;
 }
 
+.clients__list-header {
+  font-size: 14px;
+}
+
+.arrow-up {
+  display: inline-flex;
+}
+
+.arrow-down {
+  display: inline-flex;
+  transform: rotate(180deg);
+}
+
+.arrow-hidden {
+  display: none;
+}
+
 .clients__list {
   background-color: #FFFFFF;
 }

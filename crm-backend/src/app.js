@@ -34,7 +34,10 @@
       </g>`,
     'new-client': `<g opacity="0.7">
       <path d="M14.5 8C16.71 8 18.5 6.21 18.5 4C18.5 1.79 16.71 0 14.5 0C12.29 0 10.5 1.79 10.5 4C10.5 6.21 12.29 8 14.5 8ZM5.5 6V3H3.5V6H0.5V8H3.5V11H5.5V8H8.5V6H5.5ZM14.5 10C11.83 10 6.5 11.34 6.5 14V16H22.5V14C22.5 11.34 17.17 10 14.5 10Z" fill="#9873FF"/>
-      </g>`
+      </g>`,
+    'arrow': `<g opacity="0.7">
+      <path d="M2 6L2.705 6.705L5.5 3.915L5.5 10L6.5 10L6.5 3.915L9.29 6.71L10 6L6 2L2 6Z" fill="#9873FF"/>
+    </g>`
   }
 
   async function getClients() {
@@ -200,7 +203,7 @@
     return select;
   }
 
-  function configureSelect(select, value) {
+  function configureSelect(select) {
     const choicesElement = new Choices(select, {
       searchEnabled: false,
       itemSelectText: '',
@@ -749,8 +752,16 @@
 
     deleteClientButton.addEventListener('click', async e => {
       e.preventDefault();
+
+      // TODO:
+      // добавить открытие модального окна для подтверждения удаления клиента
       const clientData = await getClientByID(client.id);
-      // console.log('DELETE');
+      const data = await deleteClientByID(clientData.id);
+      if (data) {
+        console.log('DELETE');
+
+        await updateClientsListView(clientsListDiv);
+      }
     });
 
     clientLi.append(
@@ -771,7 +782,6 @@
   /*
     Создание элемента (ul) для отображения данных о всех клиентах
   */
-
 
   async function createClientsListView(clients) {
     const clienstListView = document.createElement('ul');
@@ -815,12 +825,112 @@
     return newClientButton;
   }
 
-  async function updateClientsListView(block) {
-    let clients = await getClients();
+  async function updateClientsListView(block, clients) {
     const clienstListView = await createClientsListView(clients);
     block.innerHTML = '';
     block.append(clienstListView);
   };
+
+  function createClientsListHeader() {
+    const clientListHeader = document.createElement('div');
+    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__list-header', 'mt-3');
+
+    const idSort = document.createElement('a');
+    idSort.classList.add('d-flex', 'd-inline-flex','justify-content-center', 'align-items-center');
+
+    const idSortText = document.createElement('span');
+    idSortText.classList.add('d-inline-flex');
+    idSortText.textContent = 'ID:';
+
+    const idSortArrow = createIcon('arrow', 'arrow', '12', '12', '0 0 12 12');
+    idSortArrow.classList.add('arrow-hidden');
+    idSortArrow.classList.remove('d-flex');
+    idSort.append(idSortText, idSortArrow);
+
+    let idSortValue = '';
+
+    idSort.addEventListener(
+      'click',
+      async function(e) {
+        e.preventDefault();
+        let clients = await getClients();
+        if (idSortValue === ''){
+          idSortValue = 'up';
+          idSortArrow.classList.toggle('arrow-hidden', false);
+          idSortArrow.classList.toggle('arrow-up', true);
+          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
+            return parseInt(a.id) - parseInt(b.id);
+          }));
+        } else if (idSortValue === 'up') {
+          idSortValue = 'down';
+          idSortArrow.classList.toggle('arrow-up', false);
+          idSortArrow.classList.toggle('arrow-down', true);
+
+          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
+            return parseInt(b.id) - parseInt(a.id);
+          }));
+        } else {
+          idSortValue = '';
+          idSortArrow.classList.toggle('arrow-down', false);
+          idSortArrow.classList.toggle('arrow-hidden', true);
+          await updateClientsListView(clientsListDiv, clients);
+        }
+        console.log(idSortValue);
+      }
+    );
+
+
+    const nameSort = document.createElement('a');
+    nameSort.classList.add('d-flex', 'd-inline-flex','justify-content-center', 'align-items-center');
+
+    const nameSortText = document.createElement('span');
+    nameSortText.classList.add('d-inline-flex');
+    nameSortText.textContent = 'Фамилия Имя Отчество:';
+
+    const nameSortArrow = createIcon('arrow', 'arrow', '12', '12', '0 0 12 12');
+    nameSortArrow.classList.add('arrow-hidden');
+    nameSortArrow.classList.remove('d-flex');
+    nameSort.append(nameSortText, nameSortArrow);
+
+    let nameSortValue = '';
+
+    nameSort.addEventListener(
+      'click',
+      async function(e) {
+        e.preventDefault();
+        let clients = await getClients();
+        if (nameSortValue === ''){
+          nameSortValue = 'up';
+          nameSortArrow.classList.toggle('arrow-hidden', false);
+          nameSortArrow.classList.toggle('arrow-up', true);
+          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
+            const aName = [a.surname, a.name, a.lastName].join(' ');
+            const bName = [b.surname, b.name, b.lastName].join(' ');
+            return aName.localeCompare(bName);
+          }));
+        } else if (nameSortValue === 'up') {
+          nameSortValue = 'down';
+          nameSortArrow.classList.toggle('arrow-up', false);
+          nameSortArrow.classList.toggle('arrow-down', true);
+
+          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
+            const aName = [a.surname, a.name, a.lastName].join(' ');
+            const bName = [b.surname, b.name, b.lastName].join(' ');
+            return bName.localeCompare(aName);
+          }));
+        } else {
+          nameSortValue = '';
+          nameSortArrow.classList.toggle('arrow-down', false);
+          nameSortArrow.classList.toggle('arrow-hidden', true);
+          await updateClientsListView(clientsListDiv, clients);
+        }
+        console.log(nameSortValue);
+      }
+    );
+
+    clientListHeader.append(idSort, nameSort);
+    return clientListHeader;
+  }
 
 
 
@@ -829,11 +939,16 @@
   const clientsListDiv = createClientsListDiv();
   const appPageBottom = createAppPageBottom();
   const newClientButton = createNewClientButton();
+  const clientsListHeader = createClientsListHeader();
+  let clients = await getClients();
+  console.log(clients[0]);
+
+
 
   appPageBottom.append(newClientButton);
-  app.append(clientsListDiv, appPageBottom);
+  app.append(clientsListHeader, clientsListDiv, appPageBottom);
 
-  await updateClientsListView(clientsListDiv);
+  await updateClientsListView(clientsListDiv, clients);
 
 
 
