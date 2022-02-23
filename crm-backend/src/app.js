@@ -660,6 +660,47 @@
     };
   }
 
+  function createDeleteConfirmModalContent(clientData, modal) {
+    const container = document.createElement('div');
+    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100');
+
+    const textBlock = document.createElement('p');
+    textBlock.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'add-contact-button', 'm-0', 'mb-2');
+    textBlock.textContent = 'Вы действительно хотите удалить данного клиента?';
+
+    const deleteButton = document.createElement('a');
+    deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'add-contact-button');
+    deleteButton.textContent = 'Удалить';
+
+    const cancelButton = document.createElement('a');
+    cancelButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'add-contact-button');
+    cancelButton.textContent = 'Отмена';
+
+
+    deleteButton.addEventListener(
+      'click',
+      async function (e) {
+        await updateClientsDataAfterDelete(clientData);
+        modal.hideModal();
+      }
+    );
+
+    cancelButton.addEventListener(
+      'click',
+      function (e) {
+        modal.hideModal();
+      }
+    );
+
+    container.append(textBlock, deleteButton, cancelButton);
+
+    return {
+      container,
+      deleteButton,
+      cancelButton,
+    };
+  }
+
   /*
     Создание элемента (li) для отображения данных о клиенте
   */
@@ -747,24 +788,20 @@
     changeClientButton.addEventListener('click', async e => {
       e.preventDefault();
       const clientData = await getClientByID(client.id);
-      // console.log('CHANGE');
-      // console.log(clientData);
       const modalContent = createChangeClientModalContent(clientData, modal);
       modal.insertFormIntoModal(modalContent.container).showModal();
     });
 
-    deleteClientButton.addEventListener('click', async e => {
+    deleteClientButton.addEventListener(
+      'click',
+      async function(e) {
       e.preventDefault();
 
       // TODO:
       // добавить открытие модального окна для подтверждения удаления клиента
-      const clientData = await getClientByID(client.id);
-      const data = await deleteClientByID(clientData.id);
-      if (data) {
-        console.log('DELETE');
-        clients = await getClients();
-        await updateClientsListView(clientsListDiv, clients);
-      }
+      const modalContent = createDeleteConfirmModalContent(client, modal);
+      modal.insertFormIntoModal(modalContent.container).showModal();
+
     });
 
     clientLi.append(
@@ -774,6 +811,16 @@
       changeClientButton, deleteClientButton
     );
     return clientLi;
+  }
+
+  async function updateClientsDataAfterDelete(client) {
+    const clientData = await getClientByID(client.id);
+    const data = await deleteClientByID(clientData.id);
+    if (data) {
+      console.log('DELETE');
+      clients = await getClients();
+      await updateClientsListView(clientsListDiv, clients);
+    }
   }
 
   function createClientsListDiv() {
