@@ -26,7 +26,7 @@
     'change': `<g opacity="0.7">
       <path d="M2 11.5V14H4.5L11.8733 6.62662L9.37333 4.12662L2 11.5ZM13.8067 4.69329C14.0667 4.43329 14.0667 4.01329 13.8067 3.75329L12.2467 2.19329C11.9867 1.93329 11.5667 1.93329 11.3067 2.19329L10.0867 3.41329L12.5867 5.91329L13.8067 4.69329Z" fill="#9873FF"/>
       </g>`,
-    'contact-delete':`<g opacity="0.7">
+    'contact-delete': `<g opacity="0.7">
       <path d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z" fill="#B0B0B0"/>
       </g>`,
     'contact-add': `<g opacity="0.7">
@@ -102,11 +102,11 @@
     overlay.append(modal);
     body.append(overlay);
 
-    modal.addEventListener('click', function(e) {
+    modal.addEventListener('click', function (e) {
       if (e.target === modal) e.stopPropagation();
     });
 
-    overlay.addEventListener('click', function(e) {
+    overlay.addEventListener('click', function (e) {
       if (e.target === overlay) {
         overlay.style.top = '-100%';
         body.classList.toggle('scroll-disable', false);
@@ -145,7 +145,7 @@
     svg.classList.add('d-flex', 'svg-icon');
     if (linkClass !== undefined) svg.classList.add(linkClass);
     svg.setAttribute('width', width === undefined ? '16' : width);
-    svg.setAttribute('height', height === undefined ?  '16' : height);
+    svg.setAttribute('height', height === undefined ? '16' : height);
     svg.setAttribute('fill', 'none');
     svg.setAttribute('viewBox', viewBox === undefined ? '0 0 16 16' : viewBox);
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
@@ -262,21 +262,21 @@
     lastNameInput.input.value = obj.lastName;
     nameInput.input.addEventListener(
       'input',
-      function(e) {
+      function (e) {
         obj.name = e.target.value;
         console.log(obj);
       }
     );
     surnameInput.input.addEventListener(
       'input',
-      function(e) {
+      function (e) {
         obj.surname = e.target.value;
         console.log(obj);
       }
     );
     lastNameInput.input.addEventListener(
       'input',
-      function(e) {
+      function (e) {
         obj.lastName = e.target.value;
         console.log(obj);
       }
@@ -286,7 +286,7 @@
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
     const contactsList = document.createElement('ul');
-    contactsList.classList.add('d-flex', 'flex-column','mx-0', 'mb-2', 'p-0');
+    contactsList.classList.add('d-flex', 'flex-column', 'mx-0', 'mb-2', 'p-0');
     const contactTypeChoices = [];
     const contactValueInputs = [];
     const contactDeleteButtons = [];
@@ -294,7 +294,7 @@
     obj.contacts.forEach((item, index, array) => {
       const contactItemDiv = document.createElement('div');
       contactItemDiv.classList.add('d-flex', 'contact__item-div');
-      if (index!==array.length-1) contactItemDiv.classList.add('mb-2');
+      if (index !== array.length - 1) contactItemDiv.classList.add('mb-2');
 
       const contactTypeSelect = createSelect(values, 'sel1');
       contactItemDiv.append(contactTypeSelect);
@@ -304,7 +304,7 @@
       contactItemSelect.setChoiceByValue(item.type);
       contactItemSelect.passedElement.element.addEventListener(
         'choice',
-        function(e) {
+        function (e) {
           obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
           console.log(e.detail.choice.value);
           // console.log(obj);
@@ -318,7 +318,7 @@
       contactValueInputs.push(contactValueInput);
       contactValueInput.addEventListener(
         'input',
-        function(e) {
+        function (e) {
           obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
           // console.log(obj);
         },
@@ -326,23 +326,23 @@
       );
 
       const contactDeleteButton = document.createElement('a');
-      contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button','align-items-center', 'justify-content-center');
-      const contactDeleteIcon = createIcon('contact-delete','contact-delete-icon');
+      contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
+      const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
       contactDeleteButton.append(contactDeleteIcon);
       contactDeleteButtons.push(contactDeleteButton);
       contactDeleteButton.addEventListener(
         'click',
-        function(e) {
+        function (e) {
           e.preventDefault();
           let elementToWorkWith = null;
           // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
           // тк присутствует следующая вложенность объектов снизу вверх:
           // path -> g -> svg -> a
-          if (e.target.tagName==='path'){
+          if (e.target.tagName === 'path') {
             elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-          } else if (e.target.tagName==='g'){
+          } else if (e.target.tagName === 'g') {
             elementToWorkWith = e.target.parentElement.parentElement;
-          } else if (e.target.tagName==='svg'){
+          } else if (e.target.tagName === 'svg') {
             elementToWorkWith = e.target.parentElement;
           } else {
             elementToWorkWith = e.target;
@@ -350,12 +350,12 @@
           // console.log(contactDeleteButtons.indexOf(elementToWorkWith));
           const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
           elementToWorkWith.parentElement.remove();
-          contactDeleteButtons.splice(elementNumber,1);
-          contactValueInputs.splice(elementNumber,1);
-          contactTypeChoices.splice(elementNumber,1);
-          obj.contacts.splice(elementNumber,1);
+          contactDeleteButtons.splice(elementNumber, 1);
+          contactValueInputs.splice(elementNumber, 1);
+          contactTypeChoices.splice(elementNumber, 1);
+          obj.contacts.splice(elementNumber, 1);
           // console.log(obj);
-      });
+        });
 
       contactItemDiv.append(contactValueInput, contactDeleteButton);
       contactsList.append(contactItemDiv);
@@ -372,7 +372,7 @@
 
     addContactButton.addEventListener(
       'click',
-      function(e) {
+      function (e) {
         e.preventDefault();
 
         const newContact = {
@@ -382,8 +382,8 @@
         obj.contacts.push(newContact);
 
         const contactItemDivs = document.querySelectorAll('.contact__item-div');
-        if (contactItemDivs[contactItemDivs.length-1]!==undefined) {
-          contactItemDivs[contactItemDivs.length-1].classList.add('mb-2');
+        if (contactItemDivs[contactItemDivs.length - 1] !== undefined) {
+          contactItemDivs[contactItemDivs.length - 1].classList.add('mb-2');
         }
 
         const contactItemDiv = document.createElement('div');
@@ -397,7 +397,7 @@
         contactItemSelect.setChoiceByValue('other');
         contactItemSelect.passedElement.element.addEventListener(
           'choice',
-          function(e) {
+          function (e) {
             // console.log(contactTypeChoices.indexOf(contactItemSelect));
             obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
             // console.log(obj);
@@ -410,7 +410,7 @@
         contactValueInputs.push(contactValueInput);
         contactValueInput.addEventListener(
           'input',
-          function(e) {
+          function (e) {
             obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
             // console.log(obj);
           },
@@ -418,45 +418,45 @@
         );
 
         const contactDeleteButton = document.createElement('a');
-        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button','align-items-center', 'justify-content-center');
-        const contactDeleteIcon = createIcon('contact-delete','contact-delete-icon');
+        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
+        const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
         contactDeleteButton.append(contactDeleteIcon);
         contactDeleteButtons.push(contactDeleteButton);
         contactDeleteButton.addEventListener(
           'click',
-          function(e) {
+          function (e) {
             e.preventDefault();
             let elementToWorkWith = null;
             // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
             // тк присутствует следующая вложенность объектов снизу вверх:
             // path -> g -> svg -> a
-            if (e.target.tagName==='path'){
+            if (e.target.tagName === 'path') {
               elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-            } else if (e.target.tagName==='g'){
+            } else if (e.target.tagName === 'g') {
               elementToWorkWith = e.target.parentElement.parentElement;
-            } else if (e.target.tagName==='svg'){
+            } else if (e.target.tagName === 'svg') {
               elementToWorkWith = e.target.parentElement;
             } else {
               elementToWorkWith = e.target;
             }
             const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
             elementToWorkWith.parentElement.remove();
-            contactDeleteButtons.splice(elementNumber,1);
-            obj.contacts.splice(elementNumber,1);
+            contactDeleteButtons.splice(elementNumber, 1);
+            obj.contacts.splice(elementNumber, 1);
             // console.log(obj);
-        });
+          });
 
         // console.log(obj)
         contactItemDiv.append(contactValueInput, contactDeleteButton);
         contactsList.append(contactItemDiv);
-    });
+      });
 
     const saveButton = document.createElement('a');
     saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
     saveButton.textContent = 'Сохранить';
     saveButton.addEventListener(
       'click',
-      async function(e) {
+      async function (e) {
         const dat = await changeClientByID(obj.id, obj);
         // console.log(dat);
         if (dat) {
@@ -499,21 +499,21 @@
     const lastNameInput = createInputObj('lastName', 'Отчество');
     nameInput.input.addEventListener(
       'input',
-      function(e) {
+      function (e) {
         obj.name = e.target.value;
         console.log(obj);
       }
     );
     surnameInput.input.addEventListener(
       'input',
-      function(e) {
+      function (e) {
         obj.surname = e.target.value;
         console.log(obj);
       }
     );
     lastNameInput.input.addEventListener(
       'input',
-      function(e) {
+      function (e) {
         obj.lastName = e.target.value;
         console.log(obj);
       }
@@ -523,7 +523,7 @@
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
     const contactsList = document.createElement('ul');
-    contactsList.classList.add('d-flex', 'flex-column','mx-0', 'mb-2', 'p-0');
+    contactsList.classList.add('d-flex', 'flex-column', 'mx-0', 'mb-2', 'p-0');
     const contactTypeChoices = [];
     const contactValueInputs = [];
     const contactDeleteButtons = [];
@@ -540,7 +540,7 @@
 
     addContactButton.addEventListener(
       'click',
-      function(e) {
+      function (e) {
         e.preventDefault();
 
         const newContact = {
@@ -550,8 +550,8 @@
         obj.contacts.push(newContact);
 
         const contactItemDivs = document.querySelectorAll('.contact__item-div');
-        if (contactItemDivs[contactItemDivs.length-1]!==undefined) {
-          contactItemDivs[contactItemDivs.length-1].classList.add('mb-2');
+        if (contactItemDivs[contactItemDivs.length - 1] !== undefined) {
+          contactItemDivs[contactItemDivs.length - 1].classList.add('mb-2');
         }
 
         const contactItemDiv = document.createElement('div');
@@ -565,7 +565,7 @@
         contactItemSelect.setChoiceByValue('other');
         contactItemSelect.passedElement.element.addEventListener(
           'choice',
-          function(e) {
+          function (e) {
             // console.log(contactTypeChoices.indexOf(contactItemSelect));
             obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
             console.log(obj);
@@ -578,7 +578,7 @@
         contactValueInputs.push(contactValueInput);
         contactValueInput.addEventListener(
           'input',
-          function(e) {
+          function (e) {
             obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
             console.log(obj);
           },
@@ -586,38 +586,38 @@
         );
 
         const contactDeleteButton = document.createElement('a');
-        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button','align-items-center', 'justify-content-center');
-        const contactDeleteIcon = createIcon('contact-delete','contact-delete-icon');
+        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
+        const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
         contactDeleteButton.append(contactDeleteIcon);
         contactDeleteButtons.push(contactDeleteButton);
         contactDeleteButton.addEventListener(
           'click',
-          function(e) {
+          function (e) {
             e.preventDefault();
             let elementToWorkWith = null;
             // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
             // тк присутствует следующая вложенность объектов снизу вверх:
             // path -> g -> svg -> a
-            if (e.target.tagName==='path'){
+            if (e.target.tagName === 'path') {
               elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-            } else if (e.target.tagName==='g'){
+            } else if (e.target.tagName === 'g') {
               elementToWorkWith = e.target.parentElement.parentElement;
-            } else if (e.target.tagName==='svg'){
+            } else if (e.target.tagName === 'svg') {
               elementToWorkWith = e.target.parentElement;
             } else {
               elementToWorkWith = e.target;
             }
             const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
             elementToWorkWith.parentElement.remove();
-            contactDeleteButtons.splice(elementNumber,1);
-            obj.contacts.splice(elementNumber,1);
+            contactDeleteButtons.splice(elementNumber, 1);
+            obj.contacts.splice(elementNumber, 1);
             console.log(obj);
-        });
+          });
 
         console.log(obj)
         contactItemDiv.append(contactValueInput, contactDeleteButton);
         contactsList.append(contactItemDiv);
-    });
+      });
 
     contactsDiv.append(addContactButton);
 
@@ -626,7 +626,7 @@
     saveButton.textContent = 'Сохранить';
     saveButton.addEventListener(
       'click',
-      async function(e) {
+      async function (e) {
         const dat = await createNewClient(obj);
         console.log(dat);
         if (dat) {
@@ -641,7 +641,7 @@
     cancelButton.textContent = 'Отмена';
     cancelButton.addEventListener(
       'click',
-      function(e) {
+      function (e) {
         modal.hideModal();
       }
     );
@@ -795,14 +795,14 @@
 
   function createAppPageBottom() {
     const appPageBottom = document.createElement('div');
-    appPageBottom.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100','mb-3');
+    appPageBottom.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100', 'mb-3');
     return appPageBottom;
   }
 
   function createNewClientButton() {
     const newClientButton = document.createElement('a');
-    newClientButton.classList.add('d-flex', 'd-inline-flex','align-self-center', 'align-items-center', 'justify-content-center', 'p-1', 'mb-1', 'w-25', 'new-client-button');
-    const newClientIcon = createIcon('new-client', 'new-client-icon', width='23', height='16', viewBox='0 0 23 16');
+    newClientButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'align-items-center', 'justify-content-center', 'p-1', 'mb-1', 'w-25', 'new-client-button');
+    const newClientIcon = createIcon('new-client', 'new-client-icon', width = '23', height = '16', viewBox = '0 0 23 16');
     newClientIcon.classList.add('d-inline-flex');
     const newClientText = document.createElement('p');
     newClientText.classList.add('d-inline-flex', 'm-0');
@@ -810,7 +810,7 @@
     newClientButton.append(newClientIcon, newClientText);
     newClientButton.addEventListener(
       'click',
-      async function(e) {
+      async function (e) {
         console.log('new client button pressed');
         // const dat = await changeClientByID(obj.id, obj);
         // // console.log(dat);
@@ -831,107 +831,93 @@
     block.append(clienstListView);
   };
 
-  function createClientsListHeader() {
+  async function createClientsListHeader() {
     const clientListHeader = document.createElement('div');
-    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__list-header', 'mt-3');
+    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__list-header', 'mt-3', 'px-3');
 
-    const idSort = document.createElement('a');
-    idSort.classList.add('d-flex', 'd-inline-flex','justify-content-center', 'align-items-center');
+    const idSortAsc = (a, b) => {
+      return parseInt(a.id) - parseInt(b.id);
+    }
 
-    const idSortText = document.createElement('span');
-    idSortText.classList.add('d-inline-flex');
-    idSortText.textContent = 'ID:';
+    const idSortDesc = (a, b) => {
+      return parseInt(b.id) - parseInt(a.id);
+    }
 
-    const idSortArrow = createIcon('arrow', 'arrow', '12', '12', '0 0 12 12');
-    idSortArrow.classList.add('arrow-hidden');
-    idSortArrow.classList.remove('d-flex');
-    idSort.append(idSortText, idSortArrow);
+    const idSort = await configClientsListHeaderElement('ID', idSortAsc, idSortDesc);
 
-    let idSortValue = '';
+    const nameSortAsc = (a, b) => {
+      const aName = [a.surname, a.name, a.lastName].join(' ');
+      const bName = [b.surname, b.name, b.lastName].join(' ');
+      return aName.localeCompare(bName);
+    }
 
-    idSort.addEventListener(
-      'click',
-      async function(e) {
-        e.preventDefault();
-        let clients = await getClients();
-        if (idSortValue === ''){
-          idSortValue = 'up';
-          idSortArrow.classList.toggle('arrow-hidden', false);
-          idSortArrow.classList.toggle('arrow-up', true);
-          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
-            return parseInt(a.id) - parseInt(b.id);
-          }));
-        } else if (idSortValue === 'up') {
-          idSortValue = 'down';
-          idSortArrow.classList.toggle('arrow-up', false);
-          idSortArrow.classList.toggle('arrow-down', true);
+    const nameSortDesc = (a, b) => {
+      const aName = [a.surname, a.name, a.lastName].join(' ');
+      const bName = [b.surname, b.name, b.lastName].join(' ');
+      return bName.localeCompare(aName);
+    }
 
-          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
-            return parseInt(b.id) - parseInt(a.id);
-          }));
-        } else {
-          idSortValue = '';
-          idSortArrow.classList.toggle('arrow-down', false);
-          idSortArrow.classList.toggle('arrow-hidden', true);
-          await updateClientsListView(clientsListDiv, clients);
-        }
-        console.log(idSortValue);
-      }
-    );
+    const nameSort = await configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc);
 
+    const dateSortAsc = (a, b)  => {
+      const aCreationDate = new Date(a.createdAt);
+      const bCreationDate = new Date(b.createdAt);
+      return aCreationDate > bCreationDate;
+    }
 
-    const nameSort = document.createElement('a');
-    nameSort.classList.add('d-flex', 'd-inline-flex','justify-content-center', 'align-items-center');
+    const dateSortDesc = (a, b)  => {
+      const aCreationDate = new Date(a.createdAt);
+      const bCreationDate = new Date(b.createdAt);
+      return aCreationDate < bCreationDate;
+    }
 
-    const nameSortText = document.createElement('span');
-    nameSortText.classList.add('d-inline-flex');
-    nameSortText.textContent = 'Фамилия Имя Отчество:';
+    const creationDateSort = await configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc);
 
-    const nameSortArrow = createIcon('arrow', 'arrow', '12', '12', '0 0 12 12');
-    nameSortArrow.classList.add('arrow-hidden');
-    nameSortArrow.classList.remove('d-flex');
-    nameSort.append(nameSortText, nameSortArrow);
-
-    let nameSortValue = '';
-
-    nameSort.addEventListener(
-      'click',
-      async function(e) {
-        e.preventDefault();
-        let clients = await getClients();
-        if (nameSortValue === ''){
-          nameSortValue = 'up';
-          nameSortArrow.classList.toggle('arrow-hidden', false);
-          nameSortArrow.classList.toggle('arrow-up', true);
-          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
-            const aName = [a.surname, a.name, a.lastName].join(' ');
-            const bName = [b.surname, b.name, b.lastName].join(' ');
-            return aName.localeCompare(bName);
-          }));
-        } else if (nameSortValue === 'up') {
-          nameSortValue = 'down';
-          nameSortArrow.classList.toggle('arrow-up', false);
-          nameSortArrow.classList.toggle('arrow-down', true);
-
-          await updateClientsListView(clientsListDiv, clients.sort((a, b) => {
-            const aName = [a.surname, a.name, a.lastName].join(' ');
-            const bName = [b.surname, b.name, b.lastName].join(' ');
-            return bName.localeCompare(aName);
-          }));
-        } else {
-          nameSortValue = '';
-          nameSortArrow.classList.toggle('arrow-down', false);
-          nameSortArrow.classList.toggle('arrow-hidden', true);
-          await updateClientsListView(clientsListDiv, clients);
-        }
-        console.log(nameSortValue);
-      }
-    );
-
-    clientListHeader.append(idSort, nameSort);
+    clientListHeader.append(idSort, nameSort, creationDateSort);
     return clientListHeader;
   }
 
+  async function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction) {
+    const elemSort = document.createElement('a');
+    elemSort.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center');
+
+    const elemSortText = document.createElement('span');
+    elemSortText.classList.add('d-inline-flex');
+    elemSortText.textContent = name;
+
+    const elemSortArrow = createIcon('arrow', 'arrow', '12', '12', '0 0 12 12');
+    elemSortArrow.classList.add('arrow-hidden');
+    elemSortArrow.classList.remove('d-flex');
+    elemSort.append(elemSortText, elemSortArrow);
+
+    let elemSortValue = '';
+
+    elemSort.addEventListener(
+      'click',
+      async function (e) {
+        e.preventDefault();
+        let clients = await getClients();
+        if (elemSortValue === '') {
+          elemSortValue = 'up';
+          elemSortArrow.classList.toggle('arrow-hidden', false);
+          elemSortArrow.classList.toggle('arrow-up', true);
+          await updateClientsListView(clientsListDiv, clients.sort((a,b) => sortAscFunction(a,b)));
+        } else if (elemSortValue === 'up') {
+          elemSortValue = 'down';
+          elemSortArrow.classList.toggle('arrow-up', false);
+          elemSortArrow.classList.toggle('arrow-down', true);
+          await updateClientsListView(clientsListDiv, clients.sort((a,b) => sortDescFunction(a,b)));
+        } else {
+          elemSortValue = '';
+          elemSortArrow.classList.toggle('arrow-down', false);
+          elemSortArrow.classList.toggle('arrow-hidden', true);
+          await updateClientsListView(clientsListDiv, clients);
+        }
+        console.log(elemSortValue);
+      }
+    );
+    return elemSort;
+  }
 
 
   const app = getContainer();
@@ -939,7 +925,7 @@
   const clientsListDiv = createClientsListDiv();
   const appPageBottom = createAppPageBottom();
   const newClientButton = createNewClientButton();
-  const clientsListHeader = createClientsListHeader();
+  const clientsListHeader = await createClientsListHeader();
   let clients = await getClients();
   console.log(clients[0]);
 
@@ -947,7 +933,6 @@
 
   appPageBottom.append(newClientButton);
   app.append(clientsListHeader, clientsListDiv, appPageBottom);
-
   await updateClientsListView(clientsListDiv, clients);
 
 
