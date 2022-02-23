@@ -461,7 +461,9 @@
         // console.log(dat);
         if (dat) {
           modal.hideModal();
-          await updateClientsListView(clientsListDiv);
+
+          clients = await getClients();
+          await updateClientsListView(clientsListDiv, clients);
         }
       }
     );
