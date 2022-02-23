@@ -631,7 +631,8 @@
         console.log(dat);
         if (dat) {
           modal.hideModal();
-          await updateClientsListView(clientsListDiv);
+          clients = [...clients, dat];
+          await updateClientsListView(clientsListDiv, clients);
         }
       }
     );
@@ -759,8 +760,8 @@
       const data = await deleteClientByID(clientData.id);
       if (data) {
         console.log('DELETE');
-
-        await updateClientsListView(clientsListDiv);
+        clients = await getClients();
+        await updateClientsListView(clientsListDiv, clients);
       }
     });
 
@@ -833,53 +834,69 @@
 
   async function createClientsListHeader() {
     const clientListHeader = document.createElement('div');
-    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__list-header', 'mt-3', 'px-3');
+    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'mt-3', 'px-4');
 
     const idSortAsc = (a, b) => {
       return parseInt(a.id) - parseInt(b.id);
     }
-
     const idSortDesc = (a, b) => {
       return parseInt(b.id) - parseInt(a.id);
     }
-
-    const idSort = await configClientsListHeaderElement('ID', idSortAsc, idSortDesc);
+    const idSort = await configClientsListHeaderElement('ID', idSortAsc, idSortDesc, 'clients__id');
 
     const nameSortAsc = (a, b) => {
       const aName = [a.surname, a.name, a.lastName].join(' ');
       const bName = [b.surname, b.name, b.lastName].join(' ');
       return aName.localeCompare(bName);
     }
-
     const nameSortDesc = (a, b) => {
       const aName = [a.surname, a.name, a.lastName].join(' ');
       const bName = [b.surname, b.name, b.lastName].join(' ');
       return bName.localeCompare(aName);
     }
-
-    const nameSort = await configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc);
+    const nameSort = await configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__name');
 
     const dateSortAsc = (a, b)  => {
       const aCreationDate = new Date(a.createdAt);
       const bCreationDate = new Date(b.createdAt);
       return aCreationDate > bCreationDate;
     }
-
     const dateSortDesc = (a, b)  => {
       const aCreationDate = new Date(a.createdAt);
       const bCreationDate = new Date(b.createdAt);
       return aCreationDate < bCreationDate;
     }
 
-    const creationDateSort = await configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc);
+    const updDateSortAsc = (a, b)  => {
+      const aCreationDate = new Date(a.updatedAt);
+      const bCreationDate = new Date(b.updatedAt);
+      return aCreationDate > bCreationDate;
+    }
+    const updDateSortDesc = (a, b)  => {
+      const aCreationDate = new Date(a.updatedAt);
+      const bCreationDate = new Date(b.updatedAt);
+      return aCreationDate < bCreationDate;
+    }
+    const creationDateSort = await configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc, 'clients__create-datetime');
 
-    clientListHeader.append(idSort, nameSort, creationDateSort);
+    const updateDateSort = await configClientsListHeaderElement('Последние изменения', updDateSortAsc, updDateSortDesc, 'clients__update-datetime');
+
+    const contactsSpan = document.createElement('span');
+    contactsSpan.classList.add('d-inline-flex', 'clients__contacts');
+    contactsSpan.textContent = 'Контакты';
+
+    const actionsSpan = document.createElement('span');
+    actionsSpan.classList.add('d-inline-flex', 'clients__actions');
+    actionsSpan.textContent = 'Действия';
+
+    clientListHeader.append(idSort, nameSort, creationDateSort, updateDateSort, contactsSpan, actionsSpan);
     return clientListHeader;
   }
 
-  async function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction) {
+  async function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction, elementClass) {
     const elemSort = document.createElement('a');
-    elemSort.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center');
+    elemSort.classList.add('d-flex', 'd-inline-flex', 'justify-content-start', 'align-items-center');
+    if (elementClass!==undefined) elemSort.classList.add(elementClass);
 
     const elemSortText = document.createElement('span');
     elemSortText.classList.add('d-inline-flex');
@@ -927,7 +944,7 @@
   const newClientButton = createNewClientButton();
   const clientsListHeader = await createClientsListHeader();
   let clients = await getClients();
-  console.log(clients[0]);
+  // console.log(clients[0]);
 
 
 

@@ -76,8 +76,37 @@ input:focus{
   width: 40%;
 }
 
-.clients__list-header {
-  font-size: 14px;
+.clients__header {
+  font-size: 10px;
+}
+
+.clients__id {
+  width: 110px;
+  margin-right: 40px;
+}
+
+.clients__name {
+  margin-right: 20px;
+  width: 250px;
+}
+
+.clients__create-datetime {
+  width: 130px;
+  margin-right: 18px;
+}
+
+.clients__update-datetime {
+  width: 130px;
+  margin-right: 20px;
+}
+
+.clients__contacts {
+  margin-right: 40px;
+  width: 108px;
+}
+
+.clients__actions {
+  width: 100px;
 }
 
 .arrow-up {
@@ -109,7 +138,7 @@ input:focus{
 }
 
 .clients__list-name {
-  margin-right: 40px;
+  margin-right: 20px;
   width: 250px;
 }
 
