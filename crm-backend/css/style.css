@@ -52,6 +52,9 @@ input:focus{
   outline: none;
 }
 
+.asterisk {
+  color: #9873FF;
+}
 
 .scroll-disable {
   overflow: hidden;
@@ -183,6 +186,15 @@ input:focus{
 .contact-save-button:hover {
   background-color: #B89EFF;
   color: #fff;
+}
+
+.client-delete-button {
+  text-decoration: underline;
+  transition: color .3s ease-in-out, text-decoration-color .3s ease-in-out;
+}
+
+.client-delete-button:hover {
+  text-decoration: underline;
 }
 
 .new-client-button {
