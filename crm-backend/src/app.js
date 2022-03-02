@@ -215,7 +215,7 @@
     dateTimeDiv.classList.add('d-flex', 'justify-content-between', dateTimeClassToAdd);
     const dateSpan = document.createElement('span');
     dateSpan.classList.add('d-inline-flex', 'mr-1', dateClassToAdd);
-    dateSpan.textContent = [dateTime.getDate(), month, dateTime.getFullYear()].join('.');
+    dateSpan.textContent = [padNumberByZero(dateTime.getDate()), month, dateTime.getFullYear()].join('.');
     const timeSpan = document.createElement('span');
     timeSpan.classList.add('d-inline-flex', timeClassToAdd);
     timeSpan.textContent = [padNumberByZero(dateTime.getHours()), padNumberByZero(dateTime.getMinutes())].join(':');
@@ -241,6 +241,7 @@
 
   /*
     Создание элемента ввода контактных данных
+    valuesArr - список опций для селекта
   */
 
   function createSelect(valuesArr, selectClass, selectName = '') {
@@ -564,6 +565,101 @@
   }
 
   /*
+    Конфигурирование кнопк добавления новго контакта
+    Для конфигурирования используются:
+    1) сама кнопка
+    2) объект с данным о клиенте
+    3) список селектов с типом контакта
+    4) список инпутов со значением контакта
+    5) список кнопок удаления контактов
+    6) список элементов контактов
+  */
+
+  function congigAddContactButton(addContactButton, clientObj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList) {
+    addContactButton.addEventListener(
+      'click',
+      function (e) {
+        e.preventDefault();
+
+        const newContact = {
+          'type': 'other',
+          'value': ''
+        }
+        clientObj.contacts.push(newContact);
+
+        const contactItemDivs = document.querySelectorAll('.contact__item-div');
+        if (contactItemDivs[contactItemDivs.length - 1] !== undefined) {
+          contactItemDivs[contactItemDivs.length - 1].classList.add('mb-2');
+        }
+
+        const contactItemDiv = document.createElement('div');
+        contactItemDiv.classList.add('d-flex', 'contact__item-div');
+
+        const contactTypeSelect = createSelect(values, 'sel1');
+        contactItemDiv.append(contactTypeSelect);
+        const contactItemSelect = configureSelect(contactTypeSelect);
+
+        contactTypeChoices.push(contactItemSelect);
+        contactItemSelect.setChoiceByValue('other');
+        contactItemSelect.passedElement.element.addEventListener(
+          'choice',
+          function (e) {
+            // console.log(contactTypeChoices.indexOf(contactItemSelect));
+            clientObj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
+            console.log(clientObj);
+          },
+          false,
+        );
+
+        const contactValueInput = document.createElement('input');
+        contactValueInput.classList.add('p-1', 'mw-75');
+        contactValueInputs.push(contactValueInput);
+        contactValueInput.addEventListener(
+          'input',
+          function (e) {
+            clientObj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
+            console.log(clientObj);
+          },
+          false,
+        );
+
+        const contactDeleteButton = document.createElement('a');
+        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
+        const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
+        contactDeleteButton.append(contactDeleteIcon);
+        contactDeleteButtons.push(contactDeleteButton);
+        contactDeleteButton.addEventListener(
+          'click',
+          function (e) {
+            e.preventDefault();
+            let elementToWorkWith = null;
+            // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
+            // тк присутствует следующая вложенность объектов снизу вверх:
+            // path -> g -> svg -> a
+            if (e.target.tagName === 'path') {
+              elementToWorkWith = e.target.parentElement.parentElement.parentElement;
+            } else if (e.target.tagName === 'g') {
+              elementToWorkWith = e.target.parentElement.parentElement;
+            } else if (e.target.tagName === 'svg') {
+              elementToWorkWith = e.target.parentElement;
+            } else {
+              elementToWorkWith = e.target;
+            }
+            const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
+            elementToWorkWith.parentElement.remove();
+            contactDeleteButtons.splice(elementNumber, 1);
+            clientObj.contacts.splice(elementNumber, 1);
+            console.log(clientObj);
+          });
+
+        console.log(clientObj)
+        contactItemDiv.append(contactValueInput, contactDeleteButton);
+        contactsList.append(contactItemDiv);
+      }
+    );
+  }
+
+  /*
     Создание наполнения модального окна для создания клиента
   */
 
@@ -625,88 +721,7 @@
     addContactSpan.textContent = 'Добавить контакт';
     const addContactIcon = createIcon('contact-add', 'contact-add-icon');
     addContactButton.append(addContactIcon, addContactSpan);
-
-    addContactButton.addEventListener(
-      'click',
-      function (e) {
-        e.preventDefault();
-
-        const newContact = {
-          'type': 'other',
-          'value': ''
-        }
-        obj.contacts.push(newContact);
-
-        const contactItemDivs = document.querySelectorAll('.contact__item-div');
-        if (contactItemDivs[contactItemDivs.length - 1] !== undefined) {
-          contactItemDivs[contactItemDivs.length - 1].classList.add('mb-2');
-        }
-
-        const contactItemDiv = document.createElement('div');
-        contactItemDiv.classList.add('d-flex', 'contact__item-div');
-
-        const contactTypeSelect = createSelect(values, 'sel1');
-        contactItemDiv.append(contactTypeSelect);
-        const contactItemSelect = configureSelect(contactTypeSelect);
-
-        contactTypeChoices.push(contactItemSelect);
-        contactItemSelect.setChoiceByValue('other');
-        contactItemSelect.passedElement.element.addEventListener(
-          'choice',
-          function (e) {
-            // console.log(contactTypeChoices.indexOf(contactItemSelect));
-            obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
-            console.log(obj);
-          },
-          false,
-        );
-
-        const contactValueInput = document.createElement('input');
-        contactValueInput.classList.add('p-1', 'mw-75');
-        contactValueInputs.push(contactValueInput);
-        contactValueInput.addEventListener(
-          'input',
-          function (e) {
-            obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
-            console.log(obj);
-          },
-          false,
-        );
-
-        const contactDeleteButton = document.createElement('a');
-        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
-        const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
-        contactDeleteButton.append(contactDeleteIcon);
-        contactDeleteButtons.push(contactDeleteButton);
-        contactDeleteButton.addEventListener(
-          'click',
-          function (e) {
-            e.preventDefault();
-            let elementToWorkWith = null;
-            // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
-            // тк присутствует следующая вложенность объектов снизу вверх:
-            // path -> g -> svg -> a
-            if (e.target.tagName === 'path') {
-              elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-            } else if (e.target.tagName === 'g') {
-              elementToWorkWith = e.target.parentElement.parentElement;
-            } else if (e.target.tagName === 'svg') {
-              elementToWorkWith = e.target.parentElement;
-            } else {
-              elementToWorkWith = e.target;
-            }
-            const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
-            elementToWorkWith.parentElement.remove();
-            contactDeleteButtons.splice(elementNumber, 1);
-            obj.contacts.splice(elementNumber, 1);
-            console.log(obj);
-          });
-
-        console.log(obj)
-        contactItemDiv.append(contactValueInput, contactDeleteButton);
-        contactsList.append(contactItemDiv);
-      }
-    );
+    congigAddContactButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
 
     contactsDiv.append(addContactButton);
 
@@ -749,6 +764,9 @@
 
   /*
     Создание наполнения модального окна для подтверждения удаления клиента
+    clientData - объект клиента,
+    modal - само модальное окно,
+    previousModal - предыдущее наполнения модального окна
   */
 
   function createDeleteConfirmModalContent(clientData, modal, previousModal) {
@@ -811,27 +829,10 @@
   }
 
   /*
-    Создание элемента (li) для отображения данных о клиенте
+    Заполнения дива с контактами и его конфигурирование
   */
 
-  async function createClientView(client) {
-    const clientLi = document.createElement('li');
-    clientLi.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'p-3', 'clients__list-item');
-
-    const idSpan = document.createElement('span');
-    idSpan.classList.add('d-inline-flex', 'clients__list-id');
-    idSpan.textContent = client.id;
-
-    const nameSpan = document.createElement('span');
-    nameSpan.classList.add('d-inline-flex', 'clients__list-name');
-    nameSpan.textContent = [client.surname, client.name, client.lastName].join(' ');
-
-    const creationDateTimeDiv = createDateTimeDiv(client.createdAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
-    const updateDateTimeDiv = createDateTimeDiv(client.updatedAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
-
-    const contactsDiv = document.createElement('div');
-    contactsDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'clients__list-contacts-list');
-
+  function fillContactsDiv(contactsDiv, client) {
     const fullRows = Math.floor(client.contacts.length / 5);
     const elementsInLastRow = client.contacts.length - fullRows * 5;
     const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? 5 : elementsInLastRow);
@@ -889,6 +890,31 @@
         showContactButton.remove();
       });
     }
+  }
+
+  /*
+    Создание элемента (li) для отображения данных о клиенте
+  */
+
+  async function createClientView(client) {
+    const clientLi = document.createElement('li');
+    clientLi.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'p-3', 'clients__list-item');
+
+    const idSpan = document.createElement('span');
+    idSpan.classList.add('d-inline-flex', 'clients__list-id');
+    idSpan.textContent = client.id;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.classList.add('d-inline-flex', 'clients__list-name');
+    nameSpan.textContent = [client.surname, client.name, client.lastName].join(' ');
+
+    const creationDateTimeDiv = createDateTimeDiv(client.createdAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
+    const updateDateTimeDiv = createDateTimeDiv(client.updatedAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
+
+    const contactsDiv = document.createElement('div');
+    contactsDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'clients__list-contacts-list');
+
+    fillContactsDiv(contactsDiv, client);
 
     const changeClientButton = createDataEditButton('clients__list-change-button', 'change', 'change-element-icon', 'Изменить');
 
