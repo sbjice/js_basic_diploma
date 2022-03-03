@@ -100,9 +100,12 @@
     Создание контейнера для всего приложения
   */
 
-  function getContainer(selector = document.getElementById('app')) {
+  function getContainer(selector = document.getElementById('app'), headerText = 'Клиенты') {
     const container = selector;
     container.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+    const header = document.createElement('h3');
+    header.textContent = headerText;
+    container.append(header);
     return container;
   }
 
@@ -853,6 +856,18 @@
       const svg = createIcon(element.type, linkClass);
 
       link.append(svg);
+
+      const tooltipBlock = document.createElement('div');
+      const tooltipBody = document.createElement('p');
+      const tooltipArrow = document.createElement('div');
+      tooltipBlock.classList.add('tooltip-block');
+      tooltipBody.classList.add('tooltip-body');
+      tooltipArrow.classList.add('tooltip-arrow');
+      tooltipBody.textContent = element.type + ': ' + element.value;
+
+      tooltipBlock.append(tooltipBody, tooltipArrow);
+      link.append(tooltipBlock);
+
       contactsDiv.append(link);
     });
 
