@@ -47,6 +47,7 @@
     </g>`
   }
 
+
   /*
     Реализация функций работы с API
   */
@@ -100,13 +101,56 @@
     Создание контейнера для всего приложения
   */
 
-  function getContainer(selector = document.getElementById('app'), headerText = 'Клиенты') {
+  function getContainer(selector = document.getElementById('app')) {
     const container = selector;
     container.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+    return container;
+  }
+
+  /*
+    Создание заголовка для контейнера приложения
+  */
+
+  function createAppHeader(headerText = 'Клиенты') {
     const header = document.createElement('h3');
     header.textContent = headerText;
-    container.append(header);
-    return container;
+    return header;
+  }
+
+  /*
+    Создание поля поиска для фильтрации данных
+  */
+
+  function createSearchInput() {
+    const searchInput = document.createElement('input');
+    searchInput.addEventListener(
+      'input',
+      async function(e){
+        await restartSearchInputTimer();
+      }
+    )
+    return searchInput;
+  }
+
+  /*
+    Реализация перезапуска таймера ввода данных для поиска по клиентам
+    Внутри используетв функция фильтрации данных о клиентах
+  */
+
+  function restartSearchInputTimer() {
+    clearTimeout(searchInputTimeout);
+    searchInputTimeout = setTimeout(async () => {
+      const rawClients = await getClients();
+      if (searchInput.value!=='') {
+        clients = rawClients.filter(item => {
+          return [item.surname, item.name, item.lastName].join(' ').includes(searchInput.value);
+        });
+        await fillClientsListView(clientsListDiv, clients);
+        return;
+      }
+      clients = rawClients;
+      await fillClientsListView(clientsListDiv, clients);
+    }, 300);
   }
 
   /*
@@ -822,6 +866,118 @@
   }
 
   /*
+    Создание шапки таблицы клиентов с конфигурацией сортировок
+  */
+
+  async function createClientsListHeader() {
+    const clientListHeader = document.createElement('div');
+    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'mt-3', 'px-4');
+
+    const idSortAsc = (a, b) => {
+      return parseInt(a.id) - parseInt(b.id);
+    }
+    const idSortDesc = (a, b) => {
+      return parseInt(b.id) - parseInt(a.id);
+    }
+    const idSort = await configClientsListHeaderElement('ID', idSortAsc, idSortDesc, 'clients__id');
+
+    const nameSortAsc = (a, b) => {
+      const aName = [a.surname, a.name, a.lastName].join(' ');
+      const bName = [b.surname, b.name, b.lastName].join(' ');
+      return aName.localeCompare(bName);
+    }
+    const nameSortDesc = (a, b) => {
+      const aName = [a.surname, a.name, a.lastName].join(' ');
+      const bName = [b.surname, b.name, b.lastName].join(' ');
+      return bName.localeCompare(aName);
+    }
+    const nameSort = await configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__name');
+
+    const dateSortAsc = (a, b)  => {
+      const aCreationDate = new Date(a.createdAt);
+      const bCreationDate = new Date(b.createdAt);
+      return aCreationDate > bCreationDate;
+    }
+    const dateSortDesc = (a, b)  => {
+      const aCreationDate = new Date(a.createdAt);
+      const bCreationDate = new Date(b.createdAt);
+      return aCreationDate < bCreationDate;
+    }
+
+    const updDateSortAsc = (a, b)  => {
+      const aCreationDate = new Date(a.updatedAt);
+      const bCreationDate = new Date(b.updatedAt);
+      return aCreationDate > bCreationDate;
+    }
+    const updDateSortDesc = (a, b)  => {
+      const aCreationDate = new Date(a.updatedAt);
+      const bCreationDate = new Date(b.updatedAt);
+      return aCreationDate < bCreationDate;
+    }
+    const creationDateSort = await configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc, 'clients__create-datetime');
+
+    const updateDateSort = await configClientsListHeaderElement('Последние изменения', updDateSortAsc, updDateSortDesc, 'clients__update-datetime');
+
+    const contactsSpan = document.createElement('span');
+    contactsSpan.classList.add('d-inline-flex', 'clients__contacts');
+    contactsSpan.textContent = 'Контакты';
+
+    const actionsSpan = document.createElement('span');
+    actionsSpan.classList.add('d-inline-flex', 'clients__actions');
+    actionsSpan.textContent = 'Действия';
+
+    clientListHeader.append(idSort, nameSort, creationDateSort, updateDateSort, contactsSpan, actionsSpan);
+    return clientListHeader;
+  }
+
+  /*
+    Конфигурация элементов сортировок в шапке таблицы с клиентами
+  */
+
+  async function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction, elementClass) {
+    const elemSort = document.createElement('a');
+    elemSort.classList.add('d-flex', 'd-inline-flex', 'justify-content-start', 'align-items-center');
+    if (elementClass!==undefined) elemSort.classList.add(elementClass);
+
+    const elemSortText = document.createElement('span');
+    elemSortText.classList.add('d-inline-flex');
+    elemSortText.textContent = name;
+
+    const elemSortArrow = createIcon('arrow', 'arrow', '12', '12', '0 0 12 12');
+    elemSortArrow.classList.add('arrow-hidden');
+    elemSortArrow.classList.remove('d-flex');
+    elemSort.append(elemSortText, elemSortArrow);
+
+    let elemSortValue = '';
+
+    elemSort.addEventListener(
+      'click',
+      async function (e) {
+        e.preventDefault();
+        // let clients = await getClients();
+        if (elemSortValue === '') {
+          elemSortValue = 'up';
+          elemSortArrow.classList.toggle('arrow-hidden', false);
+          elemSortArrow.classList.toggle('arrow-up', true);
+          await fillClientsListView(clientsListDiv, clients.sort((a,b) => sortAscFunction(a,b)));
+        } else if (elemSortValue === 'up') {
+          elemSortValue = 'down';
+          elemSortArrow.classList.toggle('arrow-up', false);
+          elemSortArrow.classList.toggle('arrow-down', true);
+          await fillClientsListView(clientsListDiv, clients.sort((a,b) => sortDescFunction(a,b)));
+        } else {
+          elemSortValue = '';
+          elemSortArrow.classList.toggle('arrow-down', false);
+          elemSortArrow.classList.toggle('arrow-hidden', true);
+          await fillClientsListView(clientsListDiv, clients);
+        }
+        console.log(elemSortValue);
+      }
+    );
+    return elemSort;
+  }
+
+  /*
     Создание контейнера для отображения данных о клиенте
   */
 
@@ -1035,128 +1191,23 @@
     block.append(clienstListView);
   }
 
-  /*
-    Создание шапки таблицы клиентов с конфигурацией сортировок
-  */
-
-  async function createClientsListHeader() {
-    const clientListHeader = document.createElement('div');
-    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'mt-3', 'px-4');
-
-    const idSortAsc = (a, b) => {
-      return parseInt(a.id) - parseInt(b.id);
-    }
-    const idSortDesc = (a, b) => {
-      return parseInt(b.id) - parseInt(a.id);
-    }
-    const idSort = await configClientsListHeaderElement('ID', idSortAsc, idSortDesc, 'clients__id');
-
-    const nameSortAsc = (a, b) => {
-      const aName = [a.surname, a.name, a.lastName].join(' ');
-      const bName = [b.surname, b.name, b.lastName].join(' ');
-      return aName.localeCompare(bName);
-    }
-    const nameSortDesc = (a, b) => {
-      const aName = [a.surname, a.name, a.lastName].join(' ');
-      const bName = [b.surname, b.name, b.lastName].join(' ');
-      return bName.localeCompare(aName);
-    }
-    const nameSort = await configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__name');
-
-    const dateSortAsc = (a, b)  => {
-      const aCreationDate = new Date(a.createdAt);
-      const bCreationDate = new Date(b.createdAt);
-      return aCreationDate > bCreationDate;
-    }
-    const dateSortDesc = (a, b)  => {
-      const aCreationDate = new Date(a.createdAt);
-      const bCreationDate = new Date(b.createdAt);
-      return aCreationDate < bCreationDate;
-    }
-
-    const updDateSortAsc = (a, b)  => {
-      const aCreationDate = new Date(a.updatedAt);
-      const bCreationDate = new Date(b.updatedAt);
-      return aCreationDate > bCreationDate;
-    }
-    const updDateSortDesc = (a, b)  => {
-      const aCreationDate = new Date(a.updatedAt);
-      const bCreationDate = new Date(b.updatedAt);
-      return aCreationDate < bCreationDate;
-    }
-    const creationDateSort = await configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc, 'clients__create-datetime');
-
-    const updateDateSort = await configClientsListHeaderElement('Последние изменения', updDateSortAsc, updDateSortDesc, 'clients__update-datetime');
-
-    const contactsSpan = document.createElement('span');
-    contactsSpan.classList.add('d-inline-flex', 'clients__contacts');
-    contactsSpan.textContent = 'Контакты';
-
-    const actionsSpan = document.createElement('span');
-    actionsSpan.classList.add('d-inline-flex', 'clients__actions');
-    actionsSpan.textContent = 'Действия';
-
-    clientListHeader.append(idSort, nameSort, creationDateSort, updateDateSort, contactsSpan, actionsSpan);
-    return clientListHeader;
-  }
-
-  /*
-    Конфигурация элементов сортировок в шапке таблицы с клиентами
-  */
-
-  async function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction, elementClass) {
-    const elemSort = document.createElement('a');
-    elemSort.classList.add('d-flex', 'd-inline-flex', 'justify-content-start', 'align-items-center');
-    if (elementClass!==undefined) elemSort.classList.add(elementClass);
-
-    const elemSortText = document.createElement('span');
-    elemSortText.classList.add('d-inline-flex');
-    elemSortText.textContent = name;
-
-    const elemSortArrow = createIcon('arrow', 'arrow', '12', '12', '0 0 12 12');
-    elemSortArrow.classList.add('arrow-hidden');
-    elemSortArrow.classList.remove('d-flex');
-    elemSort.append(elemSortText, elemSortArrow);
-
-    let elemSortValue = '';
-
-    elemSort.addEventListener(
-      'click',
-      async function (e) {
-        e.preventDefault();
-        let clients = await getClients();
-        if (elemSortValue === '') {
-          elemSortValue = 'up';
-          elemSortArrow.classList.toggle('arrow-hidden', false);
-          elemSortArrow.classList.toggle('arrow-up', true);
-          await fillClientsListView(clientsListDiv, clients.sort((a,b) => sortAscFunction(a,b)));
-        } else if (elemSortValue === 'up') {
-          elemSortValue = 'down';
-          elemSortArrow.classList.toggle('arrow-up', false);
-          elemSortArrow.classList.toggle('arrow-down', true);
-          await fillClientsListView(clientsListDiv, clients.sort((a,b) => sortDescFunction(a,b)));
-        } else {
-          elemSortValue = '';
-          elemSortArrow.classList.toggle('arrow-down', false);
-          elemSortArrow.classList.toggle('arrow-hidden', true);
-          await fillClientsListView(clientsListDiv, clients);
-        }
-        console.log(elemSortValue);
-      }
-    );
-    return elemSort;
-  }
 
 
-  const app = getContainer();
+
+
+
   const modal = createModal();
+  const app = getContainer();
+  const searchInput = createSearchInput();
+  const appHeader = createAppHeader();
+  const clientsListHeader = await createClientsListHeader();
   const clientsListDiv = createClientsListDiv();
   const appPageBottom = createAppPageBottom();
   const newClientButton = createNewClientButton();
-  const clientsListHeader = await createClientsListHeader();
   let clients = await getClients();
+  let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
-  app.append(clientsListHeader, clientsListDiv, appPageBottom);
+  app.append(searchInput, appHeader, clientsListHeader, clientsListDiv, appPageBottom);
   await fillClientsListView(clientsListDiv, clients);
 
 
