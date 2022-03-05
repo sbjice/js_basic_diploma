@@ -134,23 +134,29 @@
 
   /*
     Реализация перезапуска таймера ввода данных для поиска по клиентам
-    Внутри используетв функция фильтрации данных о клиентах
   */
 
   function restartSearchInputTimer() {
     clearTimeout(searchInputTimeout);
-    searchInputTimeout = setTimeout(async () => {
-      const rawClients = await getClients();
-      if (searchInput.value!=='') {
-        clients = rawClients.filter(item => {
-          return [item.surname, item.name, item.lastName].join(' ').includes(searchInput.value);
-        });
-        await fillClientsListView(clientsListDiv, clients);
-        return;
-      }
-      clients = rawClients;
+    searchInputTimeout = setTimeout(filterClients, 300);
+  }
+
+
+  /*
+    Функция фильтрации данных о клиентах
+  */
+
+  async function filterClients() {
+    const rawClients = await getClients();
+    if (searchInput.value!=='') {
+      clients = rawClients.filter(item => {
+        return [item.surname, item.name, item.lastName].join(' ').includes(searchInput.value);
+      });
       await fillClientsListView(clientsListDiv, clients);
-    }, 300);
+      return;
+    }
+    clients = rawClients;
+    await fillClientsListView(clientsListDiv, clients);
   }
 
   /*
@@ -578,8 +584,7 @@
         if (dat) {
           modal.hideModal();
 
-          clients = await getClients();
-          await fillClientsListView(clientsListDiv, clients);
+          await filterClients();
         }
       }
     );
@@ -955,16 +960,17 @@
       async function (e) {
         e.preventDefault();
         // let clients = await getClients();
+        currentClients = [...clients];
         if (elemSortValue === '') {
           elemSortValue = 'up';
           elemSortArrow.classList.toggle('arrow-hidden', false);
           elemSortArrow.classList.toggle('arrow-up', true);
-          await fillClientsListView(clientsListDiv, clients.sort((a,b) => sortAscFunction(a,b)));
+          await fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortAscFunction(a,b)));
         } else if (elemSortValue === 'up') {
           elemSortValue = 'down';
           elemSortArrow.classList.toggle('arrow-up', false);
           elemSortArrow.classList.toggle('arrow-down', true);
-          await fillClientsListView(clientsListDiv, clients.sort((a,b) => sortDescFunction(a,b)));
+          await fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortDescFunction(a,b)));
         } else {
           elemSortValue = '';
           elemSortArrow.classList.toggle('arrow-down', false);
