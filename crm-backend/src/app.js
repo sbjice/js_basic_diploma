@@ -113,6 +113,7 @@
 
   function createAppHeader(headerText = 'Клиенты') {
     const header = document.createElement('h3');
+    header.classList.add('mb-3');
     header.textContent = headerText;
     return header;
   }
@@ -152,11 +153,11 @@
       clients = rawClients.filter(item => {
         return [item.surname, item.name, item.lastName].join(' ').includes(searchInput.value);
       });
-      await fillClientsListView(clientsListDiv, clients);
+      fillClientsListView(clientsListDiv, clients);
       return;
     }
     clients = rawClients;
-    await fillClientsListView(clientsListDiv, clients);
+    fillClientsListView(clientsListDiv, clients);
   }
 
   /*
@@ -678,7 +679,7 @@
         if (dat) {
           modal.hideModal();
           clients = [...clients, dat];
-          await fillClientsListView(clientsListDiv, clients);
+          fillClientsListView(clientsListDiv, clients);
         }
       }
     );
@@ -766,7 +767,7 @@
 
   async function createClientsListHeader() {
     const clientListHeader = document.createElement('div');
-    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'mt-3', 'px-4');
+    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'mb-3', 'px-4');
 
     const idSortAsc = (a, b) => {
       return parseInt(a.id) - parseInt(b.id);
@@ -847,7 +848,7 @@
 
     elemSort.addEventListener(
       'click',
-      async function (e) {
+      function (e) {
         e.preventDefault();
         // let clients = await getClients();
         currentClients = [...clients];
@@ -855,17 +856,17 @@
           elemSortValue = 'up';
           elemSortArrow.classList.toggle('arrow-hidden', false);
           elemSortArrow.classList.toggle('arrow-up', true);
-          await fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortAscFunction(a,b)));
+          fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortAscFunction(a,b)));
         } else if (elemSortValue === 'up') {
           elemSortValue = 'down';
           elemSortArrow.classList.toggle('arrow-up', false);
           elemSortArrow.classList.toggle('arrow-down', true);
-          await fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortDescFunction(a,b)));
+          fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortDescFunction(a,b)));
         } else {
           elemSortValue = '';
           elemSortArrow.classList.toggle('arrow-down', false);
           elemSortArrow.classList.toggle('arrow-hidden', true);
-          await fillClientsListView(clientsListDiv, clients);
+          fillClientsListView(clientsListDiv, clients);
         }
         console.log(elemSortValue);
       }
@@ -881,6 +882,23 @@
     const clientsListDiv = document.createElement('div');
     clientsListDiv.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
     return clientsListDiv;
+  }
+
+  /*
+    Создание контейнера для индикатора загрузки
+  */
+
+  function createSpinner() {
+    const spinnerContainer = document.createElement('div');
+    spinnerContainer.classList.add('align-items-center', 'justify-content-center', 'spinner-container', 'spinner-container_visible', 'mb-3');
+    spinnerContainer.style.height = '500px';
+    spinnerContainer.style.width = '100%';
+
+    const spinner = document.createElement('div');
+    spinner.classList.add('loader', 'simple-circle');
+    spinnerContainer.append(spinner);
+
+    return spinnerContainer;
   }
 
   /*
@@ -963,7 +981,7 @@
     Создание элемента (li) для отображения данных о клиенте
   */
 
-  async function createClientView(client) {
+  function createClientView(client) {
     const clientLi = document.createElement('li');
     clientLi.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'p-3', 'clients__list-item');
 
@@ -998,9 +1016,6 @@
       'click',
       async function(e) {
       e.preventDefault();
-
-      // TODO:
-      // добавить открытие модального окна для подтверждения удаления клиента
       const modalContent = createDeleteConfirmModalContent(client, modal);
       modal.insertFormIntoModal(modalContent.container).showModal();
 
@@ -1019,11 +1034,11 @@
     Создание элемента (ul) для отображения данных о всех клиентах
   */
 
-  async function createClientsListView(clients) {
+  function createClientsListView(clients) {
     const clienstListView = document.createElement('ul');
-    clienstListView.classList.add('d-flex', 'flex-column', 'm-0', 'p-0', 'clients__list', 'my-3');
-    clients.forEach(async item => {
-      const clientLi = await createClientView(item);
+    clienstListView.classList.add('d-flex', 'flex-column', 'm-0', 'p-0', 'clients__list', 'mb-3');
+    clients.forEach(item => {
+      const clientLi = createClientView(item);
       clienstListView.append(clientLi);
     });
     return clienstListView;
@@ -1080,11 +1095,24 @@
     Наполнение контейнера данными о клиентах
   */
 
-  async function fillClientsListView(block, clients) {
-    const clienstListView = await createClientsListView(clients);
+  function fillClientsListView(block, clients) {
     block.innerHTML = '';
-    block.append(clienstListView);
+    spinner.classList.toggle('spinner-container_visible', true);
+
+    // Код используется для демонстрации работы спиннера
+    setTimeout(()=>{
+      const clienstListView = createClientsListView(clients);
+      spinner.classList.toggle('spinner-container_visible', false);
+      block.append(clienstListView);
+    }, 1000);
+
+    // Код используемый в приложении при работе
+    // const clienstListView = createClientsListView(clients);
+    // spinner.classList.toggle('spinner-container_visible', false);
+    // block.append(clienstListView);
+
   }
+
 
   const modal = createModal();
   const app = getContainer();
@@ -1092,13 +1120,14 @@
   const appHeader = createAppHeader();
   const clientsListHeader = await createClientsListHeader();
   const clientsListDiv = createClientsListDiv();
+  const spinner = createSpinner();
   const appPageBottom = createAppPageBottom();
   const newClientButton = createNewClientButton();
   let clients = await getClients();
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
-  app.append(searchInput, appHeader, clientsListHeader, clientsListDiv, appPageBottom);
-  await fillClientsListView(clientsListDiv, clients);
+  app.append(searchInput, appHeader, clientsListHeader, spinner, clientsListDiv, appPageBottom);
+  fillClientsListView(clientsListDiv, clients);
 
   // TODO:
 
