@@ -153,7 +153,7 @@
       clients = rawClients.filter(item => {
         return [item.surname, item.name, item.lastName].join(' ').includes(searchInput.value);
       });
-      fillClientsListView(clientsListDiv, clients);
+      fillClientsListView(clientsListDiv, clients, showSpinner = true);
       return;
     }
     clients = rawClients;
@@ -1095,21 +1095,23 @@
     Наполнение контейнера данными о клиентах
   */
 
-  function fillClientsListView(block, clients) {
+  function fillClientsListView(block, clients, showSpinner = false) {
     block.innerHTML = '';
-    spinner.classList.toggle('spinner-container_visible', true);
-
-    // Код используется для демонстрации работы спиннера
-    setTimeout(()=>{
-      const clienstListView = createClientsListView(clients);
-      spinner.classList.toggle('spinner-container_visible', false);
-      block.append(clienstListView);
-    }, 1000);
+    if (showSpinner) {
+      spinner.classList.toggle('spinner-container_visible', true);
+          // Код используется для демонстрации работы спиннера
+      setTimeout(()=>{
+        const clienstListView = createClientsListView(clients);
+        spinner.classList.toggle('spinner-container_visible', false);
+        block.append(clienstListView);
+      }, 1000);
+      return;
+    }
 
     // Код используемый в приложении при работе
-    // const clienstListView = createClientsListView(clients);
+    const clienstListView = createClientsListView(clients);
     // spinner.classList.toggle('spinner-container_visible', false);
-    // block.append(clienstListView);
+    block.append(clienstListView);
 
   }
 
@@ -1127,7 +1129,7 @@
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
   app.append(searchInput, appHeader, clientsListHeader, spinner, clientsListDiv, appPageBottom);
-  fillClientsListView(clientsListDiv, clients);
+  fillClientsListView(clientsListDiv, clients, showSpinner = true);
 
   // TODO:
 
