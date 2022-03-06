@@ -355,6 +355,45 @@
   }
 
   /*
+    Создание дива с элементами для ввода ФИО
+    Параметр fillName отвечает за необходимость заполнения инпутов имеющимися данными
+  */
+
+  function configModalNameDiv(clientObj,fillName = false) {
+    const nameDiv = document.createElement('div');
+    nameDiv.classList.add('d-flex', 'flex-column');
+    const nameInput = createInputObj('name', 'Имя', '', true);
+    const surnameInput = createInputObj('surname', 'Фамилия', '', true);
+    const lastNameInput = createInputObj('lastName', 'Отчество');
+
+    if (fillName!==undefined && fillName) {
+      nameInput.input.value = clientObj.name;
+      surnameInput.input.value = clientObj.surname;
+      lastNameInput.input.value = clientObj.lastName;
+    }
+    nameInput.input.addEventListener(
+      'input',
+      function (e) {
+        clientObj.name = e.target.value;
+      }
+    );
+    surnameInput.input.addEventListener(
+      'input',
+      function (e) {
+        clientObj.surname = e.target.value;
+      }
+    );
+    lastNameInput.input.addEventListener(
+      'input',
+      function (e) {
+        clientObj.lastName = e.target.value;
+      }
+    );
+    nameDiv.append(nameInput.inputDiv, surnameInput.inputDiv, lastNameInput.inputDiv);
+    return nameDiv;
+  }
+
+  /*
     Создание наполнения модального окна для изменения данных клиента
   */
 
@@ -372,37 +411,7 @@
     modalHeaderText.textContent = 'ID:' + obj.id;
     modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
 
-    const nameDiv = document.createElement('div');
-    nameDiv.classList.add('d-flex', 'flex-column');
-    const nameInput = createInputObj('name', 'Имя', '', true);
-    const surnameInput = createInputObj('surname', 'Фамилия', '', true);
-
-    const lastNameInput = createInputObj('lastName', 'Отчество');
-    nameInput.input.value = obj.name;
-    surnameInput.input.value = obj.surname;
-    lastNameInput.input.value = obj.lastName;
-    nameInput.input.addEventListener(
-      'input',
-      function (e) {
-        obj.name = e.target.value;
-        // console.log(obj);
-      }
-    );
-    surnameInput.input.addEventListener(
-      'input',
-      function (e) {
-        obj.surname = e.target.value;
-        // console.log(obj);
-      }
-    );
-    lastNameInput.input.addEventListener(
-      'input',
-      function (e) {
-        obj.lastName = e.target.value;
-        // console.log(obj);
-      }
-    );
-    nameDiv.append(nameInput.inputDiv, surnameInput.inputDiv, lastNameInput.inputDiv);
+    const nameDiv = configModalNameDiv(obj,fillName = true);
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
@@ -427,8 +436,6 @@
         'choice',
         function (e) {
           obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
-          // console.log(e.detail.choice.value);
-          // console.log(obj);
         },
         false,
       );
@@ -441,7 +448,6 @@
         'input',
         function (e) {
           obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
-          // console.log(obj);
         },
         false,
       );
@@ -451,32 +457,7 @@
       const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
       contactDeleteButton.append(contactDeleteIcon);
       contactDeleteButtons.push(contactDeleteButton);
-      contactDeleteButton.addEventListener(
-        'click',
-        function (e) {
-          e.preventDefault();
-          let elementToWorkWith = null;
-          // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
-          // тк присутствует следующая вложенность объектов снизу вверх:
-          // path -> g -> svg -> a
-          if (e.target.tagName === 'path') {
-            elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-          } else if (e.target.tagName === 'g') {
-            elementToWorkWith = e.target.parentElement.parentElement;
-          } else if (e.target.tagName === 'svg') {
-            elementToWorkWith = e.target.parentElement;
-          } else {
-            elementToWorkWith = e.target;
-          }
-          // console.log(contactDeleteButtons.indexOf(elementToWorkWith));
-          const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
-          elementToWorkWith.parentElement.remove();
-          contactDeleteButtons.splice(elementNumber, 1);
-          contactValueInputs.splice(elementNumber, 1);
-          contactTypeChoices.splice(elementNumber, 1);
-          obj.contacts.splice(elementNumber, 1);
-          // console.log(obj);
-        });
+      configContactDeleteButton(contactDeleteButton,obj,contactDeleteButtons,contactValueInputs,contactTypeChoices);
 
       contactItemDiv.append(contactValueInput, contactDeleteButton);
       contactsList.append(contactItemDiv);
@@ -491,87 +472,9 @@
     const addContactIcon = createIcon('contact-add', 'contact-add-icon');
     addContactButton.append(addContactIcon, addContactSpan);
 
-    addContactButton.addEventListener(
-      'click',
-      function (e) {
-        e.preventDefault();
+    configAddContactButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
 
-        const newContact = {
-          'type': 'other',
-          'value': ''
-        }
-        obj.contacts.push(newContact);
-
-        const contactItemDivs = document.querySelectorAll('.contact__item-div');
-        if (contactItemDivs[contactItemDivs.length - 1] !== undefined) {
-          contactItemDivs[contactItemDivs.length - 1].classList.add('mb-2');
-        }
-
-        const contactItemDiv = document.createElement('div');
-        contactItemDiv.classList.add('d-flex', 'contact__item-div');
-
-        const contactTypeSelect = createSelect(values, 'sel1');
-        contactItemDiv.append(contactTypeSelect);
-        const contactItemSelect = configureSelect(contactTypeSelect);
-
-        contactTypeChoices.push(contactItemSelect);
-        contactItemSelect.setChoiceByValue('other');
-        contactItemSelect.passedElement.element.addEventListener(
-          'choice',
-          function (e) {
-            // console.log(contactTypeChoices.indexOf(contactItemSelect));
-            obj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
-            // console.log(obj);
-          },
-          false,
-        );
-
-        const contactValueInput = document.createElement('input');
-        contactValueInput.classList.add('p-1', 'mw-75');
-        contactValueInputs.push(contactValueInput);
-        contactValueInput.addEventListener(
-          'input',
-          function (e) {
-            obj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
-            // console.log(obj);
-          },
-          false,
-        );
-
-        const contactDeleteButton = document.createElement('a');
-        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
-        const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
-        contactDeleteButton.append(contactDeleteIcon);
-        contactDeleteButtons.push(contactDeleteButton);
-        contactDeleteButton.addEventListener(
-          'click',
-          function (e) {
-            e.preventDefault();
-            let elementToWorkWith = null;
-            // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
-            // тк присутствует следующая вложенность объектов снизу вверх:
-            // path -> g -> svg -> a
-            if (e.target.tagName === 'path') {
-              elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-            } else if (e.target.tagName === 'g') {
-              elementToWorkWith = e.target.parentElement.parentElement;
-            } else if (e.target.tagName === 'svg') {
-              elementToWorkWith = e.target.parentElement;
-            } else {
-              elementToWorkWith = e.target;
-            }
-            const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
-            elementToWorkWith.parentElement.remove();
-            contactDeleteButtons.splice(elementNumber, 1);
-            obj.contacts.splice(elementNumber, 1);
-            // console.log(obj);
-          });
-
-        // console.log(obj)
-        contactItemDiv.append(contactValueInput, contactDeleteButton);
-        contactsList.append(contactItemDiv);
-      }
-    );
+    contactsDiv.append(addContactButton);
 
     const saveButton = document.createElement('a');
     saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
@@ -588,9 +491,6 @@
         }
       }
     );
-
-    contactsDiv.append(addContactButton);
-
 
     const deleteButton = document.createElement('a');
     deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'client-delete-button');
@@ -617,7 +517,7 @@
   }
 
   /*
-    Конфигурирование кнопк добавления новго контакта
+    Конфигурирование кнопки добавления нового контакта
     Для конфигурирования используются:
     1) сама кнопка
     2) объект с данным о клиенте
@@ -627,7 +527,7 @@
     6) список элементов контактов
   */
 
-  function congigAddContactButton(addContactButton, clientObj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList) {
+  function configAddContactButton(addContactButton, clientObj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList) {
     addContactButton.addEventListener(
       'click',
       function (e) {
@@ -658,7 +558,7 @@
           function (e) {
             // console.log(contactTypeChoices.indexOf(contactItemSelect));
             clientObj.contacts[contactTypeChoices.indexOf(contactItemSelect)].type = e.detail.choice.value;
-            console.log(clientObj);
+            // console.log(clientObj);
           },
           false,
         );
@@ -670,7 +570,6 @@
           'input',
           function (e) {
             clientObj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
-            console.log(clientObj);
           },
           false,
         );
@@ -680,33 +579,50 @@
         const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
         contactDeleteButton.append(contactDeleteIcon);
         contactDeleteButtons.push(contactDeleteButton);
-        contactDeleteButton.addEventListener(
-          'click',
-          function (e) {
-            e.preventDefault();
-            let elementToWorkWith = null;
-            // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
-            // тк присутствует следующая вложенность объектов снизу вверх:
-            // path -> g -> svg -> a
-            if (e.target.tagName === 'path') {
-              elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-            } else if (e.target.tagName === 'g') {
-              elementToWorkWith = e.target.parentElement.parentElement;
-            } else if (e.target.tagName === 'svg') {
-              elementToWorkWith = e.target.parentElement;
-            } else {
-              elementToWorkWith = e.target;
-            }
-            const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
-            elementToWorkWith.parentElement.remove();
-            contactDeleteButtons.splice(elementNumber, 1);
-            clientObj.contacts.splice(elementNumber, 1);
-            console.log(clientObj);
-          });
+        configContactDeleteButton(contactDeleteButton,clientObj,contactDeleteButtons,contactValueInputs,contactTypeChoices);
 
-        console.log(clientObj)
+        // console.log(clientObj)
         contactItemDiv.append(contactValueInput, contactDeleteButton);
         contactsList.append(contactItemDiv);
+      }
+    );
+  }
+
+  /*
+    Конфигурирование кнопки удаления контакта
+    Для конфигурирования используются:
+    1) сама кнопка
+    2) объект с данным о клиенте
+    3) список кнопок удаления контактов
+    4) список инпутов со значением контакта
+    5) список селектов с типом контакта
+  */
+
+  function configContactDeleteButton(contactDeleteButton,clientObj,contactDeleteButtons,contactValueInputs,contactTypeChoices) {
+    contactDeleteButton.addEventListener(
+      'click',
+      function (e) {
+        e.preventDefault();
+        let elementToWorkWith = null;
+        // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
+        // тк присутствует следующая вложенность объектов снизу вверх:
+        // path -> g -> svg -> a
+        if (e.target.tagName === 'path') {
+          elementToWorkWith = e.target.parentElement.parentElement.parentElement;
+        } else if (e.target.tagName === 'g') {
+          elementToWorkWith = e.target.parentElement.parentElement;
+        } else if (e.target.tagName === 'svg') {
+          elementToWorkWith = e.target.parentElement;
+        } else {
+          elementToWorkWith = e.target;
+        }
+        const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
+        elementToWorkWith.parentElement.remove();
+        contactDeleteButtons.splice(elementNumber, 1);
+        contactValueInputs.splice(elementNumber, 1);
+        contactTypeChoices.splice(elementNumber, 1);
+        clientObj.contacts.splice(elementNumber, 1);
+        // console.log(clientObj);
       }
     );
   }
@@ -728,33 +644,7 @@
     modalHeaderTitle.textContent = 'Новый клиент';
     modalHeaderDiv.append(modalHeaderTitle);
 
-    const nameDiv = document.createElement('div');
-    nameDiv.classList.add('d-flex', 'flex-column');
-    const nameInput = createInputObj('name', 'Имя', '', true);
-    const surnameInput = createInputObj('surname', 'Фамилия', '', true);
-    const lastNameInput = createInputObj('lastName', 'Отчество');
-    nameInput.input.addEventListener(
-      'input',
-      function (e) {
-        obj.name = e.target.value;
-        // console.log(obj);
-      }
-    );
-    surnameInput.input.addEventListener(
-      'input',
-      function (e) {
-        obj.surname = e.target.value;
-        // console.log(obj);
-      }
-    );
-    lastNameInput.input.addEventListener(
-      'input',
-      function (e) {
-        obj.lastName = e.target.value;
-        // console.log(obj);
-      }
-    );
-    nameDiv.append(nameInput.inputDiv, surnameInput.inputDiv, lastNameInput.inputDiv);
+    const nameDiv = configModalNameDiv(obj);
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
@@ -773,7 +663,7 @@
     addContactSpan.textContent = 'Добавить контакт';
     const addContactIcon = createIcon('contact-add', 'contact-add-icon');
     addContactButton.append(addContactIcon, addContactSpan);
-    congigAddContactButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
+    configAddContactButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
 
     contactsDiv.append(addContactButton);
 
@@ -1148,8 +1038,7 @@
     const data = await deleteClientByID(clientData.id);
     if (data) {
       console.log('DELETE');
-      clients = await getClients();
-      await fillClientsListView(clientsListDiv, clients);
+      await filterClients()
     }
   }
 
@@ -1197,11 +1086,6 @@
     block.append(clienstListView);
   }
 
-
-
-
-
-
   const modal = createModal();
   const app = getContainer();
   const searchInput = createSearchInput();
@@ -1216,46 +1100,9 @@
   app.append(searchInput, appHeader, clientsListHeader, clientsListDiv, appPageBottom);
   await fillClientsListView(clientsListDiv, clients);
 
-
-
-  // let clients = await getClients();
-  // console.log(clients);
-  // API Usage
-  /*
-  let clients = await getClients();
-  console.log(clients);
-  clients[clients.length-1].surname = 'Монастырук'
-  clients[clients.length-1].name = 'Владимир'
-  clients[clients.length-1].lastName = 'Константинович'
-  console.log(clients[clients.length-1]);
-  let clientLast = await changeClientByID(clients[clients.length-1].id, clients[clients.length-1]);
-  console.log(clientLast);
-  let newClient = await createNewClient(clientObj);
-  let idToDelete = newClient.id;
-
-  newClient = await createNewClient(clientObj);
-  newClient = await createNewClient(clientObj);
-  clients = await getClients();
-  clients[clients.length-1].surname = 'Монастырук'
-  clients[clients.length-1].name = 'Владимир'
-  clients[clients.length-1].lastName = 'Константинович'
-  console.log(clients[clients.length-1]);
-  clientLast = await changeClientByID(clients[clients.length-1].id, clients[clients.length-1]);
-  console.log(clientLast);
-
-  await deleteClientByID(idToDelete);
-  clients = await getClients();
-  console.log(clients);
-  console.log(await getClientByID(clients[0].id));
-  */
-
-
   // TODO:
-  // 2) Сделать добавление формы в модальное окно
-  // 3) Сделать обработку событий удаления, изменения данных в бд
+
   // 4) Расставить обработку статусов http-запросов
-  // 5) Добавление тултипов
-  // 6) Поиск по данным
   // 7) Менять svg для кнопок изменения и удаления при нажатиях на них
   // 7*) Добавить анимацию вращения
   // 8) Валидация формы добавления / изменения данных
