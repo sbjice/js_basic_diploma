@@ -126,7 +126,7 @@
     const searchInput = document.createElement('input');
     searchInput.addEventListener(
       'input',
-      async function(e){
+      async function (e) {
         await restartSearchInputTimer();
       }
     )
@@ -149,7 +149,7 @@
 
   async function filterClients() {
     const rawClients = await getClients();
-    if (searchInput.value!=='') {
+    if (searchInput.value !== '') {
       clients = rawClients.filter(item => {
         return [item.surname, item.name, item.lastName].join(' ').includes(searchInput.value);
       });
@@ -183,7 +183,7 @@
     modalCloseButton.append(modalCloseIcon);
     modalCloseButton.addEventListener(
       'click',
-      function(e) {
+      function (e) {
         overlay.style.top = '-100%';
         body.classList.toggle('scroll-disable', false);
         modal.innerHTML = '';
@@ -192,6 +192,10 @@
     );
 
     modal.append(modalCloseButton);
+    const transparentModalSpinner = createSpinner('spinner-container_bg-transparent');
+    modal.append(transparentModalSpinner.spinnerContainer);
+    const whiteModalSpinner = createSpinner('spinner-container_bg-transparent');
+    modal.append(whiteModalSpinner.spinnerContainer);
 
     overlay.append(modal);
     body.append(overlay);
@@ -227,6 +231,33 @@
         this.modal.append(modalCloseButton);
         this.modal.append(form);
         return this;
+      },
+      async showModalForClient(client) {
+        this.modal.innerHTML = '';
+        this.modal.append(modalCloseButton);
+        this.modal.append(transparentModalSpinner.spinnerContainer);
+        this.showModal();
+        transparentModalSpinner.showSpinner();
+        setTimeout(async () => {
+          const clientData = await getClientByID(client.id);
+          const modalContent = createChangeClientModalContent(clientData, this);
+          transparentModalSpinner.hideSpinner();
+          this.insertFormIntoModal(modalContent.container);
+        }, 1000);
+      },
+      showTransparentSpinner() {
+        this.modal.append(transparentModalSpinner.spinnerContainer);
+        transparentModalSpinner.showSpinner();
+      },
+      hideTransparentSpinner() {
+        transparentModalSpinner.hideSpinner();
+      },
+      showWhiteSpinner() {
+        this.modal.append(whiteModalSpinner.spinnerContainer);
+        whiteModalSpinner.showSpinner();
+      },
+      hideWhiteSpinner() {
+        whiteModalSpinner.hideSpinner();
       }
     }
   }
@@ -360,14 +391,14 @@
     Параметр fillName отвечает за необходимость заполнения инпутов имеющимися данными
   */
 
-  function configModalNameDiv(clientObj,fillName = false) {
+  function configModalNameDiv(clientObj, fillName = false) {
     const nameDiv = document.createElement('div');
     nameDiv.classList.add('d-flex', 'flex-column');
     const nameInput = createInputObj('name', 'Имя', '', true);
     const surnameInput = createInputObj('surname', 'Фамилия', '', true);
     const lastNameInput = createInputObj('lastName', 'Отчество');
 
-    if (fillName!==undefined && fillName) {
+    if (fillName !== undefined && fillName) {
       nameInput.input.value = clientObj.name;
       surnameInput.input.value = clientObj.surname;
       lastNameInput.input.value = clientObj.lastName;
@@ -412,7 +443,7 @@
     modalHeaderText.textContent = 'ID:' + obj.id;
     modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
 
-    const nameDiv = configModalNameDiv(obj,fillName = true);
+    const nameDiv = configModalNameDiv(obj, fillName = true);
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
@@ -458,7 +489,7 @@
       const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
       contactDeleteButton.append(contactDeleteIcon);
       contactDeleteButtons.push(contactDeleteButton);
-      configContactDeleteButton(contactDeleteButton,obj,contactDeleteButtons,contactValueInputs,contactTypeChoices);
+      configContactDeleteButton(contactDeleteButton, obj, contactDeleteButtons, contactValueInputs, contactTypeChoices);
 
       contactItemDiv.append(contactValueInput, contactDeleteButton);
       contactsList.append(contactItemDiv);
@@ -483,12 +514,17 @@
     saveButton.addEventListener(
       'click',
       async function (e) {
+        modal.showTransparentSpinner();
         const dat = await changeClientByID(obj.id, obj);
         // console.log(dat);
         if (dat) {
-          modal.hideModal();
+          setTimeout(async () => {
 
-          await filterClients();
+            modal.hideTransparentSpinner();
+            modal.hideModal();
+
+            await filterClients();
+          }, 1000)
         }
       }
     );
@@ -580,7 +616,7 @@
         const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
         contactDeleteButton.append(contactDeleteIcon);
         contactDeleteButtons.push(contactDeleteButton);
-        configContactDeleteButton(contactDeleteButton,clientObj,contactDeleteButtons,contactValueInputs,contactTypeChoices);
+        configContactDeleteButton(contactDeleteButton, clientObj, contactDeleteButtons, contactValueInputs, contactTypeChoices);
 
         // console.log(clientObj)
         contactItemDiv.append(contactValueInput, contactDeleteButton);
@@ -599,7 +635,7 @@
     5) список селектов с типом контакта
   */
 
-  function configContactDeleteButton(contactDeleteButton,clientObj,contactDeleteButtons,contactValueInputs,contactTypeChoices) {
+  function configContactDeleteButton(contactDeleteButton, clientObj, contactDeleteButtons, contactValueInputs, contactTypeChoices) {
     contactDeleteButton.addEventListener(
       'click',
       function (e) {
@@ -674,13 +710,18 @@
     saveButton.addEventListener(
       'click',
       async function (e) {
-        const dat = await createNewClient(obj);
-        // console.log(dat);
-        if (dat) {
-          modal.hideModal();
-          clients = [...clients, dat];
-          fillClientsListView(clientsListDiv, clients);
-        }
+        modal.showTransparentSpinner();
+        setTimeout(async () => {
+          const dat = await createNewClient(obj);
+          // console.log(dat);
+          if (dat) {
+            clients = [...clients, dat];
+            modal.hideTransparentSpinner();
+            modal.hideModal();
+            fillClientsListView(clientsListDiv, clients);
+          }
+        }, 1000);
+
       }
     );
 
@@ -714,7 +755,7 @@
 
   function createDeleteConfirmModalContent(clientData, modal, previousModal) {
     const container = document.createElement('div');
-    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100', 'justify-content-center','align-items-center');
+    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100', 'justify-content-center', 'align-items-center');
 
 
     const modalHeaderTitle = document.createElement('h3');
@@ -738,15 +779,19 @@
     deleteButton.addEventListener(
       'click',
       async function (e) {
-        await updateClientsDataAfterDelete(clientData);
-        modal.hideModal();
+        modal.showTransparentSpinner();
+        setTimeout(async () => {
+          await updateClientsDataAfterDelete(clientData);
+          modal.hideTransparentSpinner();
+          modal.hideModal();
+        }, 1000);
       }
     );
 
     cancelButton.addEventListener(
       'click',
       function (e) {
-        if (previousModal!==undefined){
+        if (previousModal !== undefined) {
           modal.insertFormIntoModal(previousModal).showModal();
         } else modal.hideModal();
       }
@@ -789,23 +834,23 @@
     }
     const nameSort = await configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__name');
 
-    const dateSortAsc = (a, b)  => {
+    const dateSortAsc = (a, b) => {
       const aCreationDate = new Date(a.createdAt);
       const bCreationDate = new Date(b.createdAt);
       return aCreationDate > bCreationDate;
     }
-    const dateSortDesc = (a, b)  => {
+    const dateSortDesc = (a, b) => {
       const aCreationDate = new Date(a.createdAt);
       const bCreationDate = new Date(b.createdAt);
       return aCreationDate < bCreationDate;
     }
 
-    const updDateSortAsc = (a, b)  => {
+    const updDateSortAsc = (a, b) => {
       const aCreationDate = new Date(a.updatedAt);
       const bCreationDate = new Date(b.updatedAt);
       return aCreationDate > bCreationDate;
     }
-    const updDateSortDesc = (a, b)  => {
+    const updDateSortDesc = (a, b) => {
       const aCreationDate = new Date(a.updatedAt);
       const bCreationDate = new Date(b.updatedAt);
       return aCreationDate < bCreationDate;
@@ -833,7 +878,7 @@
   async function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction, elementClass) {
     const elemSort = document.createElement('a');
     elemSort.classList.add('d-flex', 'd-inline-flex', 'justify-content-start', 'align-items-center');
-    if (elementClass!==undefined) elemSort.classList.add(elementClass);
+    if (elementClass !== undefined) elemSort.classList.add(elementClass);
 
     const elemSortText = document.createElement('span');
     elemSortText.classList.add('d-inline-flex');
@@ -856,12 +901,12 @@
           elemSortValue = 'up';
           elemSortArrow.classList.toggle('arrow-hidden', false);
           elemSortArrow.classList.toggle('arrow-up', true);
-          fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortAscFunction(a,b)));
+          fillClientsListView(clientsListDiv, currentClients.sort((a, b) => sortAscFunction(a, b)));
         } else if (elemSortValue === 'up') {
           elemSortValue = 'down';
           elemSortArrow.classList.toggle('arrow-up', false);
           elemSortArrow.classList.toggle('arrow-down', true);
-          fillClientsListView(clientsListDiv, currentClients.sort((a,b) => sortDescFunction(a,b)));
+          fillClientsListView(clientsListDiv, currentClients.sort((a, b) => sortDescFunction(a, b)));
         } else {
           elemSortValue = '';
           elemSortArrow.classList.toggle('arrow-down', false);
@@ -888,17 +933,25 @@
     Создание контейнера для индикатора загрузки
   */
 
-  function createSpinner() {
+  function createSpinner(defaultClass = 'spinner-container_bg-white') {
     const spinnerContainer = document.createElement('div');
-    spinnerContainer.classList.add('align-items-center', 'justify-content-center', 'spinner-container', 'spinner-container_visible', 'mb-3');
-    spinnerContainer.style.height = '500px';
+    spinnerContainer.classList.add('align-items-center', 'justify-content-center', 'spinner-container', 'spinner-container_visible', defaultClass, 'mb-3');
+    spinnerContainer.style.height = '100%';
     spinnerContainer.style.width = '100%';
 
     const spinner = document.createElement('div');
     spinner.classList.add('loader', 'simple-circle');
     spinnerContainer.append(spinner);
 
-    return spinnerContainer;
+    return {
+      spinnerContainer,
+      showSpinner() {
+        this.spinnerContainer.classList.toggle('spinner-container_visible', true);
+      },
+      hideSpinner() {
+        this.spinnerContainer.classList.toggle('spinner-container_visible', false);
+      }
+    };
   }
 
   /*
@@ -1005,21 +1058,20 @@
 
     const deleteClientButton = createDataEditButton('clients__list-delete-button', 'delete', 'delete-element-icon', 'Удалить');
 
-    changeClientButton.addEventListener('click', async e => {
-      e.preventDefault();
-      const clientData = await getClientByID(client.id);
-      const modalContent = createChangeClientModalContent(clientData, modal);
-      modal.insertFormIntoModal(modalContent.container).showModal();
-    });
+    changeClientButton.addEventListener(
+      'click',
+      async function (e) {
+        e.preventDefault();
+        await modal.showModalForClient(client);
+      });
 
     deleteClientButton.addEventListener(
       'click',
-      async function(e) {
-      e.preventDefault();
-      const modalContent = createDeleteConfirmModalContent(client, modal);
-      modal.insertFormIntoModal(modalContent.container).showModal();
-
-    });
+      async function (e) {
+        e.preventDefault();
+        const modalContent = createDeleteConfirmModalContent(client, modal);
+        modal.insertFormIntoModal(modalContent.container).showModal();
+      });
 
     clientLi.append(
       idSpan, nameSpan,
@@ -1052,9 +1104,10 @@
     const clientData = await getClientByID(client.id);
     const data = await deleteClientByID(clientData.id);
     if (data) {
-      console.log('DELETE');
-      await filterClients()
+      // console.log('DELETE');
+      await filterClients();
     }
+
   }
 
   /*
@@ -1083,7 +1136,7 @@
     newClientButton.addEventListener(
       'click',
       async function (e) {
-        console.log('new client button pressed');
+        // console.log('new client button pressed');
         const newClientContent = createNewClientModalContent(modal);
         modal.insertFormIntoModal(newClientContent.container).showModal();
       }
@@ -1098,19 +1151,20 @@
   function fillClientsListView(block, clients, showSpinner = false) {
     block.innerHTML = '';
     if (showSpinner) {
-      spinner.classList.toggle('spinner-container_visible', true);
-          // Код используется для демонстрации работы спиннера
-      setTimeout(()=>{
+      spinner.showSpinner();
+      // Код используется для демонстрации работы спиннера
+      setTimeout(() => {
         const clienstListView = createClientsListView(clients);
-        spinner.classList.toggle('spinner-container_visible', false);
+        spinner.hideSpinner();
         block.append(clienstListView);
       }, 1000);
       return;
     }
 
     // Код используемый в приложении при работе
+    spinner.showSpinner();
     const clienstListView = createClientsListView(clients);
-    // spinner.classList.toggle('spinner-container_visible', false);
+    spinner.hideSpinner();
     block.append(clienstListView);
 
   }
@@ -1128,15 +1182,14 @@
   let clients = await getClients();
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
-  app.append(searchInput, appHeader, clientsListHeader, spinner, clientsListDiv, appPageBottom);
+  app.append(searchInput, appHeader, clientsListHeader, spinner.spinnerContainer, clientsListDiv, appPageBottom);
   fillClientsListView(clientsListDiv, clients, showSpinner = true);
 
   // TODO:
 
-  // 4) Расставить обработку статусов http-запросов
-  // 7) Менять svg для кнопок изменения и удаления при нажатиях на них
-  // 7*) Добавить анимацию вращения
-  // 8) Валидация формы добавления / изменения данных
-  // 9) Рефакторинг кода, DRY
+  // 1) Расставить обработку статусов http-запросов
+  // 2) Валидация формы добавления / изменения данных
+  // 3) Рефакторинг кода, DRY
+  // 4) Реализовать автодополнение для поиска
 
 })();

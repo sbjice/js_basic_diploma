@@ -73,6 +73,7 @@ input:focus{
   transition: top .3s ease-in-out;
 }
 
+
 .content {
   /* font-size: 12px; */
   overflow-y: auto;
@@ -428,12 +429,24 @@ The loaders use CSS custom properties (variables) to control the attributes of t
   display: none;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
-  height: 500px;
+  height: 100%;
+  width: 100%;
 }
 
 .spinner-container_visible {
   display: flex;
+}
+
+.spinner-container_bg-white {
+  background-color: #fff;
+}
+
+.spinner-container_bg-transparent {
+  top: 0;
+  position: absolute;
+  z-index: 100;
+  background-color: #333333;
+  opacity: 0.6;
 }
 
 
