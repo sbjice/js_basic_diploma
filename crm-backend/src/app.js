@@ -108,12 +108,17 @@
     app.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
 
     const header = document.createElement('div');
-    header.classList.add('d-flex', 'flex-row', 'w-100', 'p-3', 'justify-content-start', 'header', 'mb-3');
+    header.classList.add('d-flex', 'flex-row', 'w-100', 'justify-content-center', 'header', 'align-items-start', 'mb-3');
+
+    const headerContainer = document.createElement('div');
+    headerContainer.style.maxWidth = '1280px';
+    headerContainer.classList.add('d-flex', 'flex-row', 'justify-content-start', 'mx-auto', 'my-3', 'align-items-center', 'w-100');
 
     const headerIcon = createIcon('logo', 'header-logo', '50', '50', '0 0 50 50');
     headerIcon.classList.add('mr-5');
     headerIcon.classList.remove('svg-icon');
-    header.append(headerIcon);
+    headerContainer.append(headerIcon);
+    header.append(headerContainer);
 
 
     const container = document.createElement('div');
@@ -121,7 +126,7 @@
     app.append(header, container);
     return {
       app,
-      header,
+      headerContainer,
       container,
     };
   }
@@ -134,6 +139,7 @@
     const searchInput = document.createElement('input');
     searchInput.classList.add('header__search-input');
     searchInput.style.width = '43%';
+    searchInput.placeholder = 'Введите запрос';
     searchInput.addEventListener(
       'input',
       async function (e) {
@@ -1243,7 +1249,7 @@
   let clients = await getClients();
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
-  app.header.append(searchInput);
+  app.headerContainer.append(searchInput);
   app.container.append(appHeader, clientsListHeader, spinner.spinnerContainer, clientsListDiv, appPageBottom);
   fillClientsListView(clientsListDiv, clients, showSpinner = true);
 
