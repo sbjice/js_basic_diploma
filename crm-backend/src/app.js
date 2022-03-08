@@ -41,12 +41,15 @@
       </g>`,
     'arrow': `<g opacity="0.7">
       <path d="M2 6L2.705 6.705L5.5 3.915L5.5 10L6.5 10L6.5 3.915L9.29 6.71L10 6L6 2L2 6Z" fill="#9873FF"/>
-    </g>`,
+      </g>`,
     'modal-close-icon': `<g opacity="0.7">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M22.2333 7.73333L21.2666 6.76666L14.4999 13.5334L7.73324 6.7667L6.76658 7.73336L13.5332 14.5L6.7666 21.2667L7.73327 22.2333L14.4999 15.4667L21.2666 22.2334L22.2332 21.2667L15.4666 14.5L22.2333 7.73333Z" fill="#B0B0B0"/>
-    </g>`
+      </g>`,
+    'logo': `<g opacity="0.7">
+      <circle cx="25" cy="25" r="25" fill="#9873FF"/>
+      <path d="M17.2617 29.082C17.2617 29.75 17.1035 30.3154 16.7871 30.7783C16.4766 31.2354 16.0107 31.584 15.3896 31.8242C14.7686 32.0586 13.9951 32.1758 13.0693 32.1758C12.3838 32.1758 11.7949 32.1318 11.3027 32.0439C10.8164 31.9561 10.3242 31.8096 9.82617 31.6045V29.3896C10.3594 29.6299 10.9307 29.8291 11.54 29.9873C12.1553 30.1396 12.6943 30.2158 13.1572 30.2158C13.6787 30.2158 14.0508 30.1396 14.2734 29.9873C14.502 29.8291 14.6162 29.624 14.6162 29.3721C14.6162 29.208 14.5693 29.0615 14.4756 28.9326C14.3877 28.7979 14.1943 28.6484 13.8955 28.4844C13.5967 28.3145 13.1279 28.0947 12.4893 27.8252C11.874 27.5674 11.3672 27.3066 10.9688 27.043C10.5762 26.7793 10.2832 26.4688 10.0898 26.1113C9.90234 25.748 9.80859 25.2881 9.80859 24.7314C9.80859 23.8232 10.1602 23.1406 10.8633 22.6836C11.5723 22.2207 12.5186 21.9893 13.7021 21.9893C14.3115 21.9893 14.8916 22.0508 15.4424 22.1738C15.999 22.2969 16.5703 22.4932 17.1562 22.7627L16.3477 24.6963C15.8613 24.4854 15.4014 24.3125 14.9678 24.1777C14.54 24.043 14.1035 23.9756 13.6582 23.9756C13.2656 23.9756 12.9697 24.0283 12.7705 24.1338C12.5713 24.2393 12.4717 24.4004 12.4717 24.6172C12.4717 24.7754 12.5215 24.916 12.6211 25.0391C12.7266 25.1621 12.9258 25.2998 13.2188 25.4521C13.5176 25.5986 13.9541 25.7891 14.5283 26.0234C15.085 26.252 15.5684 26.4922 15.9785 26.7441C16.3887 26.9902 16.7051 27.2979 16.9277 27.667C17.1504 28.0303 17.2617 28.502 17.2617 29.082ZM22.0342 18.3242V24.4414C22.0342 24.8105 22.0195 25.1797 21.9902 25.5488C21.9609 25.918 21.9287 26.2871 21.8936 26.6562H21.9287C22.1104 26.3984 22.2949 26.1436 22.4824 25.8916C22.6758 25.6396 22.8809 25.3965 23.0977 25.1621L25.8486 22.1738H28.8721L24.9697 26.4365L29.1094 32H26.0156L23.1855 28.0186L22.0342 28.9414V32H19.3535V18.3242H22.0342ZM33.1963 18.3242V21.5059C33.1963 21.875 33.1846 22.2412 33.1611 22.6045C33.1436 22.9678 33.1201 23.249 33.0908 23.4482H33.1963C33.4541 23.0439 33.8057 22.7012 34.251 22.4199C34.6963 22.1328 35.2734 21.9893 35.9824 21.9893C37.084 21.9893 37.9775 22.4199 38.6631 23.2812C39.3486 24.1426 39.6914 25.4053 39.6914 27.0693C39.6914 28.1885 39.5332 29.1289 39.2168 29.8906C38.9004 30.6465 38.458 31.2178 37.8896 31.6045C37.3213 31.9854 36.6621 32.1758 35.9121 32.1758C35.1914 32.1758 34.623 32.0469 34.207 31.7891C33.791 31.5312 33.4541 31.2412 33.1963 30.9189H33.0117L32.5635 32H30.5156V18.3242H33.1963ZM35.1211 24.1338C34.6523 24.1338 34.2803 24.2305 34.0049 24.4238C33.7295 24.6172 33.5273 24.9072 33.3984 25.2939C33.2754 25.6807 33.208 26.1699 33.1963 26.7617V27.0518C33.1963 28.0068 33.3369 28.7393 33.6182 29.249C33.8994 29.7529 34.4121 30.0049 35.1562 30.0049C35.707 30.0049 36.1436 29.75 36.4658 29.2402C36.7939 28.7305 36.958 27.9951 36.958 27.0342C36.958 26.0732 36.7939 25.3496 36.4658 24.8633C36.1377 24.377 35.6895 24.1338 35.1211 24.1338ZM41.5283 30.7432C41.5283 30.1924 41.6777 29.8057 41.9766 29.583C42.2812 29.3604 42.6475 29.249 43.0752 29.249C43.4912 29.249 43.8486 29.3604 44.1475 29.583C44.4521 29.8057 44.6045 30.1924 44.6045 30.7432C44.6045 31.2705 44.4521 31.6514 44.1475 31.8857C43.8486 32.1201 43.4912 32.2373 43.0752 32.2373C42.6475 32.2373 42.2812 32.1201 41.9766 31.8857C41.6777 31.6514 41.5283 31.2705 41.5283 30.7432Z" fill="white"/>
+      </g>`
   }
-
 
   /*
     Реализация функций работы с API
@@ -55,7 +58,6 @@
   async function getClients() {
     const response = await fetch(API);
     const data = await response.json();
-    // console.log(response);
     return data;
   }
 
@@ -101,10 +103,44 @@
     Создание контейнера для всего приложения
   */
 
-  function getContainer(selector = document.getElementById('app')) {
-    const container = selector;
-    container.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
-    return container;
+  function getRootElements(selector = document.getElementById('app')) {
+    const app = selector;
+    app.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+
+    const header = document.createElement('div');
+    header.classList.add('d-flex', 'flex-row', 'w-100', 'p-3', 'justify-content-start', 'header', 'mb-3');
+
+    const headerIcon = createIcon('logo', 'header-logo', '50', '50', '0 0 50 50');
+    headerIcon.classList.add('mr-5');
+    headerIcon.classList.remove('svg-icon');
+    header.append(headerIcon);
+
+
+    const container = document.createElement('div');
+    container.classList.add('container', 'd-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+    app.append(header, container);
+    return {
+      app,
+      header,
+      container,
+    };
+  }
+
+  /*
+    Создание поля поиска для фильтрации данных
+  */
+
+  function createSearchInput() {
+    const searchInput = document.createElement('input');
+    searchInput.classList.add('header__search-input');
+    searchInput.style.width = '43%';
+    searchInput.addEventListener(
+      'input',
+      async function (e) {
+        await restartSearchInputTimer();
+      }
+    )
+    return searchInput;
   }
 
   /*
@@ -119,21 +155,6 @@
   }
 
   /*
-    Создание поля поиска для фильтрации данных
-  */
-
-  function createSearchInput() {
-    const searchInput = document.createElement('input');
-    searchInput.addEventListener(
-      'input',
-      async function (e) {
-        await restartSearchInputTimer();
-      }
-    )
-    return searchInput;
-  }
-
-  /*
     Реализация перезапуска таймера ввода данных для поиска по клиентам
   */
 
@@ -141,7 +162,6 @@
     clearTimeout(searchInputTimeout);
     searchInputTimeout = setTimeout(filterClients, 300);
   }
-
 
   /*
     Функция фильтрации данных о клиентах
@@ -348,7 +368,7 @@
     Конфигурирование элемента ввода контактных данных
   */
 
-  function configureSelect(select) {
+  function configSelect(select) {
     const choicesElement = new Choices(select, {
       searchEnabled: false,
       itemSelectText: '',
@@ -426,6 +446,42 @@
   }
 
   /*
+    Создание компонента для списка ошибок, получемого от сервера
+    Планируется переиспользования для отображения ошибок валидации
+  */
+
+  function createModalErrorsList() {
+    const errorsList = document.createElement('ul');
+    errorsList.classList.add('flex-column', 'mb-2', 'align-items-center', 'justify-content-center');
+    let errorsListHidden = false;
+    return {
+      errorsList,
+      errorsListHidden,
+      clear() {
+        this.errorsList.innerHTML = '';
+      },
+      fillWithErrors(errors) {
+        this.clear();
+        errors.forEach((error, index, array) => {
+          const errorItem = document.createElement('li');
+          errorItem.classList.add('d-inline-flex', 'text-danger');
+          if(index === array.length-1) errorItem.classList.add('mb-1');
+          errorItem.textContent = error.message;
+          this.errorsList.append(errorItem);
+        })
+      },
+      hide() {
+        this.errorsList.style.display = 'none';
+        this.errorsListHidden = true;
+      },
+      show() {
+        this.errorsList.style.display = 'flex';
+        this.errorsListHidden = false;
+      }
+    }
+  }
+
+  /*
     Создание наполнения модального окна для изменения данных клиента
   */
 
@@ -460,7 +516,7 @@
 
       const contactTypeSelect = createSelect(values, 'sel1');
       contactItemDiv.append(contactTypeSelect);
-      const contactItemSelect = configureSelect(contactTypeSelect);
+      const contactItemSelect = configSelect(contactTypeSelect);
 
       contactTypeChoices.push(contactItemSelect);
       contactItemSelect.setChoiceByValue(item.type);
@@ -504,9 +560,11 @@
     const addContactIcon = createIcon('contact-add', 'contact-add-icon');
     addContactButton.append(addContactIcon, addContactSpan);
 
-    configAddContactButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
+    configContactAddButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
 
     contactsDiv.append(addContactButton);
+
+    const errorsList = createModalErrorsList();
 
     const saveButton = document.createElement('a');
     saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
@@ -516,15 +574,18 @@
       async function (e) {
         modal.showTransparentSpinner();
         const dat = await changeClientByID(obj.id, obj);
-        // console.log(dat);
-        if (dat) {
+        if (dat.errors === undefined) {
           setTimeout(async () => {
-
+            errorsList.clear();
+            errorsList.hide();
             modal.hideTransparentSpinner();
             modal.hideModal();
-
             await filterClients();
           }, 1000)
+        } else {
+          modal.hideTransparentSpinner();
+          errorsList.show();
+          errorsList.fillWithErrors(dat.errors);
         }
       }
     );
@@ -533,7 +594,7 @@
     deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'client-delete-button');
     deleteButton.textContent = 'Удалить клиента';
 
-    container.append(modalHeaderDiv, nameDiv, contactsDiv, saveButton, deleteButton);
+    container.append(modalHeaderDiv, nameDiv, contactsDiv, errorsList.errorsList, saveButton, deleteButton);
 
     deleteButton.addEventListener(
       'click',
@@ -564,7 +625,7 @@
     6) список элементов контактов
   */
 
-  function configAddContactButton(addContactButton, clientObj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList) {
+  function configContactAddButton(addContactButton, clientObj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList) {
     addContactButton.addEventListener(
       'click',
       function (e) {
@@ -586,7 +647,7 @@
 
         const contactTypeSelect = createSelect(values, 'sel1');
         contactItemDiv.append(contactTypeSelect);
-        const contactItemSelect = configureSelect(contactTypeSelect);
+        const contactItemSelect = configSelect(contactTypeSelect);
 
         contactTypeChoices.push(contactItemSelect);
         contactItemSelect.setChoiceByValue('other');
@@ -700,7 +761,7 @@
     addContactSpan.textContent = 'Добавить контакт';
     const addContactIcon = createIcon('contact-add', 'contact-add-icon');
     addContactButton.append(addContactIcon, addContactSpan);
-    configAddContactButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
+    configContactAddButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
 
     contactsDiv.append(addContactButton);
 
@@ -1171,7 +1232,7 @@
 
 
   const modal = createModal();
-  const app = getContainer();
+  const app = getRootElements();
   const searchInput = createSearchInput();
   const appHeader = createAppHeader();
   const clientsListHeader = await createClientsListHeader();
@@ -1182,7 +1243,8 @@
   let clients = await getClients();
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
-  app.append(searchInput, appHeader, clientsListHeader, spinner.spinnerContainer, clientsListDiv, appPageBottom);
+  app.header.append(searchInput);
+  app.container.append(appHeader, clientsListHeader, spinner.spinnerContainer, clientsListDiv, appPageBottom);
   fillClientsListView(clientsListDiv, clients, showSpinner = true);
 
   // TODO:
