@@ -391,7 +391,7 @@
     const input = document.createElement('input');
     input.name = inputName;
     input.placeholder = placeholderValue;
-    input.classList.add('input', 'p-1', 'border-top-0', 'border-right-0', 'border-left-0', 'w-100');
+    input.classList.add('input', 'p-1', 'border-top-0', 'border-right-0', 'border-left-0', 'w-100', 'border');
     const label = document.createElement('label');
     label.for = input.name;
     label.textContent = labelText;
@@ -432,12 +432,16 @@
     nameInput.input.addEventListener(
       'input',
       function (e) {
+        if (e.target.value==='') e.target.classList.toggle('border-danger', true);
+        else e.target.classList.toggle('border-danger', false);
         clientObj.name = e.target.value;
       }
     );
     surnameInput.input.addEventListener(
       'input',
       function (e) {
+        if (e.target.value==='') e.target.classList.toggle('border-danger', true);
+        else e.target.classList.toggle('border-danger', false);
         clientObj.surname = e.target.value;
       }
     );
@@ -448,7 +452,12 @@
       }
     );
     nameDiv.append(nameInput.inputDiv, surnameInput.inputDiv, lastNameInput.inputDiv);
-    return nameDiv;
+    return {
+      nameDiv,
+      nameInput,
+      surnameInput,
+      lastNameInput,
+    };
   }
 
   /*
@@ -458,13 +467,16 @@
 
   function createModalErrorsList() {
     const errorsList = document.createElement('ul');
-    errorsList.classList.add('flex-column', 'mb-2', 'align-items-center', 'justify-content-center');
+    errorsList.classList.add('flex-column', 'mb-2', 'align-items-center', 'justify-content-center', 'p-0');
     let errorsListHidden = false;
     return {
       errorsList,
       errorsListHidden,
+      errorTexts: [],
       clear() {
         this.errorsList.innerHTML = '';
+        this.errorTexts = [];
+        this.hide();
       },
       fillWithErrors(errors) {
         this.clear();
@@ -473,8 +485,10 @@
           errorItem.classList.add('d-inline-flex', 'text-danger');
           if(index === array.length-1) errorItem.classList.add('mb-1');
           errorItem.textContent = error.message;
+          this.errorTexts.push(error.message);
           this.errorsList.append(errorItem);
         })
+        this.show();
       },
       hide() {
         this.errorsList.style.display = 'none';
@@ -483,6 +497,25 @@
       show() {
         this.errorsList.style.display = 'flex';
         this.errorsListHidden = false;
+      },
+      appendError(error) {
+        if (this.errorsListHidden) this.show();
+        if (this.errorTexts.length) {
+          this.errorsList.children[this.errorTexts.length-1].classList.toggle('mb-1', true);
+          const errorItem = document.createElement('li');
+          errorItem.classList.add('d-inline-flex', 'text-danger');
+          errorItem.textContent = error.message;
+          this.errorTexts.push(error.message);
+          this.errorsList.append(errorItem);
+          return;
+        }
+        this.show();
+        const errorItem = document.createElement('li');
+        errorItem.classList.add('d-inline-flex', 'text-danger');
+        errorItem.textContent = error.message;
+        this.errorTexts.push(error.message);
+        this.errorsList.append(errorItem);
+        return;
       }
     }
   }
@@ -505,7 +538,7 @@
     modalHeaderText.textContent = 'ID:' + obj.id;
     modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
 
-    const nameDiv = configModalNameDiv(obj, fillName = true);
+    const nameForm = configModalNameDiv(obj, fillName = true);
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
@@ -600,7 +633,7 @@
     deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'client-delete-button');
     deleteButton.textContent = 'Удалить клиента';
 
-    container.append(modalHeaderDiv, nameDiv, contactsDiv, errorsList.errorsList, saveButton, deleteButton);
+    container.append(modalHeaderDiv, nameForm.nameDiv, contactsDiv, errorsList.errorsList, saveButton, deleteButton);
 
     deleteButton.addEventListener(
       'click',
@@ -668,11 +701,13 @@
         );
 
         const contactValueInput = document.createElement('input');
-        contactValueInput.classList.add('p-1', 'mw-75');
+        contactValueInput.classList.add('p-1', 'mw-75', 'border');
         contactValueInputs.push(contactValueInput);
         contactValueInput.addEventListener(
           'input',
           function (e) {
+            if (e.target.value==='') e.target.classList.toggle('border-danger', true);
+            else e.target.classList.toggle('border-danger', false);
             clientObj.contacts[contactValueInputs.indexOf(contactValueInput)].value = e.target.value;
           },
           false,
@@ -748,7 +783,7 @@
     modalHeaderTitle.textContent = 'Новый клиент';
     modalHeaderDiv.append(modalHeaderTitle);
 
-    const nameDiv = configModalNameDiv(obj);
+    const nameForm = configModalNameDiv(obj);
 
     const contactsDiv = document.createElement('div');
     contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
@@ -771,24 +806,42 @@
 
     contactsDiv.append(addContactButton);
 
+    const errorsList = createModalErrorsList();
+
     const saveButton = document.createElement('a');
     saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
     saveButton.textContent = 'Сохранить';
     saveButton.addEventListener(
       'click',
-      async function (e) {
-        modal.showTransparentSpinner();
-        setTimeout(async () => {
-          const dat = await createNewClient(obj);
-          // console.log(dat);
-          if (dat) {
-            clients = [...clients, dat];
-            modal.hideTransparentSpinner();
-            modal.hideModal();
-            fillClientsListView(clientsListDiv, clients);
-          }
-        }, 1000);
+      function (e) {
+        errorsList.clear();
+        if (nameForm.nameInput.input.value === '') {
+          errorsList.appendError({'message': 'Не введено имя'});
+          nameForm.nameInput.input.classList.toggle('border-danger', true);
+        }
+        if (nameForm.surnameInput.input.value === '') {
+          errorsList.appendError({'message': 'Не введена фамилия'});
+          nameForm.surnameInput.input.classList.toggle('border-danger', true);
+        }
+        if (contactValueInputs.some(element => {
+          return element.value === '';
+        })) errorsList.appendError({'message': 'Не все контакты заполнены'});
 
+        if (nameForm.nameInput.input.value &&
+            nameForm.surnameInput.input.value &&
+            contactValueInputs.every(element => {
+              return element.value !== '';
+            })) {
+              errorsList.clear();
+              modal.showTransparentSpinner();
+              setTimeout(async () => {
+                const dat = await createNewClient(obj);
+                clients = [...clients, dat];
+                modal.hideModal();
+                fillClientsListView(clientsListDiv, clients);
+              }, 1000);
+              modal.hideTransparentSpinner();
+        }
       }
     );
 
@@ -802,7 +855,7 @@
       }
     );
 
-    container.append(modalHeaderDiv, nameDiv, contactsDiv, saveButton, cancelButton);
+    container.append(modalHeaderDiv, nameForm.nameDiv, contactsDiv, errorsList.errorsList, saveButton, cancelButton);
 
     return {
       container,
@@ -877,7 +930,7 @@
     Создание шапки таблицы клиентов с конфигурацией сортировок
   */
 
-  async function createClientsListHeader() {
+  function createClientsListHeader() {
     const clientListHeader = document.createElement('div');
     clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'mb-3', 'px-4');
 
@@ -887,7 +940,7 @@
     const idSortDesc = (a, b) => {
       return parseInt(b.id) - parseInt(a.id);
     }
-    const idSort = await configClientsListHeaderElement('ID', idSortAsc, idSortDesc, 'clients__id');
+    const idSort = configClientsListHeaderElement('ID', idSortAsc, idSortDesc, 'clients__id');
 
     const nameSortAsc = (a, b) => {
       const aName = [a.surname, a.name, a.lastName].join(' ');
@@ -899,7 +952,7 @@
       const bName = [b.surname, b.name, b.lastName].join(' ');
       return bName.localeCompare(aName);
     }
-    const nameSort = await configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__name');
+    const nameSort = configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__name');
 
     const dateSortAsc = (a, b) => {
       const aCreationDate = new Date(a.createdAt);
@@ -922,9 +975,9 @@
       const bCreationDate = new Date(b.updatedAt);
       return aCreationDate < bCreationDate;
     }
-    const creationDateSort = await configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc, 'clients__create-datetime');
+    const creationDateSort = configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc, 'clients__create-datetime');
 
-    const updateDateSort = await configClientsListHeaderElement('Последние изменения', updDateSortAsc, updDateSortDesc, 'clients__update-datetime');
+    const updateDateSort = configClientsListHeaderElement('Последние изменения', updDateSortAsc, updDateSortDesc, 'clients__update-datetime');
 
     const contactsSpan = document.createElement('span');
     contactsSpan.classList.add('d-inline-flex', 'clients__contacts');
@@ -942,7 +995,7 @@
     Конфигурация элементов сортировок в шапке таблицы с клиентами
   */
 
-  async function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction, elementClass) {
+  function configClientsListHeaderElement(name, sortAscFunction, sortDescFunction, elementClass) {
     const elemSort = document.createElement('a');
     elemSort.classList.add('d-flex', 'd-inline-flex', 'justify-content-start', 'align-items-center');
     if (elementClass !== undefined) elemSort.classList.add(elementClass);
@@ -1241,7 +1294,7 @@
   const app = getRootElements();
   const searchInput = createSearchInput();
   const appHeader = createAppHeader();
-  const clientsListHeader = await createClientsListHeader();
+  const clientsListHeader = createClientsListHeader();
   const clientsListDiv = createClientsListDiv();
   const spinner = createSpinner();
   const appPageBottom = createAppPageBottom();
