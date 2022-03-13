@@ -137,16 +137,63 @@
 
   function createSearchInput() {
     const searchInput = document.createElement('input');
-    searchInput.classList.add('header__search-input');
-    searchInput.style.width = '43%';
+    searchInput.classList.add('header__search-input', 'autocomplete');
     searchInput.placeholder = 'Введите запрос';
     searchInput.addEventListener(
       'input',
-      async function (e) {
-        await restartSearchInputTimer();
-      }
-    )
+      restartSearchInputTimer
+    );
     return searchInput;
+  }
+
+  function createAutocompleteContainer() {
+    const cont = document.createElement('div');
+    cont.classList.add('matching-items');
+    return cont;
+  }
+
+  function clearMatchingList() {
+    currentFocus = -1;
+    matchingItemsContainer.innerHTML = '';
+  }
+
+  async function inputHandler(e) {
+      clearMatchingList();
+      await filterClients();
+      console.log(clients);
+      const matchingClients = clients.filter(client => {
+        return [client.surname, client.name, client.lastName].join(' ').toLowerCase().includes(e.target.value.toLowerCase());
+      }).map(client => {
+        return [client.surname, client.name, client.lastName].join(' ');
+      });
+      matchingClients.forEach(client => {
+        const cDiv = document.createElement('div');
+        cDiv.classList.add('matching-item');
+        cDiv.textContent = client;
+        matchingItemsContainer.append(cDiv);
+        cDiv.addEventListener(
+          'click',
+          function(e) {
+            // clearMatchingList();
+            searchInput.value = e.target.textContent;
+            searchInput.dispatchEvent(new Event('input'));
+          }
+        );
+      });
+      if (e.target.value === '') clearMatchingList();
+  }
+
+  function addActive(x) {
+    if (!x) return false;
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    x[currentFocus].classList.add('matching-item_active');
+  }
+  function removeActive(x) {
+    for (let i = 0; i < x.length; i++) {
+      x[i].classList.remove('matching-item_active');
+    }
   }
 
   /*
@@ -177,13 +224,13 @@
     const rawClients = await getClients();
     if (searchInput.value !== '') {
       clients = rawClients.filter(item => {
-        return [item.surname, item.name, item.lastName].join(' ').includes(searchInput.value);
+        return [item.surname, item.name, item.lastName].join(' ').toLowerCase().includes(searchInput.value.toLowerCase());
       });
       fillClientsListView(clientsListDiv, clients, showSpinner = true);
       return;
     }
     clients = rawClients;
-    fillClientsListView(clientsListDiv, clients);
+    fillClientsListView(clientsListDiv, clients, showSpinner = true);
   }
 
   /*
@@ -837,10 +884,10 @@
               setTimeout(async () => {
                 const dat = await createNewClient(obj);
                 clients = [...clients, dat];
+                modal.hideTransparentSpinner();
                 modal.hideModal();
                 fillClientsListView(clientsListDiv, clients);
               }, 1000);
-              modal.hideTransparentSpinner();
         }
       }
     );
@@ -1273,26 +1320,55 @@
     if (showSpinner) {
       spinner.showSpinner();
       // Код используется для демонстрации работы спиннера
-      setTimeout(() => {
+      // setTimeout(() => {
+        // block.innerHTML = '';
         const clienstListView = createClientsListView(clients);
         spinner.hideSpinner();
         block.append(clienstListView);
-      }, 1000);
+      // }, 1000);
       return;
     }
-
-    // Код используемый в приложении при работе
-    spinner.showSpinner();
     const clienstListView = createClientsListView(clients);
     spinner.hideSpinner();
     block.append(clienstListView);
-
   }
 
+  document.addEventListener(
+    'click',
+    function (e) {
+      clearMatchingList();
+    }
+  );
 
   const modal = createModal();
   const app = getRootElements();
   const searchInput = createSearchInput();
+  searchInput.addEventListener(
+    'input',
+    inputHandler
+  )
+  searchInput.addEventListener(
+    'keydown',
+    function(e) {
+      let x = document.querySelector('.matching-items');
+      if (x) x = x.querySelectorAll('div');
+      if (e.keyCode == 40) {
+        currentFocus++;
+        addActive(x);
+      } else if (e.keyCode == 38) {
+        currentFocus--;
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        e.preventDefault();
+        if (currentFocus > -1) {
+          if (x) x[currentFocus].click();
+        }
+      }
+    }
+  );
+  let currentFocus = -1;
+
+  const matchingItemsContainer = createAutocompleteContainer();
   const appHeader = createAppHeader();
   const clientsListHeader = createClientsListHeader();
   const clientsListDiv = createClientsListDiv();
@@ -1302,7 +1378,7 @@
   let clients = await getClients();
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
-  app.headerContainer.append(searchInput);
+  app.headerContainer.append(searchInput, matchingItemsContainer);
   app.container.append(appHeader, clientsListHeader, spinner.spinnerContainer, clientsListDiv, appPageBottom);
   fillClientsListView(clientsListDiv, clients, showSpinner = true);
 
