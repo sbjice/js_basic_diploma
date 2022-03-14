@@ -135,13 +135,37 @@
     Создание поля поиска для фильтрации данных
   */
 
+  let currentFocus = -1;
   function createSearchInput() {
     const searchInput = document.createElement('input');
     searchInput.classList.add('header__search-input', 'autocomplete');
     searchInput.placeholder = 'Введите запрос';
+    // searchInput.addEventListener(
+    //   'input',
+    //   restartSearchInputTimer
+    // );
     searchInput.addEventListener(
       'input',
-      restartSearchInputTimer
+      inputHandler
+    )
+    searchInput.addEventListener(
+      'keydown',
+      function(e) {
+        let x = document.querySelector('.matching-items');
+        if (x) x = x.querySelectorAll('div');
+        if (e.keyCode == 40) {
+          currentFocus++;
+          addActive(x);
+        } else if (e.keyCode == 38) {
+          currentFocus--;
+          addActive(x);
+        } else if (e.keyCode == 13) {
+          e.preventDefault();
+          if (currentFocus > -1) {
+            if (x) x[currentFocus].click();
+          }
+        }
+      }
     );
     return searchInput;
   }
@@ -158,6 +182,8 @@
   }
 
   async function inputHandler(e) {
+    clearTimeout(searchInputTimeout);
+    searchInputTimeout = setTimeout(async () => {
       clearMatchingList();
       await filterClients();
       console.log(clients);
@@ -181,6 +207,7 @@
         );
       });
       if (e.target.value === '') clearMatchingList();
+    }, 300);
   }
 
   function addActive(x) {
@@ -190,6 +217,7 @@
     if (currentFocus < 0) currentFocus = (x.length - 1);
     x[currentFocus].classList.add('matching-item_active');
   }
+
   function removeActive(x) {
     for (let i = 0; i < x.length; i++) {
       x[i].classList.remove('matching-item_active');
@@ -1343,31 +1371,6 @@
   const modal = createModal();
   const app = getRootElements();
   const searchInput = createSearchInput();
-  searchInput.addEventListener(
-    'input',
-    inputHandler
-  )
-  searchInput.addEventListener(
-    'keydown',
-    function(e) {
-      let x = document.querySelector('.matching-items');
-      if (x) x = x.querySelectorAll('div');
-      if (e.keyCode == 40) {
-        currentFocus++;
-        addActive(x);
-      } else if (e.keyCode == 38) {
-        currentFocus--;
-        addActive(x);
-      } else if (e.keyCode == 13) {
-        e.preventDefault();
-        if (currentFocus > -1) {
-          if (x) x[currentFocus].click();
-        }
-      }
-    }
-  );
-  let currentFocus = -1;
-
   const matchingItemsContainer = createAutocompleteContainer();
   const appHeader = createAppHeader();
   const clientsListHeader = createClientsListHeader();
