@@ -140,13 +140,10 @@
     const searchInput = document.createElement('input');
     searchInput.classList.add('header__search-input', 'autocomplete');
     searchInput.placeholder = 'Введите запрос';
-    // searchInput.addEventListener(
-    //   'input',
-    //   restartSearchInputTimer
-    // );
+
     searchInput.addEventListener(
       'input',
-      inputHandler
+      searchInputHandler
     )
     searchInput.addEventListener(
       'keydown',
@@ -170,18 +167,31 @@
     return searchInput;
   }
 
+  /*
+    Контейнер для элементов автодополнения
+  */
+
   function createAutocompleteContainer() {
     const cont = document.createElement('div');
     cont.classList.add('matching-items');
     return cont;
   }
 
+  /*
+    Очистка списка элементов автодополнения
+  */
+
   function clearMatchingList() {
     currentFocus = -1;
     matchingItemsContainer.innerHTML = '';
   }
 
-  async function inputHandler(e) {
+  /*
+    Обработчик ввода для поля поиска
+    Используется для автодополнения
+  */
+
+  async function searchInputHandler(e) {
     clearTimeout(searchInputTimeout);
     searchInputTimeout = setTimeout(async () => {
       clearMatchingList();
@@ -200,15 +210,18 @@
         cDiv.addEventListener(
           'click',
           function(e) {
-            // clearMatchingList();
             searchInput.value = e.target.textContent;
             searchInput.dispatchEvent(new Event('input'));
           }
         );
       });
       if (e.target.value === '') clearMatchingList();
-    }, 300);
+    }, 400);
   }
+
+  /*
+    Функция для "активизации" выбранного элемента в поиске с автодополнением
+  */
 
   function addActive(x) {
     if (!x) return false;
@@ -217,6 +230,10 @@
     if (currentFocus < 0) currentFocus = (x.length - 1);
     x[currentFocus].classList.add('matching-item_active');
   }
+
+  /*
+    Функция для "деактивизации" выбранного элемента в поиске с автодополнением
+  */
 
   function removeActive(x) {
     for (let i = 0; i < x.length; i++) {
@@ -233,15 +250,6 @@
     header.classList.add('mb-3');
     header.textContent = headerText;
     return header;
-  }
-
-  /*
-    Реализация перезапуска таймера ввода данных для поиска по клиентам
-  */
-
-  function restartSearchInputTimer() {
-    clearTimeout(searchInputTimeout);
-    searchInputTimeout = setTimeout(filterClients, 300);
   }
 
   /*
