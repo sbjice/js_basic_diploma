@@ -1,7 +1,7 @@
 (async () => {
   const API = 'http://localhost:3000/api/clients';
 
-  let values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
+  const values = ['VK', 'FB', 'phone', 'mail', 'other', 'TW', 'TG'];
 
   /*
     Объект с строковыми представлениями иконок
@@ -141,29 +141,8 @@
     searchInput.classList.add('header__search-input', 'autocomplete');
     searchInput.placeholder = 'Введите запрос';
 
-    searchInput.addEventListener(
-      'input',
-      searchInputHandler
-    )
-    searchInput.addEventListener(
-      'keydown',
-      function(e) {
-        let x = document.querySelector('.matching-items');
-        if (x) x = x.querySelectorAll('div');
-        if (e.keyCode == 40) {
-          currentFocus++;
-          addActive(x);
-        } else if (e.keyCode == 38) {
-          currentFocus--;
-          addActive(x);
-        } else if (e.keyCode == 13) {
-          e.preventDefault();
-          if (currentFocus > -1) {
-            if (x) x[currentFocus].click();
-          }
-        }
-      }
-    );
+    searchInput.addEventListener('input', searchInputHandler);
+    searchInput.addEventListener('keydown', searchKeydownHandler);
     return searchInput;
   }
 
@@ -217,6 +196,30 @@
       });
       if (e.target.value === '') clearMatchingList();
     }, 400);
+  }
+
+  /*
+    Обработчик нажатия клавиш при фокусе на поле поиска
+    Используется для автодополнения
+  */
+
+  function searchKeydownHandler(e) {
+    let x = document.querySelector('.matching-items');
+    if (x) x = x.querySelectorAll('div');
+    if (x.length !== 0) {
+      if (e.keyCode == 40) {
+        currentFocus++;
+        addActive(x);
+      } else if (e.keyCode == 38) {
+        currentFocus--;
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        e.preventDefault();
+        if (currentFocus > -1) {
+          if (x) x[currentFocus].click();
+        }
+      }
+    }
   }
 
   /*
@@ -825,21 +828,25 @@
       'click',
       function (e) {
         e.preventDefault();
-        let elementToWorkWith = null;
+        // избавился от этого куска кода, так как при стилизации svg при указании pointer-events: none;
+        // пропала необходимость обрабатывать вложенные части svg
+
+
         // следующий кусок кода нужен чтобы адекватно определить что работать надо с самой кнопкой
         // тк присутствует следующая вложенность объектов снизу вверх:
         // path -> g -> svg -> a
-        if (e.target.tagName === 'path') {
-          elementToWorkWith = e.target.parentElement.parentElement.parentElement;
-        } else if (e.target.tagName === 'g') {
-          elementToWorkWith = e.target.parentElement.parentElement;
-        } else if (e.target.tagName === 'svg') {
-          elementToWorkWith = e.target.parentElement;
-        } else {
-          elementToWorkWith = e.target;
-        }
-        const elementNumber = contactDeleteButtons.indexOf(elementToWorkWith);
-        elementToWorkWith.parentElement.remove();
+        // let elementToWorkWith = null;
+        // if (e.target.tagName === 'path') {
+        //   elementToWorkWith = e.target.parentElement.parentElement.parentElement;
+        // } else if (e.target.tagName === 'g') {
+        //   elementToWorkWith = e.target.parentElement.parentElement;
+        // } else if (e.target.tagName === 'svg') {
+        //   elementToWorkWith = e.target.parentElement;
+        // } else {
+        //   elementToWorkWith = e.target;
+        // }
+        const elementNumber = contactDeleteButtons.indexOf(e.target);
+        e.target.parentElement.remove();
         contactDeleteButtons.splice(elementNumber, 1);
         contactValueInputs.splice(elementNumber, 1);
         contactTypeChoices.splice(elementNumber, 1);
@@ -1162,9 +1169,13 @@
   */
 
   function fillContactsDiv(contactsDiv, client) {
-    const fullRows = Math.floor(client.contacts.length / 5);
-    const elementsInLastRow = client.contacts.length - fullRows * 5;
-    const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? 5 : elementsInLastRow);
+    const rowLength = 5;
+    const penultShownElementIndex = 3;
+    const maxShownElements = 4;
+
+    const fullRows = Math.floor(client.contacts.length / rowLength);
+    const elementsInLastRow = client.contacts.length - fullRows * rowLength;
+    const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? rowLength : elementsInLastRow);
     client.contacts.forEach((element, index, array) => {
       const link = document.createElement('a');
       const linkClass = element.type === 'phone' ||
@@ -1173,8 +1184,8 @@
         element.type === 'FB' ? element.type : 'other';
       link.classList.add('display-inline-flex', 'text-primary', 'contact-item');
 
-      (index % 5 !== 4 && index !== array.length - 1) ? link.classList.toggle('mr-1', true): null;
-      (index % 5 >= 0 && array.length > 5 && index < acceptableItems) ? link.classList.toggle('mb-1', true): null;
+      (index % rowLength !== maxShownElements && index !== array.length - 1) ? link.classList.toggle('mr-1', true): null;
+      (index % rowLength >= 0 && array.length > rowLength && index < acceptableItems) ? link.classList.toggle('mb-1', true): null;
       link.href = element.type === 'phone' ? ('tel:' + element.value) : (element.type === 'mail' ? ('mailto:' + element.value) : element.value);
       link.target = '_blank';
 
@@ -1201,30 +1212,30 @@
     Показ скрытых ссылок по нажатию на 5 ссылку в ряду
     */
 
-    if (client.contacts.length > 5) {
+    if (client.contacts.length > rowLength) {
       for (let i = 0; i < client.contacts.length; i++) {
         contactsDiv.children[i].classList.toggle('mb-1', false);
-        if (i > 3) {
+        if (i > penultShownElementIndex) {
           contactsDiv.children[i].classList.toggle('contact-hidden', true);
         }
       }
       const showContactButton = document.createElement('a');
       showContactButton.classList.add('display-inline-flex', 'show-contact-button', 'd-flex', 'align-items-center', 'justify-content-center');
       showContactButton.target = '_blank';
-      showContactButton.textContent = '+' + (client.contacts.length - 4);
+      showContactButton.textContent = '+' + (client.contacts.length - maxShownElements);
       const showContactButtonText = document.createElement('span');
       showContactButtonText.classList.add('display-inline-flex');
 
       contactsDiv.append(showContactButton);
       showContactButton.addEventListener('click', e => {
         e.preventDefault();
-        const fullRows = Math.floor(client.contacts.length / 5);
-        const elementsInLastRow = client.contacts.length - fullRows * 5;
-        const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? 5 : elementsInLastRow);
+        const fullRows = Math.floor(client.contacts.length / rowLength);
+        const elementsInLastRow = client.contacts.length - fullRows * rowLength;
+        const acceptableItems = client.contacts.length - (elementsInLastRow === 0 ? rowLength : elementsInLastRow);
         console.log('acceptableItems:', acceptableItems);
         for (let i = 0; i < client.contacts.length; i++) {
-          (i % 5 >= 0 && client.contacts.length > 5 && i < acceptableItems) ? contactsDiv.children[i].classList.toggle('mb-1', true): null;
-          if (i > 3) {
+          (i % rowLength >= 0 && client.contacts.length > rowLength && i < acceptableItems) ? contactsDiv.children[i].classList.toggle('mb-1', true): null;
+          if (i > penultShownElementIndex) {
             contactsDiv.children[i].classList.toggle('contact-hidden', false);
           }
         }
