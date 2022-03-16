@@ -57,14 +57,35 @@
 
   async function getClients() {
     const response = await fetch(API);
-    const data = await response.json();
-    return data;
+    console.log(response);
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorObj = {
+        errors: [{
+          message: response.statusText,
+        }]
+      };
+      console.log(errorObj);
+      return errorObj;
+    }
   }
 
   async function getClientByID(id) {
     const response = await fetch(API + '/' + id);
-    const data = await response.json();
-    return data;
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorObj = {
+        errors: [{
+          message: response.statusText,
+        }]
+      };
+      console.log(errorObj);
+      return errorObj;
+    }
   }
 
   async function createNewClient(clientData = {}) {
@@ -75,16 +96,36 @@
         'Content-Type': 'application/json'
       }
     });
-    const data = await response.json();
-    return data;
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorObj = {
+        errors: [{
+          message: response.statusText,
+        }]
+      };
+      console.log(errorObj);
+      return errorObj;
+    }
   }
 
   async function deleteClientByID(id) {
     const response = await fetch(API + '/' + id, {
       method: 'DELETE'
     });
-    const data = await response.json();
-    return data;
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorObj = {
+        errors: [{
+          message: response.statusText,
+        }]
+      };
+      console.log(errorObj);
+      return errorObj;
+    }
   }
 
   async function changeClientByID(id, clientData) {
@@ -95,8 +136,18 @@
         'Content-Type': 'application/json'
       }
     });
-    const data = await response.json();
-    return data;
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorObj = {
+        errors: [{
+          message: response.statusText,
+        }]
+      };
+      console.log(errorObj);
+      return errorObj;
+    }
   }
 
   /*
@@ -175,7 +226,7 @@
     searchInputTimeout = setTimeout(async () => {
       clearMatchingList();
       await filterClients();
-      console.log(clients);
+      // console.log(clients);
       const matchingClients = clients.filter(client => {
         return [client.surname, client.name, client.lastName].join(' ').toLowerCase().includes(e.target.value.toLowerCase());
       }).map(client => {
@@ -698,19 +749,20 @@
       'click',
       async function (e) {
         modal.showTransparentSpinner();
-        const dat = await changeClientByID(obj.id, obj);
-        if (dat.errors === undefined) {
+        try {
+          const dat = await changeClientByID(obj.id, obj);
+          if (dat.errors!== undefined) throw(dat.errors);
           setTimeout(async () => {
             errorsList.clear();
             errorsList.hide();
             modal.hideTransparentSpinner();
             modal.hideModal();
             await filterClients();
-          }, 1000)
-        } else {
+          }, 1000);
+        } catch (err)  {
           modal.hideTransparentSpinner();
           errorsList.show();
-          errorsList.fillWithErrors(dat.errors);
+          errorsList.fillWithErrors(err);
         }
       }
     );
@@ -925,11 +977,19 @@
               errorsList.clear();
               modal.showTransparentSpinner();
               setTimeout(async () => {
-                const dat = await createNewClient(obj);
-                clients = [...clients, dat];
-                modal.hideTransparentSpinner();
-                modal.hideModal();
-                fillClientsListView(clientsListDiv, clients);
+                try {
+                  const dat = await createNewClient(obj);
+                  if (dat.errors !== undefined) throw(dat.errors);
+                  clients = [...clients, dat];
+                  modal.hideTransparentSpinner();
+                  modal.hideModal();
+                  fillClientsListView(clientsListDiv, clients);
+                } catch(err) {
+                  modal.hideTransparentSpinner();
+                  errorsList.show();
+                  if (err instanceof Array) errorsList.fillWithErrors(err);
+                  else errorsList.fillWithErrors([err]);
+                }
               }, 1000);
         }
       }
@@ -985,15 +1045,20 @@
     cancelButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'client-delete-button', 'mb-1', 'w-25', 'p-2');
     cancelButton.textContent = 'Отмена';
 
-
     deleteButton.addEventListener(
       'click',
       async function (e) {
         modal.showTransparentSpinner();
         setTimeout(async () => {
-          await updateClientsDataAfterDelete(clientData);
-          modal.hideTransparentSpinner();
-          modal.hideModal();
+          try {
+            await updateClientsDataAfterDelete(clientData);
+            modal.hideTransparentSpinner();
+            modal.hideModal();
+          } catch (err) {
+            modal.hideTransparentSpinner();
+            errorsList.show();
+            errorsList.fillWithErrors(err);
+          }
         }, 1000);
       }
     );
@@ -1317,9 +1382,11 @@
   async function updateClientsDataAfterDelete(client) {
     const clientData = await getClientByID(client.id);
     const data = await deleteClientByID(clientData.id);
-    if (data) {
+    if (data.errors === undefined) {
       // console.log('DELETE');
       await filterClients();
+    } else {
+      throw({message: 'Something went wrong...'});
     }
 
   }
