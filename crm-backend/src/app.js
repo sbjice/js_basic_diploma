@@ -56,20 +56,25 @@
   */
 
   async function getClients() {
-    const response = await fetch(API);
-    console.log(response);
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      const errorObj = {
-        errors: [{
-          message: response.statusText,
-        }]
-      };
-      console.log(errorObj);
-      return errorObj;
+    try {
+      const response = await fetch(API);
+      // console.log(response);
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        const errorObj = {
+          errors: [{
+            message: response.statusText,
+          }]
+        };
+        console.log(errorObj);
+        return errorObj;
+      }
+    } catch (error) {
+      throw(error);
     }
+
   }
 
   async function getClientByID(id) {
@@ -311,16 +316,29 @@
   */
 
   async function filterClients() {
-    const rawClients = await getClients();
-    if (searchInput.value !== '') {
-      clients = rawClients.filter(item => {
-        return [item.surname, item.name, item.lastName].join(' ').toLowerCase().includes(searchInput.value.toLowerCase());
-      });
+    try {
+      const rawClients = await getClients();
+      if(rawClients.errors !== undefined) throw(rawClients.errors);
+      if (searchInput.value !== '') {
+        clients = rawClients.filter(item => {
+          return [item.surname, item.name, item.lastName].join(' ').toLowerCase().includes(searchInput.value.toLowerCase());
+        });
+        fillClientsListView(clientsListDiv, clients, showSpinner = true);
+        return;
+      }
+      clients = rawClients;
       fillClientsListView(clientsListDiv, clients, showSpinner = true);
-      return;
+    } catch(err) {
+      // console.log(err);
+      alert(err);
     }
-    clients = rawClients;
-    fillClientsListView(clientsListDiv, clients, showSpinner = true);
+  }
+
+  function clearURLHash(){
+    let url_ob = new URL(document.URL);
+    url_ob.hash = '';
+    let new_url = url_ob.href;
+    document.location.href = new_url;
   }
 
   /*
@@ -351,6 +369,7 @@
         body.classList.toggle('scroll-disable', false);
         modal.innerHTML = '';
         modal.append(modalCloseButton);
+        // clearURLHash();
       }
     );
 
@@ -373,6 +392,7 @@
         body.classList.toggle('scroll-disable', false);
         modal.innerHTML = '';
         modal.append(modalCloseButton);
+        // clearURLHash();
       }
     });
 
@@ -387,6 +407,7 @@
       hideModal() {
         this.overlay.style.top = '-100%';
         body.classList.toggle('scroll-disable', false);
+        clearURLHash();
         return this;
       },
       insertFormIntoModal(form) {
@@ -757,7 +778,11 @@
             errorsList.hide();
             modal.hideTransparentSpinner();
             modal.hideModal();
-            await filterClients();
+            try {
+              await filterClients();
+            } catch (error) {
+              throw(error);
+            }
           }, 1000);
         } catch (err)  {
           modal.hideTransparentSpinner();
@@ -1317,9 +1342,12 @@
     const clientLi = document.createElement('li');
     clientLi.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'p-3', 'clients__list-item');
 
-    const idSpan = document.createElement('span');
-    idSpan.classList.add('d-inline-flex', 'clients__list-id');
-    idSpan.textContent = client.id;
+    const idEl = document.createElement('a');
+    idEl.classList.add('d-inline-flex', 'clients__list-id');
+    idEl.textContent = client.id;
+    const currUrl = new URL(document.URL);
+    currUrl.hash = '';
+    idEl.href = currUrl.href + '#' + client.id;
 
     const nameSpan = document.createElement('span');
     nameSpan.classList.add('d-inline-flex', 'clients__list-name');
@@ -1342,7 +1370,8 @@
       async function (e) {
         e.preventDefault();
         await modal.showModalForClient(client);
-      });
+      }
+    );
 
     deleteClientButton.addEventListener(
       'click',
@@ -1350,10 +1379,11 @@
         e.preventDefault();
         const modalContent = createDeleteConfirmModalContent(client, modal);
         modal.insertFormIntoModal(modalContent.container).showModal();
-      });
+      }
+    );
 
     clientLi.append(
-      idSpan, nameSpan,
+      idEl, nameSpan,
       creationDateTimeDiv, updateDateTimeDiv,
       contactsDiv,
       changeClientButton, deleteClientButton
@@ -1431,20 +1461,38 @@
 
   function fillClientsListView(block, clients, showSpinner = false) {
     block.innerHTML = '';
-    if (showSpinner) {
-      spinner.showSpinner();
-      // Код используется для демонстрации работы спиннера
-      // setTimeout(() => {
-        // block.innerHTML = '';
-        const clienstListView = createClientsListView(clients);
-        spinner.hideSpinner();
-        block.append(clienstListView);
-      // }, 1000);
-      return;
+    if (clients !== null) {
+      if (showSpinner) {
+        spinner.showSpinner();
+        // Код используется для демонстрации работы спиннера
+        // setTimeout(() => {
+          // block.innerHTML = '';
+          const clienstListView = createClientsListView(clients);
+          spinner.hideSpinner();
+          block.append(clienstListView);
+        // }, 1000);
+        return;
+      }
+      const clienstListView = createClientsListView(clients);
+      spinner.hideSpinner();
+      block.append(clienstListView);
+    } else {
+      spinner.hideSpinner();
     }
-    const clienstListView = createClientsListView(clients);
-    spinner.hideSpinner();
-    block.append(clienstListView);
+  }
+
+  async function processDefaultHash() {
+    let hashValue = new URL(document.URL);
+    if (hashValue.hash!=='') {
+      hashValue = hashValue.hash.replace(/#/, '');
+      try {
+        const client = await getClientByID(hashValue);
+        if (client.errors !== undefined) throw(client.errors);
+        modal.showModalForClient(client);
+      } catch (error) {
+        alert(error);
+      }
+    }
   }
 
   document.addEventListener(
@@ -1453,6 +1501,20 @@
       clearMatchingList();
     }
   );
+  window.addEventListener(
+    'hashchange',
+    async function() {
+      let hashValue = new URL(document.URL);
+      hashValue = hashValue.hash.replace(/#/, '');
+      console.log(hashValue);
+      try {
+        const client = await getClientByID(hashValue);
+        if (client.errors !== undefined) throw(client.errors);
+        modal.showModalForClient(client);
+      } catch (error) {
+        alert(error);
+      }
+  });
 
   const modal = createModal();
   const app = getRootElements();
@@ -1464,12 +1526,19 @@
   const spinner = createSpinner();
   const appPageBottom = createAppPageBottom();
   const newClientButton = createNewClientButton();
-  let clients = await getClients();
+  let clients = null
+  try {
+     clients = await getClients();
+  } catch (error) {
+    alert(error);
+  }
+
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
   app.headerContainer.append(searchInput, matchingItemsContainer);
   app.container.append(appHeader, clientsListHeader, spinner.spinnerContainer, clientsListDiv, appPageBottom);
   fillClientsListView(clientsListDiv, clients, showSpinner = true);
+  await processDefaultHash();
 
   // TODO:
 
