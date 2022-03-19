@@ -34,7 +34,7 @@
       <path d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z" fill="#B0B0B0"/>
       </g>`,
     'contact-add': `<g opacity="0.7">
-      <path d="M8.00001 4.66667C7.63334 4.66667 7.33334 4.96667 7.33334 5.33333V7.33333H5.33334C4.96668 7.33333 4.66668 7.63333 4.66668 8C4.66668 8.36667 4.96668 8.66667 5.33334 8.66667H7.33334V10.6667C7.33334 11.0333 7.63334 11.3333 8.00001 11.3333C8.36668 11.3333 8.66668 11.0333 8.66668 10.6667V8.66667H10.6667C11.0333 8.66667 11.3333 8.36667 11.3333 8C11.3333 7.63333 11.0333 7.33333 10.6667 7.33333H8.66668V5.33333C8.66668 4.96667 8.36668 4.66667 8.00001 4.66667ZM8.00001 1.33333C4.32001 1.33333 1.33334 4.32 1.33334 8C1.33334 11.68 4.32001 14.6667 8.00001 14.6667C11.68 14.6667 14.6667 11.68 14.6667 8C14.6667 4.32 11.68 1.33333 8.00001 1.33333ZM8.00001 13.3333C5.06001 13.3333 2.66668 10.94 2.66668 8C2.66668 5.06 5.06001 2.66667 8.00001 2.66667C10.94 2.66667 13.3333 5.06 13.3333 8C13.3333 10.94 10.94 13.3333 8.00001 13.3333Z" fill="#9873FF"/>
+      <path d="M8.00001 4.66667C7.63334 4.66667 7.33334 4.96667 7.33334 5.33333V7.33333H5.33334C4.96668 7.33333 4.66668 7.63333 4.66668 8C4.66668 8.36667 4.96668 8.66667 5.33334 8.66667H7.33334V10.6667C7.33334 11.0333 7.63334 11.3333 8.00001 11.3333C8.36668 11.3333 8.66668 11.0333 8.66668 10.6667V8.66667H10.6667C11.0333 8.66667 11.3333 8.36667 11.3333 8C11.3333 7.63333 11.0333 7.33333 10.6667 7.33333H8.66668V5.33333C8.66668 4.96667 8.36668 4.66667 8.00001 4.66667ZM8.00001 1.33333C4.32001 1.33333 1.33334 4.32 1.33334 8C1.33334 11.68 4.32001 14.6667 8.00001 14.6667C11.68 14.6667 14.6667 11.68 14.6667 8C14.6667 4.32 11.68 1.33333 8.00001 1.33333ZM8.00001 13.3333C5.06001 13.3333 2.66668 10.94 2.66668 8C2.66668 5.06 5.06001 2.66667 8.00001 2.66667C10.94 2.66667 13.3333 5.06 13.3333 8C13.3333 10.94 10.94 13.3333 8.00001 13.3333Z" fill="#B89EFF"/>
       </g>`,
     'new-client': `<g opacity="0.7">
       <path d="M14.5 8C16.71 8 18.5 6.21 18.5 4C18.5 1.79 16.71 0 14.5 0C12.29 0 10.5 1.79 10.5 4C10.5 6.21 12.29 8 14.5 8ZM5.5 6V3H3.5V6H0.5V8H3.5V11H5.5V8H8.5V6H5.5ZM14.5 10C11.83 10 6.5 11.34 6.5 14V16H22.5V14C22.5 11.34 17.17 10 14.5 10Z" fill="#9873FF"/>
@@ -164,21 +164,20 @@
     app.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
 
     const header = document.createElement('div');
-    header.classList.add('d-flex', 'flex-row', 'w-100', 'justify-content-center', 'header', 'align-items-start', 'mb-3');
+    header.classList.add('d-flex', 'flex-row', 'w-100', 'justify-content-center', 'header', 'align-items-start');
 
     const headerContainer = document.createElement('div');
-    headerContainer.style.maxWidth = '1280px';
-    headerContainer.classList.add('d-flex', 'flex-row', 'justify-content-start', 'mx-auto', 'my-3', 'align-items-center', 'w-100');
+    headerContainer.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'w-100', 'header__content');
 
     const headerIcon = createIcon('logo', 'header-logo', '50', '50', '0 0 50 50');
-    headerIcon.classList.add('mr-5');
+    headerIcon.classList.add('header__logo');
     headerIcon.classList.remove('svg-icon');
     headerContainer.append(headerIcon);
     header.append(headerContainer);
 
 
     const container = document.createElement('div');
-    container.classList.add('container', 'd-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+    container.classList.add('container', 'd-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'clients__container');
     app.append(header, container);
     return {
       app,
@@ -194,7 +193,7 @@
   let currentFocus = -1;
   function createSearchInput() {
     const searchInput = document.createElement('input');
-    searchInput.classList.add('header__search-input', 'autocomplete');
+    searchInput.classList.add('header__search-input');
     searchInput.placeholder = 'Введите запрос';
 
     searchInput.addEventListener('input', searchInputHandler);
@@ -208,8 +207,17 @@
 
   function createAutocompleteContainer() {
     const cont = document.createElement('div');
-    cont.classList.add('matching-items');
+    cont.classList.add('header__matching-items', 'w-100');
     return cont;
+  }
+
+  /*  */
+
+  function createSearchStack(searchInput, matchingItemsContainer) {
+    const searchStack = document.createElement('div');
+    searchStack.classList.add('d-flex', 'flex-column', 'header__search-stack');
+    searchStack.append(searchInput, matchingItemsContainer);
+    return searchStack;
   }
 
   /*
@@ -239,7 +247,7 @@
       });
       matchingClients.forEach(client => {
         const cDiv = document.createElement('div');
-        cDiv.classList.add('matching-item');
+        cDiv.classList.add('header__matching-item');
         cDiv.textContent = client;
         matchingItemsContainer.append(cDiv);
         cDiv.addEventListener(
@@ -260,7 +268,7 @@
   */
 
   function searchKeydownHandler(e) {
-    let x = document.querySelector('.matching-items');
+    let x = document.querySelector('.header__matching-items');
     if (x) x = x.querySelectorAll('div');
     if (x.length !== 0) {
       if (e.keyCode == 40) {
@@ -287,7 +295,7 @@
     removeActive(x);
     if (currentFocus >= x.length) currentFocus = 0;
     if (currentFocus < 0) currentFocus = (x.length - 1);
-    x[currentFocus].classList.add('matching-item_active');
+    x[currentFocus].classList.add('header__matching-item_active');
   }
 
   /*
@@ -296,7 +304,7 @@
 
   function removeActive(x) {
     for (let i = 0; i < x.length; i++) {
-      x[i].classList.remove('matching-item_active');
+      x[i].classList.remove('header__matching-item_active');
     }
   }
 
@@ -306,7 +314,7 @@
 
   function createAppHeader(headerText = 'Клиенты') {
     const header = document.createElement('h3');
-    header.classList.add('mb-3');
+    header.classList.add('clients__title');
     header.textContent = headerText;
     return header;
   }
@@ -349,9 +357,9 @@
     const body = document.body;
 
     const overlay = document.createElement('div');
-    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center', 'p-3');
+    overlay.classList.add('overlay', 'd-flex', 'align-items-center', 'justify-content-center');
     const modal = document.createElement('div');
-    modal.classList.add('h-75', 'w-50', 'p-3', 'bg-white', 'd-flex', 'align-items-center', 'justify-content-center');
+    modal.classList.add('bg-white', 'd-flex', 'align-items-center', 'justify-content-center', 'modal');
     modal.style.position = 'relative';
 
     const modalCloseIcon = createIcon('modal-close-icon', 'modal-close-icon', '29', '29', '0 0 29 29');
@@ -481,9 +489,9 @@
     const dateTime = new Date(date);
     const month = padNumberByZero(dateTime.getMonth() + 1);
     const dateTimeDiv = document.createElement('div');
-    dateTimeDiv.classList.add('d-flex', 'justify-content-between', dateTimeClassToAdd);
+    dateTimeDiv.classList.add('d-flex', dateTimeClassToAdd);
     const dateSpan = document.createElement('span');
-    dateSpan.classList.add('d-inline-flex', 'mr-1', dateClassToAdd);
+    dateSpan.classList.add('d-inline-flex', dateClassToAdd);
     dateSpan.textContent = [padNumberByZero(dateTime.getDate()), month, dateTime.getFullYear()].join('.');
     const timeSpan = document.createElement('span');
     timeSpan.classList.add('d-inline-flex', timeClassToAdd);
@@ -545,15 +553,15 @@
     Создание элемента ввода фио клиента
   */
 
-  function createInputObj(inputName, labelText, placeholderValue = '', required = false) {
+  function createInputObj(inputName, inputCLass, labelText, placeholderValue = '', required = false) {
     const input = document.createElement('input');
     input.name = inputName;
     input.placeholder = placeholderValue;
-    input.classList.add('input', 'p-1', 'border-top-0', 'border-right-0', 'border-left-0', 'w-100', 'border');
+    input.classList.add('input', 'border-top-0', 'border-right-0', 'border-left-0', 'w-100', 'border', inputCLass);
     const label = document.createElement('label');
     label.for = input.name;
     label.textContent = labelText;
-    label.classList.add('text-muted', 'm-0', 'd-flex');
+    label.classList.add('text-muted', 'm-0', 'd-flex',inputCLass+'-label');
     if (required) {
       const span = document.createElement('span');
       span.classList.add('d-inline-flex', 'asterisk');
@@ -577,10 +585,10 @@
 
   function configModalNameDiv(clientObj, fillName = false) {
     const nameDiv = document.createElement('div');
-    nameDiv.classList.add('d-flex', 'flex-column');
-    const nameInput = createInputObj('name', 'Имя', '', true);
-    const surnameInput = createInputObj('surname', 'Фамилия', '', true);
-    const lastNameInput = createInputObj('lastName', 'Отчество');
+    nameDiv.classList.add('d-flex', 'flex-column', 'modal__fullname');
+    const nameInput = createInputObj('name','modal__name', 'Имя', '', true);
+    const surnameInput = createInputObj('surname','modal__surname', 'Фамилия', '', true);
+    const lastNameInput = createInputObj('lastName','modal__lastName', 'Отчество');
 
     if (fillName !== undefined && fillName) {
       nameInput.input.value = clientObj.name;
@@ -684,34 +692,34 @@
 
   function createChangeClientModalContent(obj, modal) {
     const container = document.createElement('div');
-    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100');
+    container.classList.add('d-flex', 'flex-column','h-100', 'w-100', 'modal__content');
 
     const modalHeaderDiv = document.createElement('div');
-    modalHeaderDiv.classList.add('d-flex', 'align-items-end');
+    modalHeaderDiv.classList.add('d-flex', 'align-items-end', 'modal__header');
     const modalHeaderTitle = document.createElement('h3');
-    modalHeaderTitle.classList.add('d-inline-flex', 'm-0');
-    modalHeaderTitle.textContent = 'Изменить данные';
+    modalHeaderTitle.classList.add('d-inline-flex', 'mb-0','modal__title');
+    modalHeaderTitle.textContent = 'Изменить данные ';
     const modalHeaderText = document.createElement('p');
-    modalHeaderText.classList.add('d-inline-flex', 'text-muted', 'm-0');
+    modalHeaderText.classList.add('d-inline-flex', 'm-0', 'modal__id');
     modalHeaderText.textContent = 'ID:' + obj.id;
     modalHeaderDiv.append(modalHeaderTitle, modalHeaderText);
 
     const nameForm = configModalNameDiv(obj, fillName = true);
 
     const contactsDiv = document.createElement('div');
-    contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
+    contactsDiv.classList.add('d-flex', 'flex-column', 'modal__contacts-container');
     const contactsList = document.createElement('ul');
-    contactsList.classList.add('d-flex', 'flex-column', 'mx-0', 'mb-2', 'p-0');
+    contactsList.classList.add('d-flex', 'flex-column', 'p-0', 'modal__contacts-list');
     const contactTypeChoices = [];
     const contactValueInputs = [];
     const contactDeleteButtons = [];
 
     obj.contacts.forEach((item, index, array) => {
       const contactItemDiv = document.createElement('div');
-      contactItemDiv.classList.add('d-flex', 'contact__item-div');
+      contactItemDiv.classList.add('d-flex', 'modal__contacts-item', 'w-100');
       if (index !== array.length - 1) contactItemDiv.classList.add('mb-2');
 
-      const contactTypeSelect = createSelect(values, 'sel1');
+      const contactTypeSelect = createSelect(values, 'modal__contacts-select');
       contactItemDiv.append(contactTypeSelect);
       const contactItemSelect = configSelect(contactTypeSelect);
 
@@ -726,7 +734,7 @@
       );
 
       const contactValueInput = document.createElement('input');
-      contactValueInput.classList.add('p-1', 'mw-75');
+      contactValueInput.classList.add('p-1', 'w-100', 'modal__contacts-input', 'd-inline-flex');
       contactValueInput.value = item.value;
       contactValueInputs.push(contactValueInput);
       contactValueInput.addEventListener(
@@ -738,8 +746,8 @@
       );
 
       const contactDeleteButton = document.createElement('a');
-      contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
-      const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
+      contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'modal__contacts-delete-button', 'align-items-center', 'justify-content-center');
+      const contactDeleteIcon = createIcon('contact-delete', 'modal__contacts-delete-icon');
       contactDeleteButton.append(contactDeleteIcon);
       contactDeleteButtons.push(contactDeleteButton);
       configContactDeleteButton(contactDeleteButton, obj, contactDeleteButtons, contactValueInputs, contactTypeChoices);
@@ -750,11 +758,11 @@
     contactsDiv.append(contactsList);
 
     const addContactButton = document.createElement('a');
-    addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'add-contact-button');
+    addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'modal__add-contact-button');
     const addContactSpan = document.createElement('span');
-    addContactSpan.classList.add('d-inline-flex');
+    addContactSpan.classList.add('d-inline-flex', 'modal__add-contact-text');
     addContactSpan.textContent = 'Добавить контакт';
-    const addContactIcon = createIcon('contact-add', 'contact-add-icon');
+    const addContactIcon = createIcon('contact-add', 'modal__add-contact-icon');
     addContactButton.append(addContactIcon, addContactSpan);
 
     configContactAddButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
@@ -764,7 +772,7 @@
     const errorsList = createModalErrorsList();
 
     const saveButton = document.createElement('a');
-    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
+    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'modal__client-save-button');
     saveButton.textContent = 'Сохранить';
     saveButton.addEventListener(
       'click',
@@ -773,7 +781,6 @@
         try {
           const dat = await changeClientByID(obj.id, obj);
           if (dat.errors!== undefined) throw(dat.errors);
-          setTimeout(async () => {
             errorsList.clear();
             errorsList.hide();
             modal.hideTransparentSpinner();
@@ -783,7 +790,6 @@
             } catch (error) {
               throw(error);
             }
-          }, 1000);
         } catch (err)  {
           modal.hideTransparentSpinner();
           errorsList.show();
@@ -793,7 +799,7 @@
     );
 
     const deleteButton = document.createElement('a');
-    deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'client-delete-button');
+    deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'modal__client-delete-button');
     deleteButton.textContent = 'Удалить клиента';
 
     container.append(modalHeaderDiv, nameForm.nameDiv, contactsDiv, errorsList.errorsList, saveButton, deleteButton);
@@ -839,15 +845,15 @@
         }
         clientObj.contacts.push(newContact);
 
-        const contactItemDivs = document.querySelectorAll('.contact__item-div');
+        const contactItemDivs = document.querySelectorAll('.modal__contacts-item');
         if (contactItemDivs[contactItemDivs.length - 1] !== undefined) {
           contactItemDivs[contactItemDivs.length - 1].classList.add('mb-2');
         }
 
         const contactItemDiv = document.createElement('div');
-        contactItemDiv.classList.add('d-flex', 'contact__item-div');
+        contactItemDiv.classList.add('d-flex', 'modal__contacts-item');
 
-        const contactTypeSelect = createSelect(values, 'sel1');
+        const contactTypeSelect = createSelect(values, 'modal__contacts-select');
         contactItemDiv.append(contactTypeSelect);
         const contactItemSelect = configSelect(contactTypeSelect);
 
@@ -864,7 +870,7 @@
         );
 
         const contactValueInput = document.createElement('input');
-        contactValueInput.classList.add('p-1', 'mw-75', 'border');
+        contactValueInput.classList.add('p-1', 'w-100', 'border', 'modal__contacts-input');
         contactValueInputs.push(contactValueInput);
         contactValueInput.addEventListener(
           'input',
@@ -877,8 +883,8 @@
         );
 
         const contactDeleteButton = document.createElement('a');
-        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'contact-delete-button', 'align-items-center', 'justify-content-center');
-        const contactDeleteIcon = createIcon('contact-delete', 'contact-delete-icon');
+        contactDeleteButton.classList.add('d-flex', 'd-inline-flex', 'modal__contacts-delete-button', 'align-items-center', 'justify-content-center');
+        const contactDeleteIcon = createIcon('contact-delete', 'modal__contacts-delete-icon');
         contactDeleteButton.append(contactDeleteIcon);
         contactDeleteButtons.push(contactDeleteButton);
         configContactDeleteButton(contactDeleteButton, clientObj, contactDeleteButtons, contactValueInputs, contactTypeChoices);
@@ -941,21 +947,21 @@
     const obj = {};
     obj.contacts = [];
     const container = document.createElement('div');
-    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100');
+    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100', 'modal__content');
 
     const modalHeaderDiv = document.createElement('div');
-    modalHeaderDiv.classList.add('d-flex', 'align-items-end');
+    modalHeaderDiv.classList.add('d-flex', 'align-items-end', 'modal__header');
     const modalHeaderTitle = document.createElement('h3');
-    modalHeaderTitle.classList.add('d-inline-flex', 'm-0');
+    modalHeaderTitle.classList.add('d-inline-flex', 'm-0', 'modal__title');
     modalHeaderTitle.textContent = 'Новый клиент';
     modalHeaderDiv.append(modalHeaderTitle);
 
     const nameForm = configModalNameDiv(obj);
 
     const contactsDiv = document.createElement('div');
-    contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2');
+    contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2', 'modal__contacts-container');
     const contactsList = document.createElement('ul');
-    contactsList.classList.add('d-flex', 'flex-column', 'mx-0', 'mb-2', 'p-0');
+    contactsList.classList.add('d-flex', 'flex-column', 'mx-0', 'mb-2', 'p-0', 'modal__contacts-list');
     const contactTypeChoices = [];
     const contactValueInputs = [];
     const contactDeleteButtons = [];
@@ -963,11 +969,11 @@
     contactsDiv.append(contactsList);
 
     const addContactButton = document.createElement('a');
-    addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'add-contact-button');
+    addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'modal__add-contact-button');
     const addContactSpan = document.createElement('span');
     addContactSpan.classList.add('d-inline-flex');
     addContactSpan.textContent = 'Добавить контакт';
-    const addContactIcon = createIcon('contact-add', 'contact-add-icon');
+    const addContactIcon = createIcon('contact-add', 'modal__add-contact-icon');
     addContactButton.append(addContactIcon, addContactSpan);
     configContactAddButton(addContactButton, obj, contactTypeChoices, contactValueInputs, contactDeleteButtons, contactsList);
 
@@ -976,11 +982,11 @@
     const errorsList = createModalErrorsList();
 
     const saveButton = document.createElement('a');
-    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'contact-save-button');
+    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'modal__client-save-button');
     saveButton.textContent = 'Сохранить';
     saveButton.addEventListener(
       'click',
-      function (e) {
+      async function (e) {
         errorsList.clear();
         if (nameForm.nameInput.input.value === '') {
           errorsList.appendError({'message': 'Не введено имя'});
@@ -1001,27 +1007,25 @@
             })) {
               errorsList.clear();
               modal.showTransparentSpinner();
-              setTimeout(async () => {
-                try {
-                  const dat = await createNewClient(obj);
-                  if (dat.errors !== undefined) throw(dat.errors);
-                  clients = [...clients, dat];
-                  modal.hideTransparentSpinner();
-                  modal.hideModal();
-                  fillClientsListView(clientsListDiv, clients);
-                } catch(err) {
-                  modal.hideTransparentSpinner();
-                  errorsList.show();
-                  if (err instanceof Array) errorsList.fillWithErrors(err);
-                  else errorsList.fillWithErrors([err]);
-                }
-              }, 1000);
+              try {
+                const dat = await createNewClient(obj);
+                if (dat.errors !== undefined) throw(dat.errors);
+                clients = [...clients, dat];
+                modal.hideTransparentSpinner();
+                modal.hideModal();
+                fillClientsListView(clientsListDiv, clients);
+              } catch(err) {
+                modal.hideTransparentSpinner();
+                errorsList.show();
+                if (err instanceof Array) errorsList.fillWithErrors(err);
+                else errorsList.fillWithErrors([err]);
+              }
         }
       }
     );
 
     const cancelButton = document.createElement('a');
-    cancelButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'client-delete-button');
+    cancelButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'modal__client-delete-button');
     cancelButton.textContent = 'Отмена';
     cancelButton.addEventListener(
       'click',
@@ -1063,11 +1067,11 @@
     textBlock.style.textAlign = 'center';
 
     const deleteButton = document.createElement('a');
-    deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'contact-save-button', 'mb-1', 'w-25', 'p-2');
+    deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'modal__client-save-button', 'mb-1', 'w-25', 'p-2');
     deleteButton.textContent = 'Удалить';
 
     const cancelButton = document.createElement('a');
-    cancelButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'client-delete-button', 'mb-1', 'w-25', 'p-2');
+    cancelButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'modal__client-delete-button', 'mb-1', 'w-25', 'p-2');
     cancelButton.textContent = 'Отмена';
 
     deleteButton.addEventListener(
@@ -1112,7 +1116,7 @@
 
   function createClientsListHeader() {
     const clientListHeader = document.createElement('div');
-    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'mb-3', 'px-4');
+    clientListHeader.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__header', 'clients__header');
 
     const idSortAsc = (a, b) => {
       return parseInt(a.id) - parseInt(b.id);
@@ -1120,7 +1124,7 @@
     const idSortDesc = (a, b) => {
       return parseInt(b.id) - parseInt(a.id);
     }
-    const idSort = configClientsListHeaderElement('ID', idSortAsc, idSortDesc, 'clients__id');
+    const idSort = configClientsListHeaderElement('ID', idSortAsc, idSortDesc, 'clients__header-id');
 
     const nameSortAsc = (a, b) => {
       const aName = [a.surname, a.name, a.lastName].join(' ');
@@ -1132,7 +1136,7 @@
       const bName = [b.surname, b.name, b.lastName].join(' ');
       return bName.localeCompare(aName);
     }
-    const nameSort = configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__name');
+    const nameSort = configClientsListHeaderElement('Фамилия Имя Отчество', nameSortAsc, nameSortDesc, 'clients__header-name');
 
     const dateSortAsc = (a, b) => {
       const aCreationDate = new Date(a.createdAt);
@@ -1155,16 +1159,16 @@
       const bCreationDate = new Date(b.updatedAt);
       return aCreationDate < bCreationDate;
     }
-    const creationDateSort = configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc, 'clients__create-datetime');
+    const creationDateSort = configClientsListHeaderElement('Дата и время создания', dateSortAsc, dateSortDesc, 'clients__header-creation-datetime');
 
-    const updateDateSort = configClientsListHeaderElement('Последние изменения', updDateSortAsc, updDateSortDesc, 'clients__update-datetime');
+    const updateDateSort = configClientsListHeaderElement('Последние изменения', updDateSortAsc, updDateSortDesc, 'clients__header-change-datetime');
 
     const contactsSpan = document.createElement('span');
-    contactsSpan.classList.add('d-inline-flex', 'clients__contacts');
+    contactsSpan.classList.add('d-inline-flex', 'clients__header-contacts');
     contactsSpan.textContent = 'Контакты';
 
     const actionsSpan = document.createElement('span');
-    actionsSpan.classList.add('d-inline-flex', 'clients__actions');
+    actionsSpan.classList.add('d-inline-flex', 'clients__header-actions');
     actionsSpan.textContent = 'Действия';
 
     clientListHeader.append(idSort, nameSort, creationDateSort, updateDateSort, contactsSpan, actionsSpan);
@@ -1225,7 +1229,7 @@
 
   function createClientsListDiv() {
     const clientsListDiv = document.createElement('div');
-    clientsListDiv.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center');
+    clientsListDiv.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100', 'clients__clients-container');
     return clientsListDiv;
   }
 
@@ -1272,7 +1276,7 @@
         element.type === 'VK' ||
         element.type === 'mail' ||
         element.type === 'FB' ? element.type : 'other';
-      link.classList.add('display-inline-flex', 'text-primary', 'contact-item');
+      link.classList.add('display-inline-flex', 'text-primary', 'clients__clients-contact-item');
 
       (index % rowLength !== maxShownElements && index !== array.length - 1) ? link.classList.toggle('mr-1', true): null;
       (index % rowLength >= 0 && array.length > rowLength && index < acceptableItems) ? link.classList.toggle('mb-1', true): null;
@@ -1340,30 +1344,31 @@
 
   function createClientView(client) {
     const clientLi = document.createElement('li');
-    clientLi.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'p-3', 'clients__list-item');
+    clientLi.classList.add('d-flex', 'flex-row', 'justify-content-start', 'align-items-center', 'clients__clients-item');
 
     const idEl = document.createElement('a');
-    idEl.classList.add('d-inline-flex', 'clients__list-id');
+    idEl.classList.add('d-inline-flex', 'clients__clients-item-id');
     idEl.textContent = client.id;
     const currUrl = new URL(document.URL);
     currUrl.hash = '';
     idEl.href = currUrl.href + '#' + client.id;
+    idEl.target = '_blank';
 
     const nameSpan = document.createElement('span');
-    nameSpan.classList.add('d-inline-flex', 'clients__list-name');
+    nameSpan.classList.add('d-inline-flex', 'clients__clients-item-name');
     nameSpan.textContent = [client.surname, client.name, client.lastName].join(' ');
 
-    const creationDateTimeDiv = createDateTimeDiv(client.createdAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
-    const updateDateTimeDiv = createDateTimeDiv(client.updatedAt, 'clients__list-create-datetime', 'clients__list-create-date', 'clients__list-create-time');
+    const creationDateTimeDiv = createDateTimeDiv(client.createdAt, 'clients__clients-item-creation-datetime', 'clients__clients-item-creation-date', 'clients__clients-item-creation-time');
+    const updateDateTimeDiv = createDateTimeDiv(client.updatedAt, 'clients__clients-item-change-datetime', 'clients__clients-item-change-date', 'clients__clients-item-change-time');
 
     const contactsDiv = document.createElement('div');
-    contactsDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'clients__list-contacts-list');
+    contactsDiv.classList.add('d-flex', 'flex-wrap', 'justify-content-start', 'align-items-center', 'clients__clients-item-contacts-list');
 
     fillContactsDiv(contactsDiv, client);
 
-    const changeClientButton = createDataEditButton('clients__list-change-button', 'change', 'change-element-icon', 'Изменить');
+    const changeClientButton = createDataEditButton('clients__clients-item-change-button', 'change', 'change-element-icon', 'Изменить');
 
-    const deleteClientButton = createDataEditButton('clients__list-delete-button', 'delete', 'delete-element-icon', 'Удалить');
+    const deleteClientButton = createDataEditButton('clients__clients-item-delete-button', 'delete', 'delete-element-icon', 'Удалить');
 
     changeClientButton.addEventListener(
       'click',
@@ -1397,7 +1402,7 @@
 
   function createClientsListView(clients) {
     const clienstListView = document.createElement('ul');
-    clienstListView.classList.add('d-flex', 'flex-column', 'm-0', 'p-0', 'clients__list', 'mb-3');
+    clienstListView.classList.add('d-flex', 'flex-column', 'clients__clients-list');
     clients.forEach(item => {
       const clientLi = createClientView(item);
       clienstListView.append(clientLi);
@@ -1427,7 +1432,7 @@
 
   function createAppPageBottom() {
     const appPageBottom = document.createElement('div');
-    appPageBottom.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100', 'mb-3');
+    appPageBottom.classList.add('d-flex', 'flex-column', 'align-self-center', 'justify-content-center', 'w-100', 'mb-3', 'clients__bottom');
     return appPageBottom;
   }
 
@@ -1437,11 +1442,11 @@
 
   function createNewClientButton() {
     const newClientButton = document.createElement('a');
-    newClientButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'align-items-center', 'justify-content-center', 'p-1', 'mb-1', 'w-25', 'new-client-button');
-    const newClientIcon = createIcon('new-client', 'new-client-icon', width = '23', height = '16', viewBox = '0 0 23 16');
+    newClientButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'align-items-center', 'justify-content-center', 'clients__add-contact-button');
+    const newClientIcon = createIcon('new-client', 'clients__add-contact-icon', width = '23', height = '16', viewBox = '0 0 23 16');
     newClientIcon.classList.add('d-inline-flex');
     const newClientText = document.createElement('p');
-    newClientText.classList.add('d-inline-flex', 'm-0');
+    newClientText.classList.add('d-inline-flex', 'm-0', 'clients__add-contact-text');
     newClientText.textContent = 'Добавить контакт';
     newClientButton.append(newClientIcon, newClientText);
     newClientButton.addEventListener(
@@ -1520,6 +1525,8 @@
   const app = getRootElements();
   const searchInput = createSearchInput();
   const matchingItemsContainer = createAutocompleteContainer();
+  const searchStack = createSearchStack(searchInput, matchingItemsContainer);
+
   const appHeader = createAppHeader();
   const clientsListHeader = createClientsListHeader();
   const clientsListDiv = createClientsListDiv();
@@ -1535,16 +1542,14 @@
 
   let searchInputTimeout = null;
   appPageBottom.append(newClientButton);
-  app.headerContainer.append(searchInput, matchingItemsContainer);
+  app.headerContainer.append(searchStack);
   app.container.append(appHeader, clientsListHeader, spinner.spinnerContainer, clientsListDiv, appPageBottom);
   fillClientsListView(clientsListDiv, clients, showSpinner = true);
   await processDefaultHash();
 
   // TODO:
 
-  // 1) Расставить обработку статусов http-запросов
-  // 2) Валидация формы добавления / изменения данных
-  // 3) Рефакторинг кода, DRY
-  // 4) Реализовать автодополнение для поиска
+  // 1) Рефакторинг кода, DRY
+  // 2) Реализовать автодополнение для поиска
 
 })();
