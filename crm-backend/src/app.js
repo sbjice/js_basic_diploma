@@ -415,7 +415,7 @@
       hideModal() {
         this.overlay.style.top = '-100%';
         body.classList.toggle('scroll-disable', false);
-        clearURLHash();
+        // clearURLHash();
         return this;
       },
       insertFormIntoModal(form) {
@@ -450,6 +450,16 @@
       },
       hideWhiteSpinner() {
         whiteModalSpinner.hideSpinner();
+      },
+      setSmallSize() {
+        this.modal.classList.toggle('modal', false);
+        this.modal.classList.toggle('modal_confirm', true);
+
+      },
+      setBigSize() {
+        this.modal.classList.toggle('modal', true);
+        this.modal.classList.toggle('modal_confirm', false);
+
       }
     }
   }
@@ -691,6 +701,8 @@
   */
 
   function createChangeClientModalContent(obj, modal) {
+    modal.setBigSize();
+
     const container = document.createElement('div');
     container.classList.add('d-flex', 'flex-column','h-100', 'w-100', 'modal__content');
 
@@ -944,10 +956,12 @@
   */
 
   function createNewClientModalContent(modal) {
+    modal.setBigSize();
+
     const obj = {};
     obj.contacts = [];
     const container = document.createElement('div');
-    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100', 'modal__content');
+    container.classList.add('d-flex', 'flex-column', 'w-100', 'h-100', 'modal__content');
 
     const modalHeaderDiv = document.createElement('div');
     modalHeaderDiv.classList.add('d-flex', 'align-items-end', 'modal__header');
@@ -959,7 +973,7 @@
     const nameForm = configModalNameDiv(obj);
 
     const contactsDiv = document.createElement('div');
-    contactsDiv.classList.add('d-flex', 'flex-column', 'bg-light', 'p-3', 'mb-2', 'modal__contacts-container');
+    contactsDiv.classList.add('d-flex', 'flex-column', 'modal__contacts-container');
     const contactsList = document.createElement('ul');
     contactsList.classList.add('d-flex', 'flex-column', 'mx-0', 'mb-2', 'p-0', 'modal__contacts-list');
     const contactTypeChoices = [];
@@ -971,7 +985,7 @@
     const addContactButton = document.createElement('a');
     addContactButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-items-center', 'modal__add-contact-button');
     const addContactSpan = document.createElement('span');
-    addContactSpan.classList.add('d-inline-flex');
+    addContactSpan.classList.add('d-inline-flex', 'modal__add-contact-text');
     addContactSpan.textContent = 'Добавить контакт';
     const addContactIcon = createIcon('contact-add', 'modal__add-contact-icon');
     addContactButton.append(addContactIcon, addContactSpan);
@@ -980,9 +994,10 @@
     contactsDiv.append(addContactButton);
 
     const errorsList = createModalErrorsList();
+    errorsList.hide();
 
     const saveButton = document.createElement('a');
-    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'modal__client-save-button');
+    saveButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'modal__client-save-button');
     saveButton.textContent = 'Сохранить';
     saveButton.addEventListener(
       'click',
@@ -1025,7 +1040,7 @@
     );
 
     const cancelButton = document.createElement('a');
-    cancelButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'p-1', 'mb-1', 'w-50', 'modal__client-delete-button');
+    cancelButton.classList.add('d-flex', 'd-inline-flex', 'align-self-center', 'justify-content-center', 'modal__client-delete-button');
     cancelButton.textContent = 'Отмена';
     cancelButton.addEventListener(
       'click',
@@ -1053,25 +1068,27 @@
   */
 
   function createDeleteConfirmModalContent(clientData, modal, previousModal) {
+    modal.setSmallSize();
+
     const container = document.createElement('div');
-    container.classList.add('d-flex', 'flex-column', 'w-75', 'content', 'h-100', 'justify-content-center', 'align-items-center');
+    container.classList.add('d-flex', 'flex-column', 'h-100', 'justify-content-center', 'align-items-center');
 
 
     const modalHeaderTitle = document.createElement('h3');
-    modalHeaderTitle.classList.add('d-inline-flex', 'm-0', 'align-self-center');
+    modalHeaderTitle.classList.add('d-inline-flex', 'align-self-center', 'modal__title_confirm-delete');
     modalHeaderTitle.textContent = 'Удалить клиента';
 
     const textBlock = document.createElement('p');
-    textBlock.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'm-0', 'mb-2', 'w-75');
+    textBlock.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'modal__question-text');
     textBlock.textContent = 'Вы действительно хотите удалить данного клиента?';
     textBlock.style.textAlign = 'center';
 
     const deleteButton = document.createElement('a');
-    deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'modal__client-save-button', 'mb-1', 'w-25', 'p-2');
+    deleteButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'modal__client-save-button');
     deleteButton.textContent = 'Удалить';
 
     const cancelButton = document.createElement('a');
-    cancelButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'modal__client-delete-button', 'mb-1', 'w-25', 'p-2');
+    cancelButton.classList.add('d-flex', 'd-inline-flex', 'justify-content-center', 'align-self-center', 'align-items-center', 'modal__client-delete-button', 'm-0');
     cancelButton.textContent = 'Отмена';
 
     deleteButton.addEventListener(

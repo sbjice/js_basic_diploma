@@ -41,6 +41,7 @@ a {
   text-decoration: none;
   color: black;
   cursor: pointer;
+  transition: color .3s ease-in-out;
 }
 
 a:hover {
@@ -90,6 +91,12 @@ svg {
 .svg-icon:hover g{
   opacity: 1;
 }
+
+a:hover .svg-icon g{
+  opacity: 1;
+}
+
+
 
 .VK {
   width: 16px;
@@ -303,8 +310,7 @@ svg {
 
 .clients__clients-item {
   min-height: 60px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 20px;
   border-bottom: 1px solid #C8C5D1;
 }
 
@@ -417,6 +423,11 @@ svg {
   /* padding: 30px; */
 }
 
+.modal_confirm {
+  width: 450px;
+  height: 215px;
+}
+
 .modal__content {
   overflow-y: auto;
 }
@@ -434,6 +445,21 @@ svg {
   font-weight: 700;
   line-height: 25px;
 }
+
+.modal__title_confirm-delete {
+  margin-bottom: 11px;
+  font-size: 18px;
+  line-height: 25px;
+  font-weight: 700;
+}
+
+.modal__question-text {
+  max-width: 275px;
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 400;
+}
+
 
 .modal__id {
   font-size: 12px;
