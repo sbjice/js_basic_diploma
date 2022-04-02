@@ -1420,11 +1420,18 @@
   function createClientsListView(clients) {
     const clienstListView = document.createElement('ul');
     clienstListView.classList.add('d-flex', 'flex-column', 'clients__clients-list');
-    clients.forEach(item => {
-      const clientLi = createClientView(item);
-      clienstListView.append(clientLi);
-    });
-    return clienstListView;
+    if (!clients.errors) {
+      clients.forEach(item => {
+        const clientLi = createClientView(item);
+        clienstListView.append(clientLi);
+      });
+      return clienstListView;
+    } else {
+      const errorField = document.createElement('div');
+      errorField.textContent = 'Возникла ошибка';
+      errorField.classList.add('d-flex', 'justify-content-between', 'mx-auto', 'my-5');
+      return errorField;
+    }
   }
 
   /*
